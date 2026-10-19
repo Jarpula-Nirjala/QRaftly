@@ -1946,68 +1946,6 @@ section[id],
 .compare-table td.ours {
   background: var(--accent-soft);
 }
-.explore-grid {
-  display: grid;
-  gap: 16px;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
-}
-.explore-card {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding: 22px;
-  border-radius: var(--radius);
-  border: 1px solid var(--line);
-  background: var(--surface);
-  box-shadow: var(--shadow);
-  color: var(--ink);
-}
-.explore-card:hover {
-  border-color: var(--accent);
-  text-decoration: none;
-  transform: translateY(-2px);
-}
-.explore-card {
-  transition:
-    transform 0.2s,
-    border-color 0.2s;
-}
-.explore-card .ic {
-  display: grid;
-  place-items: center;
-  width: 46px;
-  height: 46px;
-  border-radius: 12px;
-  background: var(--accent-soft);
-  color: var(--accent-text);
-}
-.explore-card h3 {
-  font-size: 23px;
-  margin: 6px 0 0;
-}
-.explore-card p {
-  margin: 0;
-  font-family: var(--font-read);
-  font-size: 19px;
-  color: var(--ink-2);
-}
-.explore-card ul {
-  margin: 6px 0 8px;
-  padding-left: 20px;
-  font-size: 17px;
-  color: var(--ink-2);
-}
-.explore-card li::marker {
-  color: var(--gold);
-}
-.explore-card .go {
-  margin-top: auto;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-weight: 700;
-  color: var(--accent-text);
-}
 
 /* ------------------------------------------------------------ kiosk */
 
@@ -2061,28 +1999,6 @@ section[id],
 .gen-title .section-title {
   margin-bottom: 0;
 }
-
-
-
-/* Dark mode: no boxes. Panels on the page background are fully transparent, so content floats on the black. */
-:root[data-theme='dark'] .bg-stage .card,
-:root[data-theme='dark'] .bg-stage .feature,
-:root[data-theme='dark'] .bg-stage .how-steps li,
-:root[data-theme='dark'] .bg-stage .flow-step,
-:root[data-theme='dark'] .bg-stage .compare-card,
-:root[data-theme='dark'] .bg-stage .explore-card,
-:root[data-theme='dark'] .bg-stage .table-wrap,
-:root[data-theme='dark'] .bg-stage .step,
-:root[data-theme='dark'] .bg-stage .ex-pg,
-:root[data-theme='dark'] .bg-stage .v-stats div,
-:root[data-theme='dark'] .bg-stage .v-float-band,
-:root[data-theme='dark'] .bg-stage .v-tunnel,
-:root[data-theme='dark'] .bg-stage .v-tunnel .cta-card {
-  background: transparent !important;
-  border-color: transparent !important;
-  box-shadow: none !important;
-  backdrop-filter: none !important;
-}
 :root[data-theme='dark'] .bg-stage .compare-card .was,
 :root[data-theme='dark'] .bg-stage .table th,
 :root[data-theme='dark'] .bg-stage .compare-table td.ours {
@@ -2117,55 +2033,6 @@ section[id],
 :root[data-theme='dark'] .bg-stage .divider {
   background: rgb(212 175 101 / 0.16);
 }
-
-/* ------------------------------------------------------------ cards with pictures */
-
-.card-img {
-  display: block;
-  max-width: none;
-  width: calc(100% + 44px);
-  margin: -22px -22px 14px;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-  border-radius: var(--radius) var(--radius) 0 0;
-  background: var(--surface-2);
-}
-.explore-card .more {
-  margin-top: 8px !important;
-  font-size: 17px !important;
-  color: var(--muted) !important;
-}
-/* Explore: three wide cards, then two centred below. */
-.explore-grid {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 22px;
-}
-.explore-card {
-  flex: 0 1 calc((100% - 44px) / 3);
-  min-width: min(100%, 300px);
-  overflow: hidden;
-}
-.explore-card .card-img {
-  aspect-ratio: 16 / 9;
-}
-@media (max-width: 1000px) {
-  .explore-card {
-    flex-basis: calc((100% - 22px) / 2);
-  }
-}
-@media (max-width: 640px) {
-  .explore-card {
-    flex-basis: 100%;
-  }
-}
-:root[data-theme='dark'] .bg-stage .card-img {
-  border-radius: var(--radius);
-  width: 100%;
-  margin: 0 0 14px;
-}
-
 /* ------------------------------------------------------------ the generator preview: your steel-framed screen */
 
 .preview {
@@ -2209,12 +2076,6 @@ section[id],
 }
 .preview .qr-placeholder {
   display: none;
-}
-
-/* Tool screenshots are shown whole, on a soft studio backdrop. */
-.explore-card .card-img {
-  object-fit: contain;
-  background: radial-gradient(120% 90% at 30% 10%, #ffffff, #f1f3f7 60%, #e4e8ee);
 }
 
 /* ------------------------------------------------------------ one even rhythm between sections */

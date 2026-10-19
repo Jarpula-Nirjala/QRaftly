@@ -98,8 +98,6 @@ Where a palette colour would be too faint as text, a deeper or lighter shade of 
 
 The codes in the mockups are real and pass the same scan check as the studio, and the browser test decodes them from screenshots. Patterns that are only decorative are random, so they cannot be scanned. Animations pause when off-screen and stop for visitors who prefer reduced motion. Everything scales down to phone width without sideways scrolling.
 
-The pictures on the home page cards are screenshots of the site's own mockups and tools. After a design change, regenerate them with `BASE=http://localhost:3000 node scripts/capture-cards.ts`.
-
 ## Run it
 
 ```bash

@@ -3,7 +3,6 @@ import {
   ArrowRight, BarChart3, CalendarCheck, Check, Cpu, Files, Globe2, Package, Paintbrush, ShieldCheck, Sparkles, UserRound,
 } from 'lucide-react';
 import { DEFAULT_DESIGN, type Design } from '../../../shared/qr/render.ts';
-import { EXPLORE } from '../explore.ts';
 import { Link } from '../router.tsx';
 import { Pipeline, ScanFlow } from '../visuals/howitworks.tsx';
 import { DesignPanel, PayloadForm, payloadOf, QrPreview, TYPES, type StaticType } from '../studio.tsx';
@@ -311,37 +310,6 @@ export function Landing() {
       <section id="compare" className="section">
         <div className="wrap">
           <WhySection />
-        </div>
-      </section>
-
-      <section id="explore" className="section">
-        <div className="wrap">
-          <div className="section-title">
-            <span className="hero-kicker">Explore</span>
-            <h2>Five more pages, twenty-five more tools</h2>
-            <p>Each page has five working features you can try right now, most of them without an account.</p>
-          </div>
-          <div className="explore-grid">
-            {EXPLORE.map(({ to, title, blurb, more, img, icon: Icon, features }) => (
-              <Link key={to} to={to} className="explore-card">
-                <img className="card-img" src={`/cards/${img}.jpg`} alt="" loading="lazy" decoding="async" />
-                <div className="ic">
-                  <Icon size={22} />
-                </div>
-                <h3>{title}</h3>
-                <p>{blurb}</p>
-                <p className="more">{more}</p>
-                <ul>
-                  {features.map((f) => (
-                    <li key={f}>{f}</li>
-                  ))}
-                </ul>
-                <span className="go">
-                  Open <ArrowRight size={16} />
-                </span>
-              </Link>
-            ))}
-          </div>
         </div>
       </section>
 
