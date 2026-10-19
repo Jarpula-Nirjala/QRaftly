@@ -490,12 +490,6 @@
   position: static;
   max-width: 320px;
 }
-/* The palette demo's card hugs its content, matching the smaller QR inside it. */
-#f1 .ex-demo {
-  justify-self: start;
-  width: fit-content;
-  max-width: 100%;
-}
 
 #f1 .ex-demo .preview-col {
   max-width: none;
@@ -503,8 +497,8 @@
 }
 #f1 .preview {
   aspect-ratio: auto;
-  height: 400px;
+  height: 300px;
 }
 #f1 .preview .qr {
-  width: 290px !important;
+  width: 193px !important;
 }

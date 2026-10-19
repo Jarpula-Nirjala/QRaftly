@@ -37,7 +37,7 @@
 /* ------------------------------------------------------------ dark: one background, black to gold */
 
 .gw {
-  background: #070605;
+  background: #030201;
 }
 .gw-img {
   position: absolute;
@@ -65,7 +65,7 @@
   inset: 0;
 }
 .gw-veil.black {
-  background: linear-gradient(180deg, rgb(10 6 3 / 0.96) 0%, rgb(14 9 5 / 0.95) 50%, rgb(10 6 3 / 0.96) 100%);
+  background: linear-gradient(180deg, rgb(3 2 1 / 0.975) 0%, rgb(6 4 2 / 0.965) 50%, rgb(3 2 1 / 0.975) 100%);
   opacity: 1;
 }
 .gw-veil.warm {

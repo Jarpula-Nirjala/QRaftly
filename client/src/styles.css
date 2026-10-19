@@ -2143,3 +2143,50 @@ section[id],
   box-shadow: 0 0 36px 26px rgb(255 255 255 / 0.8);
   border-radius: 28px;
 }
+
+/* ------------------------------------------------------------ sign in / sign up: dark navy scene, card on the right */
+.auth {
+  min-height: calc(100vh - 64px);
+  place-items: center end;
+  padding: 40px clamp(16px, 8vw, 140px);
+}
+/* The scene fills the whole window behind the header and Back button. */
+.auth::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(100deg, rgb(8 16 36 / 0.25) 0%, rgb(8 16 36 / 0.55) 55%, rgb(8 16 36 / 0.82) 100%),
+    var(--auth-photo, radial-gradient(80% 90% at 20% 60%, #1c2f57 0%, #0d1730 55%, #070d1d 100%));
+  background-size: cover;
+  background-position: center;
+}
+.auth .card {
+  background: rgb(16 28 56 / 0.72);
+  border: 1px solid rgb(255 255 255 / 0.14);
+  backdrop-filter: blur(14px) saturate(1.2);
+  color: #eef3ff;
+  box-shadow: 0 40px 80px -30px rgb(0 0 0 / 0.7);
+}
+.auth .card h1,
+.auth .card label.field {
+  color: #ffffff;
+}
+.auth .card .muted,
+.auth .card .hint {
+  color: #c3cfeb !important;
+}
+.auth .card .input {
+  background: rgb(8 16 36 / 0.65);
+  border-color: rgb(255 255 255 / 0.18);
+  color: #ffffff;
+}
+.auth .card a {
+  color: #f0cf7f;
+}
+@media (max-width: 760px) {
+  .auth {
+    place-items: center;
+  }
+}
