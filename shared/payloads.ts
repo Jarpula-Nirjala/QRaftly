@@ -93,7 +93,8 @@ export function buildPayload(d: PayloadData): string {
       const vpa = d.vpa.trim();
       // The UPI ID goes in as-is: UPI apps expect a literal "@", and many reject "%40" as an invalid ID.
       // It can only contain letters, digits, ".", "-", "_" and "@" (checked above), so nothing needs escaping.
-      const parts = [`pa=${vpa}`, `pn=${encodeURIComponent((d.name || vpa).trim())}`];
+      // With no name, the UPI ID is the label (some apps need a pn); its "@" stays literal there too.
+      const parts = [`pa=${vpa}`, `pn=${d.name?.trim() ? encodeURIComponent(d.name.trim()) : vpa}`];
       if (d.amount) {
         if (!/^\d+(\.\d{1,2})?$/.test(d.amount) || Number(d.amount) <= 0) throw new Error('Enter the amount in rupees, like 250 or 99.50.');
         parts.push(`am=${Number(d.amount).toFixed(2)}`);
