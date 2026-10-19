@@ -119,7 +119,7 @@ function Routes() {
   return (
     <>
       <Header />
-      {path !== '/' && <BackBar />}
+      {path !== '/' && path !== '/signin' && path !== '/signup' && <BackBar />}
       <main>
         <Suspense fallback={<Loading />}>{page}</Suspense>
       </main>
