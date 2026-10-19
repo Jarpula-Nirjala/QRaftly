@@ -2130,33 +2130,10 @@ section[id],
   border-radius: var(--radius) var(--radius) 0 0;
   background: var(--surface-2);
 }
-.feature .more,
 .explore-card .more {
   margin-top: 8px !important;
   font-size: 17px !important;
   color: var(--muted) !important;
-}
-/* Everything in one place: five in a row, two rows. */
-.features {
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-}
-@media (max-width: 1280px) {
-  .features {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-@media (max-width: 860px) {
-  .features {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-@media (max-width: 560px) {
-  .features {
-    grid-template-columns: 1fr;
-  }
-}
-.feature {
-  overflow: hidden;
 }
 /* Explore: three wide cards, then two centred below. */
 .explore-grid {

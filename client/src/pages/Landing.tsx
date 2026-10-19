@@ -1,6 +1,6 @@
 import { useState, type CSSProperties, type ReactNode } from 'react';
 import {
-  ArrowRight, BadgeCheck, BarChart3, CalendarCheck, Check, CheckCircle2, Cpu, XCircle, Files, Globe2, HeartPulse, LockKeyhole, Package, Paintbrush, Route, ShieldCheck, Sparkles, UserRound, Wifi,
+  ArrowRight, BarChart3, CalendarCheck, Check, CheckCircle2, Cpu, XCircle, Files, Globe2, Package, Paintbrush, ShieldCheck, Sparkles, UserRound,
 } from 'lucide-react';
 import { DEFAULT_DESIGN, type Design } from '../../../shared/qr/render.ts';
 import { EXPLORE } from '../explore.ts';
@@ -27,18 +27,6 @@ const COMPARE: Array<[string, boolean | string, boolean | string, boolean | stri
   ['Price for these features', 'Free', 'Monthly fee', 'Free'],
 ];
 
-const FEATURES = [
-  { icon: UserRound, img: 'profile', title: 'Living profile cards', text: 'A hosted page with your links and a one-tap "Save contact". Change jobs, keep the code.', more: 'Add a photo, up to eight links and your own colour; the printed card never needs replacing.' },
-  { icon: BarChart3, img: 'dynamic', title: 'Editable links with analytics', text: 'Point a printed code somewhere new. Scans by day, hour, device, country and language.', more: 'Unique visitors are counted without storing IP addresses, and the history exports as CSV.' },
-  { icon: Route, img: 'rules', title: 'Context-aware rules', text: 'Breakfast menu at 8 am, dinner at 8 pm; App Store for iPhones, Google Play for Android.', more: 'Combine time, day, phone, language and country, and test it all in the scan simulator.' },
-  { icon: Paintbrush, img: 'design', title: 'Design studio with a scan check', text: 'Colours, styles and your logo, decoded before download with the logo treated as damage.', more: 'Five dot styles, four corner styles and gradients, exported as sharp PNG or SVG.' },
-  { icon: LockKeyhole, img: 'secure', title: 'Secure and expiring codes', text: 'PIN, expiry date, scan limits and single use, safe even when two people scan at once.', more: 'Chat-app link previews never use up a scan, and refused scans still show in analytics.' },
-  { icon: CalendarCheck, img: 'tickets', title: 'Event tickets and check-in', text: 'Signed tickets, a phone scanner that catches reused tickets, and a live headcount.', more: 'Import guests from a spreadsheet and run a self check-in kiosk at the entrance.' },
-  { icon: HeartPulse, img: 'medical', title: 'Medical emergency card', text: 'Blood group, allergies and a contact readable offline; private details behind a PIN.', more: 'First responders read it with any camera, even with no signal, and call your contact in one tap.' },
-  { icon: Wifi, img: 'wifi', title: 'Wi-Fi, UPI and quick actions', text: 'Join Wi-Fi, pay by UPI, WhatsApp, SMS, email, calendar events and map pins.', more: 'Print a ready-made Wi-Fi poster with the password in plain text as well.' },
-  { icon: Files, img: 'bulk', title: 'Bulk generation', text: 'A spreadsheet in, hundreds of codes out as PNGs or a print-ready PDF, with live progress.', more: 'Rows with problems are listed, never silently dropped, and jobs survive restarts.' },
-  { icon: BadgeCheck, img: 'certs', title: 'Scan-to-verify certificates', text: 'Signed certificates that show "Valid", or "Tampered" if a single letter changed.', more: 'Anyone can check them offline with the public key, and you can revoke one at any time.' },
-];
 
 function Show({ kicker, icon: Icon, title, text, points, visual, flip, example, size = 1 }: { kicker: string; icon: typeof Cpu; title: string; text: string; points: string[]; visual: ReactNode; flip?: boolean; example?: string; size?: number }) {
   // Pictures up to 1.75× sit beside the text; larger ones get a row of their own below it.
@@ -219,7 +207,7 @@ export function Landing() {
             text="Five dot styles, four corner styles, gradients and your logo. Before you download, we decode the design ourselves with every module under the logo counted as misread."
             points={['Shows how much error correction the logo uses', 'Warns about low contrast and light-on-dark colours', 'PNG up to 2048 px, or vector SVG']}
             visual={<PedestalScene />}
-            size={2.5}
+            size={1.67}
             example="A bakery adds its logo at 25% size; the scan check shows it uses 61% of the error-correction budget, safely under the limit."
           />
           <Show
@@ -239,7 +227,7 @@ export function Landing() {
             text="Each guest gets a signed ticket that cannot be guessed or copied into a new one. Staff scan at the door with a phone camera; a reused ticket shows when and where it was first used."
             points={['“Already used at 7:42 pm, North gate”', 'Live headcount across every door', 'Import guests from a spreadsheet']}
             visual={<TicketScene />}
-            size={2.5}
+            size={1.67}
             example="A 300-guest meetup with two doors: a ticket screenshot passed to a friend is refused with “already used at 6:42 pm, North gate”."
           />
           <Show
@@ -259,30 +247,9 @@ export function Landing() {
             text="Put a dynamic code on a box, a pouch or a bottle and update the page behind it: instructions, offers or a recall notice, without changing the packaging."
             points={['Vector PDF labels stay sharp at any size', 'Wi-Fi, UPI and contact codes for counters and shops', 'Medical cards readable with no signal']}
             visual={<PackagingScene />}
-            size={2}
+            size={1.33}
             example="A spice brand prints one code per product line and later points it at a recall notice for one batch, overnight."
           />
-        </div>
-      </section>
-
-      <section className="section" style={{ paddingTop: 10 }}>
-        <div className="wrap">
-          <div className="section-title">
-            <h2>Everything in one place</h2>
-          </div>
-          <div className="features">
-            {FEATURES.map(({ icon: Icon, img, title, text: t, more }) => (
-              <article key={title} className="feature">
-                <img className="card-img" src={`/cards/${img}.jpg`} alt="" loading="lazy" decoding="async" />
-                <div className="ic">
-                  <Icon size={21} />
-                </div>
-                <h3>{title}</h3>
-                <p>{t}</p>
-                <p className="more">{more}</p>
-              </article>
-            ))}
-          </div>
         </div>
       </section>
 
@@ -301,7 +268,7 @@ export function Landing() {
           </div>
           <ScanFlow />
           <div className="v-show" style={{ marginTop: 40 }}>
-            <div>
+            <div className="v-show-text">
               <span className="kicker">
                 <Cpu size={15} /> Under the hood
               </span>
@@ -439,7 +406,7 @@ export function Landing() {
       <section id="privacy" className="section">
         <div className="wrap">
           <div className="v-show flip">
-            <div>
+            <div className="v-show-text">
               <span className="kicker">
                 <ShieldCheck size={15} /> Privacy
               </span>

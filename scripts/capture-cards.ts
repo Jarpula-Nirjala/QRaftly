@@ -1,5 +1,5 @@
 /**
- * Photographs the site's own mockups and tools for the pictures on the home page cards.
+ * Photographs the site's own tools for the pictures on the home page's Explore cards.
  * Run against a running server, then commit client/public/cards/*.jpg:
  *
  *   BASE=http://localhost:3100 node scripts/capture-cards.ts
@@ -30,17 +30,9 @@ body { background: #f4f6f9 !important; }
 `;
 
 const shots: Array<[string, (p: Page) => Promise<Locator>]> = [];
-const stage = (n: number) => async (p: Page) => p.locator('.v-show .v-stage').nth(n);
 
 async function main() {
   const { cookie } = await api('/api/auth/signup', '', { name: 'Card Shots', email: `cards-${Date.now()}@example.com`, password: 'password123' });
-  const med = (await api('/api/qrs', cookie!, { kind: 'medical', data: { public: { name: 'Asha Rao', bloodGroup: 'O+', allergies: 'Penicillin', conditions: 'Asthma', medicines: 'Salbutamol inhaler', contactName: 'Ravi (brother)', contactPhone: '+91 98765 43210' }, private: {} } })).json.qr;
-  await api('/api/certs', cookie!, { recipient: 'Asha Rao', title: 'Full-stack web development', issuer: 'QRaftly Academy', date: '2026-10-01', details: 'Grade A · 120 hours' });
-
-  shots.push(['profile', stage(0)], ['dynamic', stage(1)], ['rules', stage(2)], ['design', stage(3)], ['secure', stage(4)], ['tickets', stage(5)], ['bulk', stage(6)]);
-  shots.push(['medical', async (p) => (await p.goto(`${BASE}/m/${med.slug}`), p.locator('.sheet'))]);
-  shots.push(['wifi', async (p) => (await p.goto(`${BASE}/venues`), p.locator('#f13 .poster'))]);
-  shots.push(['certs', async (p) => (await p.goto(`${BASE}/app/certificates`), await p.locator('tbody tr').first().click(), p.locator('.cert-sheet'))]);
   shots.push(['x-studio', async (p) => (await p.goto(`${BASE}/studio`), await p.locator('#f2').getByText('Scans: decoded').waitFor({ timeout: 15000 }), p.locator('#f2 canvas'))]);
   shots.push(['x-growth', async (p) => (await p.goto(`${BASE}/growth`), p.locator('#f10 .ex-demo'))]);
   shots.push(['x-venues', async (p) => (await p.goto(`${BASE}/venues`), p.locator('#f12 .grid-2'))]);
@@ -53,9 +45,7 @@ async function main() {
   const [name, value] = cookie!.split('=');
   await ctx.addCookies([{ name, value, url: BASE }]);
   const page = await ctx.newPage();
-  await page.goto(`${BASE}/#features`);
   for (const [file, find] of shots) {
-    if (!file.startsWith('x-') && !['medical', 'wifi', 'certs'].includes(file) && !page.url().endsWith('#features')) await page.goto(`${BASE}/#features`);
     const el = await find(page);
     await page.addStyleTag({ content: STUDIO_CSS });
     await el.scrollIntoViewIfNeeded();
