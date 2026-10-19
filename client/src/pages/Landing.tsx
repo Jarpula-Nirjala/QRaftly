@@ -81,7 +81,9 @@ export function Landing() {
   return (
     <>
       <BackdropStage>
-      <section className="v-hero">
+      {/* The top of the page sits on a solid white panel in light mode, so its text reads clearly. */}
+      <div className="top-veil">
+      <section id="top" className="v-hero">
         <LampScene className="only-dark lamps-desktop" />
         <Particles />
         <div className="wrap v-hero-grid">
@@ -121,12 +123,16 @@ export function Landing() {
         </div>
       </section>
 
-      <section id="generator" className="section">
+      <div id="generator" className="wrap gen-title">
+        <div className="section-title">
+          <h2>Make a code in seconds</h2>
+          <p>No sign-up for static codes. Every design is decoded before you download it.</p>
+        </div>
+      </div>
+      </div>
+
+      <section className="section" style={{ paddingTop: 0 }}>
         <div className="wrap" style={{ position: 'relative' }}>
-          <div className="section-title">
-            <h2>Make a code in seconds</h2>
-            <p>No sign-up for static codes. Every design is decoded before you download it.</p>
-          </div>
           <div className="studio">
             <div className="card">
               <div className="tabs" role="tablist">

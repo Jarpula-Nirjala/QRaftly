@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useId, useState, type CSSProperties, type ReactNode } from 'react';
-import { AlertCircle, ArrowLeft, CalendarCheck, ChevronDown, Files, KeyRound, LayoutGrid, Loader2, LogOut, Menu, MessageSquareHeart, Moon, ScrollText, Sun, Ticket, X } from 'lucide-react';
+import { AlertCircle, ArrowLeft, CalendarCheck, ChevronDown, Files, Home, KeyRound, LayoutGrid, Loader2, LogOut, Menu, MessageSquareHeart, Moon, ScrollText, Sun, Ticket, X } from 'lucide-react';
 import { EXPLORE } from './explore.ts';
 import { useAuth } from './auth.tsx';
 import { goBack, Link, navigate, useLocation } from './router.tsx';
@@ -229,6 +229,9 @@ export function Header() {
         <nav className={open ? 'nav open' : 'nav'} aria-label="Main">
           {user ? (
             <>
+              <Link to="/#top" className="home-link">
+                <Home size={17} /> Home
+              </Link>
               {APP_NAV.map(({ to, label, icon: Icon }) => (
                 <Link key={to} to={to} className={on(to) ? 'on' : ''}>
                   <Icon size={16} /> {label}
@@ -250,6 +253,9 @@ export function Header() {
             </>
           ) : (
             <>
+              <Link to="/" className={`home-link${path === '/' ? ' on' : ''}`}>
+                <Home size={17} /> Home
+              </Link>
               <Link to="/#features">Features</Link>
               <Link to="/#how">How it works</Link>
               <DropMenu label="Explore">{explore}</DropMenu>
@@ -298,7 +304,7 @@ export function Header() {
 /** "Back" at the top left of every page except the home page. */
 export function BackBar() {
   return (
-    <div className="wrap back-bar">
+    <div className="back-bar">
       <button type="button" className="back-btn" onClick={goBack}>
         <ArrowLeft size={18} /> Back
       </button>

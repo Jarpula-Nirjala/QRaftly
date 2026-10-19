@@ -1,4 +1,4 @@
-import { useEffect, useRef, type CSSProperties, type ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import { useCanvas } from './scene.tsx';
 import './backdrop.css';
 
@@ -35,8 +35,8 @@ function Glitter() {
 }
 
 /**
- * The dark theme's one background: blackest brown at the top and the bottom of the page, warming gently to a
- * deep brown around the middle, over the white-gold-black wave artwork with orange and gold light and gold dust.
+ * The dark theme's one background: blackest brown from top to bottom over the white-gold-black wave artwork,
+ * with faint gold light, floating QR objects and gold dust.
  */
 function GoldWaves() {
   return (
@@ -60,6 +60,7 @@ function GoldWaves() {
         ))}
       </svg>
       <div className="gw-sheen" />
+      <FloatingQr />
       <Glitter />
     </div>
   );
@@ -109,41 +110,72 @@ function Corridor() {
   );
 }
 
-/**
- * One fixed background behind everything inside, for both themes. Two scroll values drive it:
- *   --top: 0 → 1 over the first screen (the hero's ribbons fade as you leave it);
- *   --sp:  0 at the top and the bottom of the page, rising gently to 1 at the middle (the dark theme's warmth).
- */
-export function BackdropStage({ children }: { children: ReactNode }) {
-  const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    let raf = 0;
-    const update = () => {
-      raf = 0;
-      const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-      const p = Math.min(1, Math.max(0, window.scrollY / max));
-      // A smooth hill: no warmth at either end, the most in the middle, with no sudden step anywhere.
-      const warm = Math.sin(Math.PI * p) ** 2;
-      ref.current?.style.setProperty('--sp', warm.toFixed(3));
-      ref.current?.style.setProperty('--top', Math.min(1, window.scrollY / window.innerHeight).toFixed(3));
-    };
-    const on = () => {
-      if (!raf) raf = requestAnimationFrame(update);
-    };
-    update();
-    window.addEventListener('scroll', on, { passive: true });
-    window.addEventListener('resize', on);
-    // The page grows as lazy content appears; re-measure once it has settled.
-    const t = setTimeout(update, 1500);
-    return () => {
-      window.removeEventListener('scroll', on);
-      window.removeEventListener('resize', on);
-      cancelAnimationFrame(raf);
-      clearTimeout(t);
-    };
-  }, []);
+/** A small QR-like pattern for a cube face: finder corners and random modules (decorative, not scannable). */
+function faceSvg(seed: number): string {
+  let v = seed * 9301 + 49297;
+  const rnd = () => ((v = (v * 9301 + 49297) % 233280) / 233280);
+  const n = 11;
+  let d = '';
+  let glow = '';
+  for (let y = 0; y < n; y++)
+    for (let x = 0; x < n; x++) {
+      const corner = (x < 3 && y < 3) || (x > 7 && y < 3) || (x < 3 && y > 7);
+      const ring = corner && (x % 8 === 0 || x % 8 === 2 || y % 8 === 0 || y % 8 === 2 || (x % 8 === 1 && y % 8 === 1));
+      if (corner ? ring : rnd() < 0.46) {
+        if (!corner && rnd() < 0.06) glow += `M${x + 0.12} ${y + 0.12}h0.76v0.76h-0.76z`;
+        else d += `M${x + 0.12} ${y + 0.12}h0.76v0.76h-0.76z`;
+      }
+    }
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${n} ${n}"><path d="${d}" fill="#d9dde3"/><path d="${glow}" fill="#3b82f6"/></svg>`;
+}
+
+// Cubes and tiles keep to the side margins, so they never sit behind text; only tiny sparks drift in the middle.
+const OBJECTS: Array<{ x: number; y: number; s: number; d: number; z: number; kind: 'cube' | 'tile' | 'spark' }> = [
+  { x: 1.5, y: 16, s: 52, d: 34, z: 1, kind: 'cube' },
+  { x: 91, y: 10, s: 66, d: 40, z: 1, kind: 'cube' },
+  { x: 93, y: 58, s: 46, d: 30, z: 0, kind: 'cube' },
+  { x: 2, y: 70, s: 58, d: 38, z: 1, kind: 'cube' },
+  { x: 88, y: 84, s: 38, d: 28, z: 0, kind: 'cube' },
+  { x: 4, y: 44, s: 30, d: 26, z: 0, kind: 'tile' },
+  { x: 95, y: 34, s: 32, d: 32, z: 1, kind: 'tile' },
+  { x: 3, y: 92, s: 28, d: 30, z: 0, kind: 'tile' },
+  { x: 90, y: 72, s: 26, d: 27, z: 0, kind: 'tile' },
+  { x: 22, y: 6, s: 7, d: 18, z: 1, kind: 'spark' },
+  { x: 52, y: 30, s: 6, d: 16, z: 0, kind: 'spark' },
+  { x: 80, y: 22, s: 8, d: 20, z: 1, kind: 'spark' },
+  { x: 38, y: 64, s: 6, d: 17, z: 0, kind: 'spark' },
+  { x: 70, y: 90, s: 8, d: 22, z: 1, kind: 'spark' },
+  { x: 14, y: 52, s: 7, d: 19, z: 0, kind: 'spark' },
+  { x: 62, y: 48, s: 5, d: 15, z: 0, kind: 'spark' },
+];
+
+/** Small glossy QR cubes, flat QR tiles and glowing blue modules drifting through the dark (inspired by a QR landscape). */
+function FloatingQr() {
   return (
-    <div ref={ref} className="bg-stage" style={{ '--sp': 0, '--top': 0 } as CSSProperties}>
+    <div className="fq">
+      {OBJECTS.map((o, i) => (
+        <div key={i} className={`fq-o ${o.kind}${o.z ? '' : ' far'}`} style={{ left: `${o.x}%`, top: `${o.y}%`, '--s': `${o.s}px`, '--d': `${o.d}s`, '--delay': `${-i * 3.7}s` } as CSSProperties}>
+          {o.kind === 'cube' ? (
+            <div className="fq-cube">
+              {['f', 'b', 'l', 'r', 't', 'u'].map((f, k) => (
+                <div key={f} className={`fq-face ${f}`} dangerouslySetInnerHTML={{ __html: k < 2 || k === 4 ? faceSvg(i * 7 + k + 1) : '' }} />
+              ))}
+            </div>
+          ) : o.kind === 'tile' ? (
+            <div className="fq-tile" dangerouslySetInnerHTML={{ __html: faceSvg(i * 13 + 5) }} />
+          ) : (
+            <div className="fq-spark" />
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/** One fixed background behind everything inside, for both themes. */
+export function BackdropStage({ children }: { children: ReactNode }) {
+  return (
+    <div className="bg-stage">
       <div className="bg-layer" aria-hidden="true">
         <Corridor />
         <GoldWaves />

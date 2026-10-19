@@ -16,6 +16,7 @@ export function ExploreShell({ children, visual }: { children: ReactNode; visual
   const Icon = page.icon;
   return (
     <BackdropStage>
+      <div className="top-veil">
       <div className="wrap">
         <PageTabs />
         <header className="ex-head">
@@ -37,6 +38,9 @@ export function ExploreShell({ children, visual }: { children: ReactNode; visual
           </div>
           {visual && <div className="ex-visual">{visual}</div>}
         </header>
+      </div>
+      </div>
+      <div className="wrap">
         <div className="ex-features">{children}</div>
         <nav className="ex-pager" aria-label="Pages">
           {prev ? (

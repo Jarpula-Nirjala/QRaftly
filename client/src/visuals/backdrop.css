@@ -67,15 +67,13 @@
 }
 .gw-veil.black {
   background: linear-gradient(180deg, rgb(6 4 3 / 0.95) 0%, rgb(8 6 4 / 0.92) 50%, rgb(6 4 3 / 0.95) 100%);
-  opacity: calc(1 - var(--sp, 0) * 0.6);
-  transition: opacity 0.6s linear;
+  opacity: 1;
 }
 .gw-veil.warm {
   background:
     radial-gradient(60% 70% at 50% 45%, rgb(26 18 12 / 0.84), rgb(22 15 10 / 0.74) 70%, rgb(16 11 8 / 0.7) 100%),
     linear-gradient(180deg, rgb(8 5 4 / 0.5), transparent 35%, transparent 70%, rgb(8 5 4 / 0.55));
-  opacity: calc(var(--sp, 0) * 0.85);
-  transition: opacity 0.6s linear;
+  opacity: 0;
 }
 /* Orange, gold and warm-white light rising as the page warms. */
 .gw-glow {
@@ -83,8 +81,7 @@
   border-radius: 50%;
   filter: blur(70px);
   mix-blend-mode: screen;
-  opacity: calc(0.12 + var(--sp, 0) * 0.5);
-  transition: opacity 0.6s linear;
+  opacity: 0.14;
   animation: gw-glow 26s ease-in-out infinite alternate;
 }
 .gw-glow.g1 {
@@ -123,7 +120,7 @@
   background: linear-gradient(112deg, transparent 38%, rgb(255 228 172 / 0.12) 48%, rgb(255 244 220 / 0.18) 50%, rgb(255 228 172 / 0.12) 52%, transparent 62%);
   background-size: 300% 100%;
   mix-blend-mode: screen;
-  opacity: calc(0.3 + var(--sp, 0) * 0.4);
+  opacity: 0.3;
   animation: gw-sheen 14s ease-in-out infinite;
 }
 @keyframes gw-sheen {
@@ -140,7 +137,7 @@
   inset: 0;
   width: 100%;
   height: 100%;
-  opacity: calc(0.25 + var(--sp, 0) * 0.3);
+  opacity: 0.25;
   mix-blend-mode: screen;
 }
 .gw-strands .s {
@@ -305,5 +302,134 @@
 @media (prefers-reduced-motion: reduce) {
   .co-rays {
     animation: none !important;
+  }
+}
+
+/* ------------------------------------------------------------ dark: floating QR objects */
+
+.fq {
+  position: absolute;
+  inset: 0;
+  perspective: 1200px;
+}
+.fq-o {
+  position: absolute;
+  width: var(--s);
+  height: var(--s);
+  animation: fq-float var(--d) ease-in-out infinite alternate;
+  animation-delay: var(--delay);
+  transform-style: preserve-3d;
+}
+.fq-o.far {
+  filter: blur(1.2px);
+  opacity: 0.55;
+}
+@keyframes fq-float {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(1.2vw, -6vh, 0);
+  }
+}
+.fq-cube {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  animation: fq-spin calc(var(--d) * 1.6) linear infinite;
+  animation-delay: var(--delay);
+}
+@keyframes fq-spin {
+  from {
+    transform: rotateX(-24deg) rotateY(0deg) rotateZ(8deg);
+  }
+  to {
+    transform: rotateX(-24deg) rotateY(360deg) rotateZ(8deg);
+  }
+}
+.fq-face {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(145deg, #1b1d22, #0b0c0f 60%, #16181d);
+  border: 1px solid rgb(120 160 230 / 0.45);
+  box-shadow:
+    inset 0 0 calc(var(--s) * 0.18) rgb(59 130 246 / 0.25),
+    0 0 calc(var(--s) * 0.25) rgb(59 130 246 / 0.18);
+  padding: 8%;
+}
+.fq-face svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.fq-face.f {
+  transform: translateZ(calc(var(--s) / 2));
+}
+.fq-face.b {
+  transform: rotateY(180deg) translateZ(calc(var(--s) / 2));
+}
+.fq-face.l {
+  transform: rotateY(-90deg) translateZ(calc(var(--s) / 2));
+}
+.fq-face.r {
+  transform: rotateY(90deg) translateZ(calc(var(--s) / 2));
+}
+.fq-face.t {
+  transform: rotateX(90deg) translateZ(calc(var(--s) / 2));
+}
+.fq-face.u {
+  transform: rotateX(-90deg) translateZ(calc(var(--s) / 2));
+}
+.fq-tile {
+  width: 100%;
+  height: 100%;
+  padding: 8%;
+  border-radius: 6%;
+  background: linear-gradient(145deg, #202329, #0c0d10);
+  border: 1px solid rgb(200 210 225 / 0.3);
+  box-shadow: 0 0 calc(var(--s) * 0.5) rgb(59 130 246 / 0.22);
+  transform: rotateX(48deg) rotateZ(-18deg);
+  animation: fq-tilt calc(var(--d) * 1.2) ease-in-out infinite alternate;
+  animation-delay: var(--delay);
+}
+.fq-tile svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+@keyframes fq-tilt {
+  to {
+    transform: rotateX(30deg) rotateZ(14deg) rotateY(20deg);
+  }
+}
+/* A single glowing blue module. */
+.fq-spark {
+  width: 100%;
+  height: 100%;
+  border-radius: 2px;
+  background: #3b82f6;
+  box-shadow:
+    0 0 calc(var(--s) * 1.2) rgb(59 130 246 / 0.9),
+    0 0 calc(var(--s) * 3) rgb(59 130 246 / 0.45);
+  animation: fq-pulse 3.4s ease-in-out infinite alternate;
+  animation-delay: var(--delay);
+}
+@keyframes fq-pulse {
+  from {
+    opacity: 0.35;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fq-o,
+  .fq-cube,
+  .fq-tile,
+  .fq-spark {
+    animation: none !important;
+  }
+}
+@media (max-width: 760px) {
+  .fq-o:nth-child(n + 9) {
+    display: none;
   }
 }
