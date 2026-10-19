@@ -2192,3 +2192,34 @@ section[id],
     place-items: center;
   }
 }
+
+/* Sign in / sign up: the QRaftly stand on smoke, part of the background — full height on the left, melting
+   into the blue smoke behind the form. Never enlarged past its own 1672 px height, so it stays sharp. */
+.auth::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: min(62vw, calc(100vh * 941 / 1672 * 1.18));
+  z-index: -1;
+  background: url('/bg/signin-stand.jpg') left center / cover no-repeat;
+  -webkit-mask-image: linear-gradient(to right, #000 0%, #000 72%, transparent 100%);
+  mask-image: linear-gradient(to right, #000 0%, #000 72%, transparent 100%);
+  pointer-events: none;
+}
+.auth {
+  place-items: center end;
+}
+@media (max-aspect-ratio: 1/1) {
+  /* Tall screens: the picture is the whole background. */
+  .auth::after {
+    width: 100%;
+    background-position: center;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+  .auth {
+    place-items: center;
+  }
+}
