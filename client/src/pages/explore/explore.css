@@ -490,3 +490,9 @@
   position: static;
   max-width: 320px;
 }
+/* The palette demo's card hugs its content, matching the smaller QR inside it. */
+#f1 .ex-demo {
+  justify-self: start;
+  width: fit-content;
+  max-width: 100%;
+}
