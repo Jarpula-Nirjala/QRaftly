@@ -171,6 +171,8 @@ const MIGRATIONS: string[] = [
      updated_at double precision not null
    );
    create index jobs_queue on jobs (status, created_at);`,
+  // Bulk jobs keep their finished items and row errors, so a restarted job resumes instead of starting over.
+  `alter table jobs add column report jsonb not null default '{}'`,
 ];
 
 async function migrate(db: Db): Promise<void> {

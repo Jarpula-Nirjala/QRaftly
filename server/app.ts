@@ -29,7 +29,9 @@ export interface RunningServer {
 export async function startServer(opts: ServerOptions): Promise<RunningServer> {
   const db = await openDb({ url: opts.databaseUrl, dir: opts.dataDir });
   const ctx: AppCtx = { db, keys: await loadKeys(db), publicUrl: (opts.publicUrl ?? `http://localhost:${opts.port}`).replace(/\/+$/, ''), geo: opts.geo ?? false };
-  const extra: Array<(app: express.Express, ctx: AppCtx) => void> = [];
+  /** Feature modules; each may return a function that stops its background work. */
+  const extra: Array<(app: express.Express, ctx: AppCtx) => void | (() => void)> = [];
+  const stops: Array<() => void> = [];
   for (const mod of ['./routes-events.ts', './routes-certs.ts', './routes-bulk.ts']) {
     const file = new URL(mod, import.meta.url);
     if (fs.existsSync(file)) extra.push((await import(file.href)).mount);
@@ -47,7 +49,10 @@ export async function startServer(opts: ServerOptions): Promise<RunningServer> {
   app.use(sessionMiddleware(ctx));
   app.use('/api/auth', express.json({ limit: '20kb' }), authRoutes(ctx));
   app.use(qrRoutes(ctx));
-  for (const mount of extra) mount(app, ctx);
+  for (const mount of extra) {
+    const stop = mount(app, ctx);
+    if (stop) stops.push(stop);
+  }
   app.use('/api', (_req, _res, next) => next(new HttpError(404, 'Not found.')));
 
   if (opts.staticDir && fs.existsSync(opts.staticDir)) {
@@ -71,6 +76,8 @@ export async function startServer(opts: ServerOptions): Promise<RunningServer> {
     port,
     ctx,
     close: async () => {
+      for (const stop of stops) stop();
+      server.closeAllConnections();
       await new Promise<void>((ok) => server.close(() => ok()));
       await db.close();
     },
