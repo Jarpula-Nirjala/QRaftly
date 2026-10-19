@@ -434,42 +434,40 @@
 
 .hw {
   position: relative;
-  /* Inside the page margins: about 2 cm clear of the window's right edge. */
-  width: 100%;
-  max-width: 900px;
-  justify-self: end;
+  /* 1.5× its column, growing leftwards into the picture's own white space; about 2 cm clear of the right edge. */
+  width: 150%;
+  margin-left: -50%;
   margin-right: max(0px, calc(76px - clamp(28px, 5vw, 96px)));
-  aspect-ratio: 1500 / 846;
-  /* The whole picture: its white melts into the page, and every edge is softly feathered, so no border shows. */
+  aspect-ratio: 1600 / 900;
+  z-index: 0;
   mix-blend-mode: multiply;
-  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 12%, #000 94%, transparent 100%), linear-gradient(to bottom, transparent 0%, #000 10%, #000 90%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 12%, #000 94%, transparent 100%), linear-gradient(to bottom, transparent 0%, #000 8%, #000 92%, transparent 100%);
   -webkit-mask-composite: source-in;
-  mask-image: linear-gradient(to right, transparent 0%, #000 12%, #000 94%, transparent 100%), linear-gradient(to bottom, transparent 0%, #000 10%, #000 90%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0%, #000 12%, #000 94%, transparent 100%), linear-gradient(to bottom, transparent 0%, #000 8%, #000 92%, transparent 100%);
   mask-composite: intersect;
+}
+.v-hero-copy {
+  position: relative;
+  z-index: 1;
 }
 .hw-img {
   position: absolute;
   inset: 0;
-  background: url('/bg/qr-wave.jpg') center / cover no-repeat;
+  background: url('/bg/qr-orbit.jpg') center / cover no-repeat;
+  will-change: transform;
+  animation: hw-float 7s ease-in-out infinite alternate;
 }
 @media (max-width: 760px) {
   .hw-img {
-    background-image: url('/bg/qr-wave-960.jpg');
+    background-image: url('/bg/qr-orbit-960.jpg');
   }
 }
-.hw-band {
-  clip-path: inset(var(--top) 0 var(--bot) 0);
-  will-change: transform;
-  animation: hw-wave 4.6s ease-in-out infinite;
-  animation-delay: calc(var(--i) * -0.42s);
-}
-@keyframes hw-wave {
-  0%,
-  100% {
-    transform: translateY(0);
+@keyframes hw-float {
+  from {
+    transform: translateY(0.6%) scale(1);
   }
-  50% {
-    transform: translateY(calc(-1px - var(--i) * 0.28px));
+  to {
+    transform: translateY(-0.9%) scale(1.012);
   }
 }
 .hw-glint {
@@ -494,12 +492,12 @@
 }
 @media (max-width: 900px) {
   .hw {
-    margin-right: 0;
-    justify-self: stretch;
+    width: 100%;
+    margin: 0;
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .hw-band,
+  .hw-img,
   .hw-glint {
     animation: none !important;
   }

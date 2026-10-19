@@ -2216,3 +2216,27 @@ section[id],
   object-fit: contain;
   background: radial-gradient(120% 90% at 30% 10%, #ffffff, #f1f3f7 60%, #e4e8ee);
 }
+
+/* ------------------------------------------------------------ one even rhythm between sections */
+.section {
+  padding: 72px 0;
+}
+.section--flush {
+  padding-top: 0;
+}
+.section-title {
+  margin-bottom: 40px;
+}
+.section-title.sub {
+  margin-top: 72px;
+}
+.block-gap {
+  margin-top: 56px;
+}
+.gen-title {
+  padding-top: 72px;
+  padding-bottom: 40px;
+}
+.v-hero {
+  padding-bottom: 24px;
+}

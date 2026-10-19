@@ -108,20 +108,13 @@ export function LampScene({ className = '' }: { className?: string }) {
   );
 }
 
-// ------------------------------------------------------------ light: the QR landscape
+// ------------------------------------------------------------ light: the floating QR
 
-/**
- * Your QR landscape picture. The carpet of cubes is cut into thin horizontal bands that rise and fall a pixel or
- * two, each a little after the one above, so a very slight wave rolls through it; the rest stays still.
- */
+/** Your floating-QR picture: it drifts gently up and down while a soft light passes across it. */
 export function HeroWave({ className = '' }: { className?: string }) {
-  const bands = 9;
   return (
-    <div className={`hw ${className}`} role="img" aria-label="A QR code rising out of a landscape of cubes">
+    <div className={`hw ${className}`} role="img" aria-label="A glossy QR code made of glass cubes, floating over a pedestal">
       <div className="hw-img" />
-      {Array.from({ length: bands }, (_, i) => (
-        <div key={i} className="hw-img hw-band" style={{ '--i': i, '--top': `${58 + (i * 42) / bands}%`, '--bot': `${100 - (58 + ((i + 1) * 42) / bands)}%` } as CSSProperties} />
-      ))}
       <div className="hw-glint" />
     </div>
   );

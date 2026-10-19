@@ -119,7 +119,7 @@ export function Landing() {
       </div>
       </div>
 
-      <section className="section" style={{ paddingTop: 0 }}>
+      <section className="section section--flush">
         <div className="wrap" style={{ position: 'relative' }}>
           <div className="studio">
             <div className="card">
@@ -262,12 +262,12 @@ export function Landing() {
             <p>QRaftly encodes, draws, checks and reads QR codes with its own implementation of the ISO/IEC 18004 standard. Each picture below is drawn from the real intermediate data for one link.</p>
           </div>
           <Pipeline />
-          <div className="section-title" style={{ marginTop: 56 }}>
+          <div className="section-title sub">
             <h2>What happens when someone scans</h2>
             <p>A dynamic code is a short link that QRaftly answers in a few milliseconds. Here is everything that happens in between.</p>
           </div>
           <ScanFlow />
-          <div className="v-show" style={{ marginTop: 40 }}>
+          <div className="v-show">
             <div className="v-show-text">
               <span className="kicker">
                 <Cpu size={15} /> Under the hood
@@ -293,7 +293,7 @@ export function Landing() {
             </div>
             <EncoderScene />
           </div>
-          <div style={{ marginTop: 40 }}>
+          <div className="block-gap">
             <FloatingBand>
               <h2 style={{ fontSize: 'clamp(24px, 3vw, 34px)', fontWeight: 800, letterSpacing: '-0.01em', margin: 0 }}>Measured, not promised</h2>
               <p className="muted" style={{ margin: '8px 0 0' }}>From the project's own test suite and benchmark.</p>
@@ -429,7 +429,7 @@ export function Landing() {
         </div>
       </section>
 
-      <section className="section" style={{ paddingTop: 10 }}>
+      <section className="section">
         <div className="wrap">
           <Tunnel>
             <h2>Print once. Update forever.</h2>

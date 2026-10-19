@@ -592,7 +592,7 @@
   grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.8fr);
   gap: clamp(28px, 5vw, 64px);
   align-items: center;
-  padding: clamp(28px, 4vw, 52px) 0;
+  padding: 44px 0;
 }
 .v-show.flip > :first-child {
   order: 2;
