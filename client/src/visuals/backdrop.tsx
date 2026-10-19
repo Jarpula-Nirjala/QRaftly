@@ -1,5 +1,4 @@
 import { useEffect, useRef, type CSSProperties, type ReactNode } from 'react';
-import { RibbonBackdrop } from './hero.tsx';
 import { useCanvas } from './scene.tsx';
 import './backdrop.css';
 
@@ -66,24 +65,46 @@ function GoldWaves() {
   );
 }
 
+/** Specks of light drifting slowly through the corridor, towards the viewer (light theme). */
+function LightMotes() {
+  const ref = useCanvas((ctx, w, h, t) => {
+    ctx.clearRect(0, 0, w, h);
+    const cx = w * 0.5;
+    const cy = h * 0.58;
+    for (let i = 0; i < 70; i++) {
+      const seed = Math.imul(i + 7, 2654435761) >>> 0;
+      const r = (k: number) => ((seed >>> k) & 1023) / 1023;
+      // Each mote travels outwards from the doorway on its own line, growing as it nears the viewer.
+      const life = (t * (0.025 + r(3) * 0.035) + r(9)) % 1;
+      const a = r(0) * Math.PI * 2;
+      const d = life * life * Math.hypot(w, h) * 0.55;
+      const x = cx + Math.cos(a) * d * 1.3;
+      const y = cy + Math.sin(a) * d * 0.8;
+      const s = 0.6 + life * 2.6;
+      const alpha = Math.sin(Math.PI * life) * (0.25 + r(5) * 0.45);
+      ctx.fillStyle = r(13) < 0.35 ? `rgba(150, 205, 255, ${alpha})` : `rgba(255, 255, 255, ${alpha})`;
+      ctx.beginPath();
+      ctx.arc(x, y, s, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }, 30);
+  return <canvas ref={ref} className="co-motes" />;
+}
+
 /**
- * The light theme's one background: the corridor of light, shaded with navy, light blue and a touch of gold, a
- * faint pattern and a little frosted glass, with the gold ribbons over it at the top that fade as you scroll.
+ * The light theme's one background: your corridor photograph, sharp, with soft rays from the doorway, drifting
+ * specks of light and a slow push towards the light, shaded with a little navy and light blue.
  */
 function Corridor() {
   return (
     <div className="co only-light">
       <div className="co-img" />
+      <div className="co-rays" />
       <div className="co-door" />
       <div className="co-tint" />
-      <div className="co-pattern" />
-      <div className="co-pane p1" />
-      <div className="co-pane p2" />
       <div className="co-sheen" />
       <div className="co-veil" />
-      <div className="co-ribbons">
-        <RibbonBackdrop />
-      </div>
+      <LightMotes />
     </div>
   );
 }

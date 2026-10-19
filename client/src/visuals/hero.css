@@ -133,63 +133,6 @@
   color: var(--accent-text);
 }
 
-/* ------------------------------------------------------------ light ribbons */
-
-.ribbons {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  overflow: hidden;
-}
-.ribbons svg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-.ribbons .rib {
-  transform-box: view-box;
-  transform-origin: 1100px 450px;
-  animation: rib-sway 18s ease-in-out infinite alternate;
-}
-.ribbons .r1,
-.ribbons .a1 {
-  animation-duration: 22s;
-  animation-delay: -6s;
-}
-.ribbons .r2,
-.ribbons .a2 {
-  animation-duration: 26s;
-  animation-delay: -11s;
-}
-.ribbons .r3 {
-  animation-duration: 20s;
-  animation-delay: -3s;
-}
-.ribbons .r4 {
-  animation-duration: 30s;
-  animation-delay: -15s;
-}
-@keyframes rib-sway {
-  from {
-    transform: rotate(-1.6deg) translate(-14px, 8px);
-  }
-  to {
-    transform: rotate(1.4deg) translate(16px, -10px);
-  }
-}
-/* White space for the headline on the left, fading into the ribbons. */
-.ribbons-wash {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, rgb(255 255 255 / 0.72) 0%, rgb(255 255 255 / 0.5) 30%, rgb(255 255 255 / 0.18) 50%, rgb(255 255 255 / 0) 66%);
-}
-@media (max-width: 900px) {
-  .ribbons-wash {
-    background: linear-gradient(180deg, rgb(255 255 255 / 0.7) 0%, rgb(255 255 255 / 0.5) 45%, rgb(255 255 255 / 0.25) 70%, rgb(255 255 255 / 0) 100%);
-  }
-}
-
 /* ------------------------------------------------------------ dark lamps */
 
 .lamps {
@@ -490,7 +433,6 @@
   .hero-name .ch,
   .name-swash path,
   .name-swash .spark,
-  .ribbons .rib,
   .lamps .beam,
   .pedestal .pool,
   .lamp-unit .halo,

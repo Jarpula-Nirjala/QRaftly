@@ -1,4 +1,4 @@
-import { useMemo, type CSSProperties } from 'react';
+import type { CSSProperties } from 'react';
 import { QrSvg } from '../studio.tsx';
 import { useCanvas } from './scene.tsx';
 import './hero.css';
@@ -35,88 +35,6 @@ export function AnimatedName() {
         </circle>
       </svg>
     </span>
-  );
-}
-
-// ------------------------------------------------------------ light: glass and gold ribbons
-
-/** A thin lens between two curves: a ribbon of glass or gold seen edge-on, bowing by `bend`. */
-function lens(x0: number, y0: number, x1: number, y1: number, bend: number, thick: number) {
-  const dx = x1 - x0;
-  const dy = y1 - y0;
-  const len = Math.hypot(dx, dy);
-  const nx = -dy / len;
-  const ny = dx / len;
-  const c = (t: number, b: number) => `${(x0 + dx * t + nx * b).toFixed(1)} ${(y0 + dy * t + ny * b).toFixed(1)}`;
-  const b2 = bend - thick;
-  return `M${x0} ${y0} C${c(0.3, bend)} ${c(0.7, bend * 0.92)} ${x1} ${y1} C${c(0.7, b2 * 0.92)} ${c(0.3, b2)} ${x0} ${y0}Z`;
-}
-
-const GLASS: Array<[number, number, number, number, number, number]> = [
-  [180, 1010, 1780, 90, -270, 74],
-  [430, 1040, 1720, -80, -190, 48],
-  [720, 990, 1680, 250, -130, 120],
-  [120, 780, 1700, 400, -95, 30],
-  [900, 1060, 1640, 40, -60, 26],
-];
-const GOLD: Array<[number, number, number, number, number, number]> = [
-  [160, 930, 1760, 40, -315, 10],
-  [520, 1030, 1640, -30, -168, 7],
-  [300, 840, 1710, 330, -66, 5],
-];
-
-export function RibbonBackdrop({ className = '' }: { className?: string }) {
-  const motion = !reduced();
-  const glass = useMemo(() => GLASS.map((g) => lens(...g)), []);
-  const gold = useMemo(() => GOLD.map((g) => lens(...g)), []);
-  return (
-    <div className={`ribbons ${className}`} aria-hidden="true">
-      <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
-        <defs>
-          <linearGradient id="rbGlass" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stopColor="#ffffff" stopOpacity="0.95" />
-            <stop offset="0.45" stopColor="#eef1f5" stopOpacity="0.55" />
-            <stop offset="0.7" stopColor="#ffffff" stopOpacity="0.25" />
-            <stop offset="1" stopColor="#dfe4eb" stopOpacity="0.7" />
-          </linearGradient>
-          <linearGradient id="rbGold" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stopColor="#9c6f2c" />
-            <stop offset="0.16" stopColor="#f7e2b0" />
-            <stop offset="0.33" stopColor="#c99a4a" />
-            <stop offset="0.5" stopColor="#fff4d6" />
-            <stop offset="0.67" stopColor="#b8893e" />
-            <stop offset="0.84" stopColor="#f1d391" />
-            <stop offset="1" stopColor="#a77a33" />
-          </linearGradient>
-          {/* A narrow band of light travelling along the gold. */}
-          <linearGradient id="rbShine" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="420" y2="-240">
-            <stop offset="0" stopColor="#ffffff" stopOpacity="0" />
-            <stop offset="0.5" stopColor="#ffffff" stopOpacity="0.95" />
-            <stop offset="1" stopColor="#ffffff" stopOpacity="0" />
-            {motion && <animateTransform attributeName="gradientTransform" type="translate" values="-500 600; 2100 -300" dur="7s" repeatCount="indefinite" />}
-          </linearGradient>
-          <filter id="rbShadow" x="-10%" y="-10%" width="120%" height="140%">
-            <feDropShadow dx="0" dy="22" stdDeviation="20" floodColor="#14243a" floodOpacity="0.09" />
-          </filter>
-          <filter id="rbSoft">
-            <feGaussianBlur stdDeviation="1.2" />
-          </filter>
-        </defs>
-        {glass.map((d, i) => (
-          <g key={`g${i}`} className={`rib r${i}`} filter="url(#rbShadow)">
-            <path d={d} fill="url(#rbGlass)" stroke="#ffffff" strokeOpacity="0.95" strokeWidth="1.4" />
-            <path d={d} fill="none" stroke="#c9d1dd" strokeOpacity="0.35" strokeWidth="0.6" filter="url(#rbSoft)" />
-          </g>
-        ))}
-        {gold.map((d, i) => (
-          <g key={`a${i}`} className={`rib a${i}`}>
-            <path d={d} fill="url(#rbGold)" />
-            <path d={d} fill="url(#rbShine)" style={{ mixBlendMode: 'screen' }} />
-          </g>
-        ))}
-      </svg>
-      <div className="ribbons-wash" />
-    </div>
   );
 }
 
