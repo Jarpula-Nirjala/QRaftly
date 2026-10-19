@@ -31,7 +31,7 @@ try {
   page.on('console', (m) => m.type() === 'error' && !/Failed to load resource/.test(m.text()) && errors.push(`console: ${m.text()}`));
 
   // Dark is the default theme.
-  await page.goto(BASE);
+  await page.goto(BASE, { waitUntil: 'domcontentloaded' });
   await page.locator('.hero-name').waitFor();
   assert.equal(await page.evaluate(() => document.documentElement.dataset.theme), 'dark');
   // Header links scroll to their sections.
@@ -52,14 +52,14 @@ try {
 
   // The five pages: tabs, five features each, previous/next, back.
   for (const p of ['/studio', '/growth', '/venues', '/trust', '/engine']) {
-    await page.goto(BASE + p);
+    await page.goto(BASE + p, { waitUntil: 'domcontentloaded' });
     await page.locator('.ex-head h1').waitFor();
     assert.equal(await page.locator('.ex-feature').count(), 5, `${p} has five features`);
     await page.locator('.back-btn').waitFor();
     await shot(page, `page${p.replace('/', '-')}`);
   }
   // Next / previous buttons and the back button.
-  await page.goto(`${BASE}/studio`);
+  await page.goto(`${BASE}/studio`, { waitUntil: 'domcontentloaded' });
   await page.locator('.ex-pg.next').click();
   await page.waitForURL(`${BASE}/growth`);
   await page.locator('.back-btn').click();
@@ -71,14 +71,14 @@ try {
   await page.locator('#f5 .mini-qr svg').waitFor();
 
   // Growth: the split follows the weights; UTM link is built.
-  await page.goto(`${BASE}/growth`);
+  await page.goto(`${BASE}/growth`, { waitUntil: 'domcontentloaded' });
   await page.locator('#f6 .hbar .n').first().waitFor();
   const shareA = Number((await page.locator('#f6 .hbar .n').first().textContent())!.replace('%', ''));
   assert.ok(shareA > 45 && shareA < 55, `share ${shareA}`);
   assert.match((await page.locator('#f8 .code-block').textContent())!, /utm_source=poster/);
 
   // Trust: link checker, then a real view-once note round trip.
-  await page.goto(`${BASE}/trust`);
+  await page.goto(`${BASE}/trust`, { waitUntil: 'domcontentloaded' });
   await page.locator('#f16').getByRole('heading', { name: 'Do not open' }).waitFor();
   await page.locator('#f18 textarea').fill('Locker 14 code: 7392');
   await page.locator('#f18').getByRole('button', { name: 'Seal it' }).click();
@@ -86,12 +86,12 @@ try {
   assert.match(link, /\/n\/[\w-]+#[\w-]+$/);
   const reader = await browser.newContext();
   const rp = await reader.newPage();
-  await rp.goto(link);
+  await rp.goto(link, { waitUntil: 'domcontentloaded' });
   await rp.getByRole('button', { name: 'Reveal the note' }).click();
   await rp.getByText('Locker 14 code: 7392').waitFor();
   // A second visitor (a fresh tab) finds nothing.
   const again = await reader.newPage();
-  await again.goto(link);
+  await again.goto(link, { waitUntil: 'domcontentloaded' });
   await again.getByText('This note is gone').waitFor();
   await reader.close();
 
@@ -105,7 +105,7 @@ try {
   assert.ok(/Genuine/.test(verdict) || /cannot check Ed25519/.test(verdict), verdict);
 
   // Engine: x-ray, encoder steps, masks, benchmark.
-  await page.goto(`${BASE}/engine`);
+  await page.goto(`${BASE}/engine`, { waitUntil: 'domcontentloaded' });
   await page.locator('#f21 .kv').getByText('/r/xray-demo').waitFor();
   await page.locator('#f23 figure.best').waitFor();
   await page.locator('#f25').getByRole('button', { name: /Run the benchmark/ }).click();
@@ -113,13 +113,13 @@ try {
   await shot(page, 'engine-benchmark');
 
   // Account tools: feedback form → public rating → summary.
-  await page.goto(`${BASE}/app/feedback`);
+  await page.goto(`${BASE}/app/feedback`, { waitUntil: 'domcontentloaded' });
   await page.getByLabel('Name (only you see this)').fill('Table feedback');
   await page.getByRole('button', { name: 'Create form' }).click();
   await page.waitForURL(/\/app\/feedback\/\w+/);
   const formUrl = (await page.locator('.mono').first().textContent())!;
   const guest = await (await browser.newContext()).newPage();
-  await guest.goto(formUrl);
+  await guest.goto(formUrl, { waitUntil: 'domcontentloaded' });
   await guest.getByRole('radio', { name: '4 stars' }).click();
   await guest.getByRole('button', { name: 'Send' }).click();
   await guest.getByText('Thank you!').waitFor();
@@ -127,12 +127,12 @@ try {
   await page.locator('.stat .value').first().filter({ hasText: '4' }).waitFor();
 
   // Queue: a customer takes a number, staff call it.
-  await page.goto(`${BASE}/app/queues`);
+  await page.goto(`${BASE}/app/queues`, { waitUntil: 'domcontentloaded' });
   await page.getByLabel('Name').fill('Pharmacy');
   await page.getByRole('button', { name: 'Create queue' }).click();
   await page.waitForURL(/\/app\/queues\/\w+/);
   const qUrl = (await page.locator('.mono').first().textContent())!;
-  await guest.goto(qUrl);
+  await guest.goto(qUrl, { waitUntil: 'domcontentloaded' });
   await guest.getByRole('button', { name: 'Take a number' }).click();
   await guest.getByText('Your number').waitFor();
   await page.getByRole('button', { name: /Call next/ }).click({ timeout: 10_000 });
@@ -140,13 +140,13 @@ try {
   await shot(page, 'queue-desk');
 
   // API keys: shown once.
-  await page.goto(`${BASE}/app/keys`);
+  await page.goto(`${BASE}/app/keys`, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Create key' }).click();
   await page.getByText('shown only once', { exact: false }).waitFor();
 
   // A dynamic code: the Simulate tab answers.
   const qr = (await api('/api/qrs', cookie, { kind: 'dynamic', data: { url: 'example.com', split: [{ url: 'a.example', weight: 1 }, { url: 'b.example', weight: 1 }] }, rules: [{ label: 'iPhones', os: ['ios'], target: 'apps.apple.com' }] })).json.qr;
-  await page.goto(`${BASE}/app/qr/${qr.id}`);
+  await page.goto(`${BASE}/app/qr/${qr.id}`, { waitUntil: 'domcontentloaded' });
   await page.getByRole('tab', { name: 'Simulate' }).click();
   await page.locator('.note.good').getByText(/Variant [AB]/).waitFor();
   await page.locator('select').first().selectOption('ios');
@@ -156,13 +156,13 @@ try {
 
   // Kiosk page renders (camera is not available here; it falls back gracefully).
   const ev = (await api('/api/events', cookie, { title: 'Kiosk test' })).json.event;
-  await page.goto(`${BASE}/app/events/${ev.id}/kiosk`);
+  await page.goto(`${BASE}/app/events/${ev.id}/kiosk`, { waitUntil: 'domcontentloaded' });
   await page.getByRole('heading', { name: 'Kiosk test' }).waitFor();
 
   // Phone width: no sideways scrolling on any page.
   const phone = await browser.newPage({ viewport: { width: 390, height: 844 } });
   for (const p of ['/', '/studio', '/growth', '/venues', '/trust', '/engine']) {
-    await phone.goto(BASE + p);
+    await phone.goto(BASE + p, { waitUntil: 'domcontentloaded' });
     await phone.waitForTimeout(800);
     assert.ok(await phone.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), `${p} scrolls sideways on a phone`);
   }

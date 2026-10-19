@@ -26,8 +26,7 @@
 .bg-stage .table-wrap,
 .bg-stage .step,
 .bg-stage .ex-pg {
-  background: color-mix(in srgb, var(--surface) 84%, transparent);
-  backdrop-filter: blur(10px) saturate(1.15);
+  background: color-mix(in srgb, var(--surface) 90%, transparent);
 }
 .bg-stage .section-title p,
 .bg-stage .v-show p,
@@ -79,7 +78,6 @@
 .gw-glow {
   position: absolute;
   border-radius: 50%;
-  filter: blur(70px);
   mix-blend-mode: screen;
   opacity: 0.14;
   animation: gw-glow 26s ease-in-out infinite alternate;
@@ -116,20 +114,23 @@
 }
 .gw-sheen {
   position: absolute;
-  inset: 0;
-  background: linear-gradient(112deg, transparent 38%, rgb(255 228 172 / 0.12) 48%, rgb(255 244 220 / 0.18) 50%, rgb(255 228 172 / 0.12) 52%, transparent 62%);
-  background-size: 300% 100%;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 60%;
+  background: linear-gradient(112deg, transparent 20%, rgb(255 228 172 / 0.12) 45%, rgb(255 244 220 / 0.18) 50%, rgb(255 228 172 / 0.12) 55%, transparent 80%);
   mix-blend-mode: screen;
   opacity: 0.3;
+  will-change: transform;
   animation: gw-sheen 14s ease-in-out infinite;
 }
 @keyframes gw-sheen {
   0% {
-    background-position: 120% 0;
+    transform: translateX(-100%);
   }
   55%,
   100% {
-    background-position: -20% 0;
+    transform: translateX(180%);
   }
 }
 .gw-strands {
@@ -201,6 +202,7 @@
   }
 }
 .co-door {
+  will-change: transform, opacity;
   position: absolute;
   left: 50%;
   top: 58%;
@@ -225,19 +227,22 @@
 /* A cool band of light passing over the glass now and then. */
 .co-sheen {
   position: absolute;
-  inset: 0;
-  background: linear-gradient(105deg, transparent 40%, rgb(190 225 255 / 0.22) 48%, rgb(255 255 255 / 0.35) 50%, rgb(190 225 255 / 0.22) 52%, transparent 60%);
-  background-size: 300% 100%;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 50%;
+  background: linear-gradient(105deg, transparent 20%, rgb(190 225 255 / 0.22) 44%, rgb(255 255 255 / 0.35) 50%, rgb(190 225 255 / 0.22) 56%, transparent 80%);
   mix-blend-mode: screen;
+  will-change: transform;
   animation: co-sheen 12s ease-in-out infinite;
 }
 @keyframes co-sheen {
   0% {
-    background-position: 130% 0;
+    transform: translateX(-100%);
   }
   50%,
   100% {
-    background-position: -30% 0;
+    transform: translateX(220%);
   }
 }
 /* Keeps navy text crisp over the photograph. */
@@ -279,12 +284,13 @@
   position: absolute;
   left: 50%;
   top: 58%;
-  width: 260vmax;
-  height: 260vmax;
+  width: 150vmax;
+  height: 150vmax;
+  will-change: transform;
   transform: translate(-50%, -50%);
   background: repeating-conic-gradient(from 0deg at 50% 50%, rgb(255 255 255 / 0.16) 0deg 3deg, transparent 3deg 14deg, rgb(200 228 255 / 0.1) 14deg 16deg, transparent 16deg 30deg);
-  -webkit-mask-image: radial-gradient(closest-side, #000 0%, rgb(0 0 0 / 0.6) 22%, transparent 55%);
-  mask-image: radial-gradient(closest-side, #000 0%, rgb(0 0 0 / 0.6) 22%, transparent 55%);
+  -webkit-mask-image: radial-gradient(closest-side, #000 0%, rgb(0 0 0 / 0.6) 38%, transparent 95%);
+  mask-image: radial-gradient(closest-side, #000 0%, rgb(0 0 0 / 0.6) 38%, transparent 95%);
   mix-blend-mode: screen;
   animation: co-rays 90s linear infinite;
 }
@@ -321,8 +327,7 @@
   transform-style: preserve-3d;
 }
 .fq-o.far {
-  filter: blur(1.2px);
-  opacity: 0.55;
+  opacity: 0.45;
 }
 @keyframes fq-float {
   from {

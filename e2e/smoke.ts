@@ -78,7 +78,7 @@ try {
   page.on('console', (m) => m.type() === 'error' && !/Failed to load resource/.test(m.text()) && errors.push(`console: ${m.text()}`));
 
   // Home page and the free generator.
-  await page.goto(BASE);
+  await page.goto(BASE, { waitUntil: 'domcontentloaded' });
   await page.getByRole('heading', { name: /keep working/ }).waitFor();
   await page.locator('.preview .qr svg').waitFor();
   await page.getByText('Safe to print').waitFor();
@@ -104,7 +104,7 @@ try {
 
   // Sign in through the form.
   await ctx.clearCookies();
-  await page.goto(`${BASE}/signin`);
+  await page.goto(`${BASE}/signin`, { waitUntil: 'domcontentloaded' });
   await page.getByLabel('Email').fill(email);
   await page.getByLabel('Password').fill('password123');
   await page.getByRole('button', { name: 'Sign in' }).click();
@@ -135,29 +135,29 @@ try {
   await shot(page, '04-edit', false);
 
   // Door scanner: the fake camera shows Asha's ticket.
-  await page.goto(`${BASE}/app/events/${ev.id}/scan`);
+  await page.goto(`${BASE}/app/events/${ev.id}/scan`, { waitUntil: 'domcontentloaded' });
   await page.getByRole('heading', { name: 'Welcome, Asha Rao' }).waitFor({ timeout: 20_000 });
   await page.locator('.headcount').filter({ hasText: '1' }).waitFor();
   await shot(page, '05-door-scanner', false);
-  await page.goto(`${BASE}/app/events/${ev.id}`);
+  await page.goto(`${BASE}/app/events/${ev.id}`, { waitUntil: 'domcontentloaded' });
   await page.getByText('Ravi Kumar').waitFor();
   await shot(page, '06-event');
 
   // Ticket page (public).
-  await page.goto(ticket.url);
+  await page.goto(ticket.url, { waitUntil: 'domcontentloaded' });
   await page.getByText('ADMIT ONE').waitFor();
   await page.getByText(/Checked in/).waitFor();
   await shot(page, '07-ticket');
 
   // Certificates: issue, verify, then forge.
-  await page.goto(`${BASE}/app/certificates`);
+  await page.goto(`${BASE}/app/certificates`, { waitUntil: 'domcontentloaded' });
   await page.getByLabel('Awarded to').fill('Asha Rao');
   await page.getByLabel('For', { exact: true }).fill('Full-stack web development');
   await page.getByRole('button', { name: 'Issue and sign' }).click();
   await page.locator('.cert-sheet').waitFor();
   await shot(page, '08-certificate');
   const certs = (await api('/api/certs', cookie)).json.certs;
-  await page.goto(certs[0].url);
+  await page.goto(certs[0].url, { waitUntil: 'domcontentloaded' });
   await page.getByRole('heading', { name: 'Genuine certificate' }).waitFor();
   await page.getByRole('button', { name: 'Try to forge it' }).click();
   await page.locator('.cert-fields input').first().fill('Mallory');
@@ -166,7 +166,7 @@ try {
   await shot(page, '09-verify-tampered');
 
   // Bulk: a PDF sheet of dynamic codes.
-  await page.goto(`${BASE}/app/bulk`);
+  await page.goto(`${BASE}/app/bulk`, { waitUntil: 'domcontentloaded' });
   await page.getByLabel('…or paste it here').fill('label,url\nTable 1,example.com/t1\nTable 2,example.com/t2\nTable 3,example.com/t3');
   await page.getByRole('button', { name: 'Generate' }).click();
   await page.getByText('Ready').waitFor({ timeout: 20_000 });
@@ -174,24 +174,25 @@ try {
 
   // A profile page and the PIN gate.
   const prof = (await api('/api/qrs', cookie, { kind: 'profile', data: { firstName: 'Asha', lastName: 'Rao', title: 'Engineer', org: 'QRaftly', email: 'asha@example.com', bio: 'I build web apps.', links: [{ label: 'GitHub', url: 'https://github.com' }] } })).json.qr;
-  await page.goto(`${BASE}/p/${prof.slug}`);
+  await page.goto(`${BASE}/p/${prof.slug}`, { waitUntil: 'domcontentloaded' });
   await page.getByRole('link', { name: 'Save contact' }).waitFor();
   await shot(page, '11-profile');
   const locked = (await api('/api/qrs', cookie, { kind: 'dynamic', data: { url: 'https://example.com/secret' }, security: { pin: '4321' } })).json.qr;
-  await page.goto(`${BASE}/r/${locked.slug}`);
+  await page.goto(`${BASE}/r/${locked.slug}`, { waitUntil: 'domcontentloaded' });
   await page.getByLabel('PIN').fill('4321');
   await page.getByRole('button', { name: 'Unlock' }).click();
-  await page.waitForURL('https://example.com/secret');
+  // Only the redirect matters; the external site's own load time is not under test.
+  await page.waitForURL('https://example.com/secret', { waitUntil: 'commit' });
 
   // Phone width, dark theme.
   const phone = await browser.newContext({ viewport: { width: 390, height: 844 }, colorScheme: 'dark' });
   const m = await phone.newPage();
   m.on('pageerror', (e) => errors.push(`pageerror (phone): ${e.message}`));
-  await m.goto(BASE);
+  await m.goto(BASE, { waitUntil: 'domcontentloaded' });
   await m.locator('.preview .qr svg').waitFor();
   await noSideScroll(m, 'home on a phone');
   await shot(m, '12-phone-dark');
-  await m.goto(`${BASE}/p/${prof.slug}`);
+  await m.goto(`${BASE}/p/${prof.slug}`, { waitUntil: 'domcontentloaded' });
   await m.getByRole('link', { name: 'Save contact' }).waitFor();
   await noSideScroll(m, 'profile on a phone');
 
