@@ -97,58 +97,6 @@ export function Particles() {
   return <canvas ref={ref} className="v-particles" aria-hidden="true" />;
 }
 
-/**
- * The "QR universe": a landscape of square modules receding to the horizon, gliding slowly towards the
- * viewer, with a few modules lit electric blue. Random, so it is decorative and never scannable.
- */
-export function ModuleField() {
-  const ref = useCanvas((ctx, w, h, t) => {
-    ctx.clearRect(0, 0, w, h);
-    // A ground plane of square modules, seen from just above; rows are one module deep.
-    const dark = document.documentElement.dataset.theme === 'dark';
-    const horizon = h * 0.02;
-    const f = h * 0.62;
-    const cell = 0.2;
-    const near = 0.75;
-    const rows = 46;
-    const travel = t * 0.12;
-    const base = Math.floor(travel / cell);
-    const frac = travel / cell - base;
-    const y = (z: number) => horizon + f / z;
-    for (let zi = rows; zi >= 0; zi--) {
-      const z0 = near + (zi - frac) * cell; // near edge of the row
-      if (z0 <= 0.2) continue;
-      const z1 = z0 + cell * 0.82; // far edge
-      const top = y(z1);
-      const bottom = y(z0);
-      if (top > h) continue;
-      const zid = zi + base;
-      const px = (cell * f) / z0;
-      const span = Math.min(110, Math.ceil(((w / 2) * z0) / (cell * f)) + 1);
-      const fog = Math.min(1, 0.25 + 0.9 / z0);
-      for (let X = -span; X <= span; X++) {
-        const r = hash(X, zid);
-        if (r < 0.5) continue;
-        const x0 = w / 2 + (X - 0.41) * px;
-        const wpx = px * 0.82;
-        if (r > 0.985) {
-          const pulse = 0.55 + 0.45 * Math.sin(t * 1.4 + X * 0.7 + zid);
-          const c = r > 0.993 ? '212, 175, 101' : '176, 138, 62';
-          ctx.fillStyle = `rgba(${c}, ${0.16 * pulse * fog})`; // soft halo
-          ctx.fillRect(x0 - wpx * 0.3, top - (bottom - top) * 0.3, wpx * 1.6, (bottom - top) * 1.6);
-          ctx.fillStyle = `rgba(${c}, ${(0.6 + 0.35 * pulse) * fog})`;
-        } else ctx.fillStyle = `rgba(${dark ? '232, 223, 207' : '71, 85, 105'}, ${(0.12 + 0.26 * (r - 0.5) * 2) * fog})`;
-        ctx.fillRect(x0, top, wpx, Math.max(0.6, bottom - top));
-      }
-    }
-  }, 24);
-  return (
-    <div className="v-universe" aria-hidden="true">
-      <canvas ref={ref} />
-    </div>
-  );
-}
-
 // ------------------------------------------------------------ glass objects
 
 export function GlassCube({ size, glow = false, style, className = '', duration = 28, delay = 0 }: { size: number | string; glow?: boolean; style?: CSSProperties; className?: string; duration?: number; delay?: number }) {

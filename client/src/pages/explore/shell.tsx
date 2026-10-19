@@ -3,6 +3,7 @@ import { ArrowLeft, ArrowRight, Home } from 'lucide-react';
 import { EXPLORE } from '../../explore.ts';
 import { Link, useLocation } from '../../router.tsx';
 import { Footer } from '../../ui.tsx';
+import { BackdropStage } from '../../visuals/backdrop.tsx';
 import './explore.css';
 
 /** The frame every feature page shares: a title band, page tabs, the five features, and previous/next. */
@@ -14,7 +15,7 @@ export function ExploreShell({ children, visual }: { children: ReactNode; visual
   const next = i < EXPLORE.length - 1 ? EXPLORE[i + 1] : null;
   const Icon = page.icon;
   return (
-    <>
+    <BackdropStage>
       <div className="wrap">
         <PageTabs />
         <header className="ex-head">
@@ -73,7 +74,7 @@ export function ExploreShell({ children, visual }: { children: ReactNode; visual
         </nav>
       </div>
       <Footer />
-    </>
+    </BackdropStage>
   );
 }
 

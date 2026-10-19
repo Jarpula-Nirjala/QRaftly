@@ -91,7 +91,7 @@ Where a palette colour would be too faint as text, a deeper or lighter shade of 
 
 **Every visual is built in code**, with no stock images or video files. The page includes:
 
-- the two hero scenes, and a "QR universe" of modules above the generator;
+- the two hero scenes, and a fixed, animated backdrop below them: a corridor of light in light mode, and a gold-and-black wave artwork (drifting, with a light sweep, gold strands and glitter) in dark mode;
 - a phone and business card, an analytics monitor, a scan globe, styled codes on pedestals, a crystal shield, an event ticket, print sheets and product packaging;
 - an exploded view of a real symbol from the encoder;
 - floating glass cubes, and a tunnel call to action.

@@ -584,21 +584,6 @@
   margin-bottom: 12px;
 }
 
-/* ------------------------------------------------------------ QR universe band */
-
-.v-universe {
-  position: relative;
-  height: clamp(150px, 18vw, 230px);
-  margin-bottom: 8px;
-  pointer-events: none;
-  mask-image: radial-gradient(60% 75% at 50% 55%, #000 35%, transparent 100%);
-}
-.v-universe canvas {
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
 /* ------------------------------------------------------------ showcase rows */
 
 .v-show {

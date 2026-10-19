@@ -10,7 +10,8 @@ import { DesignPanel, PayloadForm, payloadOf, QrPreview, TYPES, type StaticType 
 import { Footer, useToast } from '../ui.tsx';
 import { DashboardScene, EncoderScene, GlobeScene, PackagingScene, PedestalScene, ProfileScene, SheetsScene, ShieldScene, TicketScene } from '../visuals/mockups.tsx';
 import { AnimatedName, LampScene, RibbonBackdrop } from '../visuals/hero.tsx';
-import { FloatingBand, GlassPrism, HeroScanner, ModuleField, Particles, Tunnel } from '../visuals/scene.tsx';
+import { BackdropStage } from '../visuals/backdrop.tsx';
+import { FloatingBand, GlassPrism, HeroScanner, Particles, Tunnel } from '../visuals/scene.tsx';
 
 const COMPARE: Array<[string, boolean | string, boolean | string, boolean | string]> = [
   ['Change the destination after printing', false, true, true],
@@ -120,8 +121,8 @@ export function Landing() {
         </div>
       </section>
 
-      <section id="generator" className="section" style={{ paddingTop: 0 }}>
-        <ModuleField />
+      <BackdropStage>
+      <section id="generator" className="section">
         <div className="wrap" style={{ position: 'relative' }}>
           <div className="section-title">
             <h2>Make a code in seconds</h2>
@@ -459,6 +460,7 @@ export function Landing() {
           </Tunnel>
         </div>
       </section>
+      </BackdropStage>
       <Footer />
     </>
   );

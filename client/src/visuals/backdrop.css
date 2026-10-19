@@ -1,0 +1,304 @@
+/* The page backdrop below the hero: a corridor of light (light theme) or gold waves (dark theme). */
+
+.bg-stage {
+  position: relative;
+  isolation: isolate;
+}
+/* Sticky within the stage: it stays put while the content scrolls over it, and never covers the hero. */
+.bg-layer {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  margin-bottom: -100vh;
+  overflow: hidden;
+  z-index: -1;
+  pointer-events: none;
+}
+.bg-layer > div {
+  position: absolute;
+  inset: 0;
+}
+
+/* Content on the backdrop: cards become frosted glass so the scene shows through softly. */
+.bg-stage .card,
+.bg-stage .feature,
+.bg-stage .how-steps li,
+.bg-stage .flow-step,
+.bg-stage .compare-card,
+.bg-stage .explore-card,
+.bg-stage .table-wrap,
+.bg-stage .step,
+.bg-stage .ex-pg {
+  background: color-mix(in srgb, var(--surface) 84%, transparent);
+  backdrop-filter: blur(10px) saturate(1.15);
+}
+.bg-stage .section-title p,
+.bg-stage .v-show p,
+.bg-stage .v-show li {
+  text-shadow: 0 1px 12px var(--bg);
+}
+
+/* ------------------------------------------------------------ dark: gold waves */
+
+.gw {
+  background: #1c1814;
+}
+.gw-img {
+  position: absolute;
+  inset: -6%;
+  background: url('/bg/gold-waves.jpg') center / cover no-repeat;
+  animation: gw-drift 48s ease-in-out infinite alternate;
+  will-change: transform;
+}
+@media (max-width: 760px) {
+  .gw-img {
+    background-image: url('/bg/gold-waves-960.jpg');
+  }
+}
+@keyframes gw-drift {
+  from {
+    transform: scale(1.02) translate3d(0, 0, 0) rotate(0deg);
+  }
+  to {
+    transform: scale(1.12) translate3d(-2.5%, -1.5%, 0) rotate(-1.2deg);
+  }
+}
+/* An espresso veil: the cream turns warm brown, gold and black stay rich, and ivory text stays readable. */
+.gw-veil {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(60% 70% at 50% 45%, rgb(30 26 22 / 0.8), rgb(30 26 22 / 0.62) 70%, rgb(30 26 22 / 0.5) 100%),
+    linear-gradient(180deg, rgb(28 24 20 / 0.35), transparent 30%, transparent 70%, rgb(28 24 20 / 0.5));
+}
+.gw-sheen {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(112deg, transparent 38%, rgb(255 228 172 / 0.13) 48%, rgb(255 244 220 / 0.2) 50%, rgb(255 228 172 / 0.13) 52%, transparent 62%);
+  background-size: 300% 100%;
+  mix-blend-mode: screen;
+  animation: gw-sheen 14s ease-in-out infinite;
+}
+@keyframes gw-sheen {
+  0% {
+    background-position: 120% 0;
+  }
+  55%,
+  100% {
+    background-position: -20% 0;
+  }
+}
+.gw-strands {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.55;
+  mix-blend-mode: screen;
+}
+.gw-strands .s {
+  fill: none;
+  stroke: url(#gwStrand);
+  stroke-width: 1.4;
+  stroke-dasharray: 260 900;
+  animation: gw-flow 11s linear infinite;
+}
+.gw-strands .s1 {
+  animation-duration: 15s;
+  animation-delay: -5s;
+  stroke-width: 1;
+}
+.gw-strands .s2 {
+  animation-duration: 13s;
+  animation-delay: -2s;
+}
+.gw-strands .s3 {
+  animation-duration: 17s;
+  animation-delay: -8s;
+  stroke-width: 0.8;
+}
+@keyframes gw-flow {
+  to {
+    stroke-dashoffset: -1160;
+  }
+}
+.gw-glitter {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* ------------------------------------------------------------ light: corridor of light */
+
+.co {
+  background: linear-gradient(180deg, #f4f7fb 0%, #ffffff 46%, #eef2f7 100%);
+  overflow: hidden;
+}
+.co-end {
+  position: absolute;
+  left: 50%;
+  top: 46%;
+  width: 26vmin;
+  height: 34vmin;
+  transform: translate(-50%, -50%);
+  border-radius: 6px;
+  background: radial-gradient(closest-side, #ffffff 0%, #ffffff 35%, rgb(214 236 255 / 0.9) 60%, rgb(170 214 255 / 0) 100%);
+  box-shadow: 0 0 12vmin 6vmin rgb(255 255 255 / 0.9), 0 0 30vmin 10vmin rgb(176 216 255 / 0.35);
+  animation: co-breathe 7s ease-in-out infinite alternate;
+}
+@keyframes co-breathe {
+  from {
+    opacity: 0.82;
+    transform: translate(-50%, -50%) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.04);
+  }
+}
+/* Nested white arches gliding towards the viewer. */
+.co-frame {
+  position: absolute;
+  left: 50%;
+  top: 46%;
+  width: 40vmin;
+  aspect-ratio: 0.78;
+  border: 2.2vmin solid #ffffff;
+  border-bottom-width: 0;
+  box-shadow:
+    inset 0 0 0 1px rgb(150 170 200 / 0.35),
+    0 0 0 1px rgb(150 170 200 / 0.22),
+    0 2vmin 5vmin -2vmin rgb(20 36 58 / 0.18),
+    inset 0.6vmin 0 1.2vmin -0.4vmin rgb(130 190 255 / 0.25);
+  transform: translate(-50%, -50%) scale(var(--k, 0.1));
+  opacity: 0;
+  animation: co-frame 28s linear infinite;
+}
+@keyframes co-frame {
+  0% {
+    transform: translate(-50%, -50%) scale(0.06);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.95;
+  }
+  85% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(3.4);
+    opacity: 0;
+  }
+}
+.co-ceil {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 40%;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 9%, rgb(255 255 255 / 0.9) 9% 10%),
+    linear-gradient(180deg, #e9eef5, rgb(255 255 255 / 0));
+  transform: perspective(500px) rotateX(-62deg);
+  transform-origin: bottom;
+  mask-image: linear-gradient(to top, transparent, #000 60%);
+  opacity: 0.8;
+}
+.co-floor {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 48%;
+  overflow: hidden;
+  background: linear-gradient(0deg, #e6ecf3 0%, #f4f7fb 55%, rgb(255 255 255 / 0) 100%);
+}
+.co-lines {
+  position: absolute;
+  inset: 0 -40% -10% -40%;
+  background:
+    repeating-linear-gradient(90deg, rgb(140 160 190 / 0.18) 0 1px, transparent 1px 7%),
+    repeating-linear-gradient(0deg, rgb(140 160 190 / 0.12) 0 1px, transparent 1px 12%);
+  transform: perspective(380px) rotateX(64deg);
+  transform-origin: top;
+  mask-image: linear-gradient(to bottom, transparent, #000 35%);
+  animation: co-floor 9s linear infinite;
+}
+@keyframes co-floor {
+  to {
+    background-position: 0 0, 0 12%;
+  }
+}
+/* Glass side walls with vertical light strips; blue light runs along their edges. */
+.co-wall {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 26%;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 18%, rgb(120 190 255 / 0.32) 18% 18.6%, transparent 18.6% 40%, rgb(255 255 255 / 0.9) 40% 41%, transparent 41% 62%),
+    linear-gradient(90deg, rgb(228 236 246 / 0.95), rgb(255 255 255 / 0.25));
+  background-size:
+    200% 100%,
+    100% 100%;
+  animation: co-glint 10s ease-in-out infinite alternate;
+}
+.co-wall.left {
+  left: 0;
+  clip-path: polygon(0 0, 100% 22%, 100% 74%, 0 100%);
+}
+.co-wall.right {
+  right: 0;
+  clip-path: polygon(0 22%, 100% 0, 100% 100%, 0 74%);
+  transform: scaleX(-1);
+}
+@keyframes co-glint {
+  to {
+    background-position:
+      100% 0,
+      0 0;
+  }
+}
+.co-seam {
+  position: absolute;
+  bottom: 0;
+  width: 26%;
+  height: 26%;
+  background: linear-gradient(90deg, transparent, rgb(90 170 255 / 0.55));
+  clip-path: polygon(0 100%, 100% 0, 100% 2.5%, 0 101%);
+  filter: drop-shadow(0 0 6px rgb(90 170 255 / 0.8));
+  animation: co-seam 5s ease-in-out infinite alternate;
+}
+.co-seam.left {
+  left: 0;
+}
+.co-seam.right {
+  right: 0;
+  transform: scaleX(-1);
+}
+@keyframes co-seam {
+  from {
+    opacity: 0.45;
+  }
+}
+/* Keeps navy text crisp over the scene. */
+.co-veil {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(55% 50% at 50% 46%, rgb(255 255 255 / 0.25), rgb(255 255 255 / 0.62) 75%),
+    linear-gradient(180deg, rgb(255 255 255 / 0.35), transparent 30%, transparent 70%, rgb(255 255 255 / 0.5));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gw-img,
+  .gw-sheen,
+  .gw-strands .s,
+  .co-end,
+  .co-frame,
+  .co-lines,
+  .co-wall,
+  .co-seam {
+    animation: none !important;
+  }
+  .co-frame {
+    opacity: 0.85;
+  }
+}
