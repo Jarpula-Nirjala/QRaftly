@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: qrforge
+    runtime: node
+    plan: free
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /healthz
+    envVars:
+      - key: NODE_VERSION
+        value: "24"
+      # Required: a Postgres connection string (a free Neon database works). The embedded database is for
+      # local development only; it does not fit the free instance and would be lost on every deploy.
+      - key: DATABASE_URL
+        sync: false
+      # The site's public address, used inside every QR code, e.g. https://qrforge.onrender.com
+      - key: PUBLIC_URL
+        sync: false
+      # Signs tickets, unlock links and visitor ids. Keep it fixed: changing it invalidates issued tickets.
+      - key: HMAC_SECRET
+        generateValue: true

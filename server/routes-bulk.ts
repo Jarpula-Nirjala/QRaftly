@@ -110,19 +110,30 @@ export function mount(app: express.Express, ctx: AppCtx): () => void {
     return { label, content: buildPayload(rowPayload(input.type, row)) };
   }
 
-  /** Builds the download from the finished items. */
-  function render(input: JobInput, report: Report): { name: string; mime: string; data: Buffer } {
+  /**
+   * Builds the download from the finished items. Encoding and compressing 1,000 codes takes seconds, so it
+   * yields to the event loop every few codes: scans and page loads must not wait behind a bulk job.
+   */
+  async function render(input: JobInput, report: Report): Promise<{ name: string; mime: string; data: Buffer }> {
+    const each = async <T, R>(list: T[], fn: (x: T, i: number) => R): Promise<R[]> => {
+      const out: R[] = [];
+      for (let i = 0; i < list.length; i++) {
+        out.push(fn(list[i], i));
+        if (i % 10 === 9) await new Promise((r) => setImmediate(r));
+      }
+      return out;
+    };
     const items = report.items ?? [];
     const errors = report.errors ?? [];
     const base = (input.title || (input.kind === 'certificates' ? 'certificates' : 'qr-codes')).replace(/[^\w-]+/g, '-').slice(0, 50) || 'qr-codes';
     if (input.format === 'pdf') {
-      const cells = items.map((it) => ({ modules: encodeText(it.content, { ecl: 'M' }).modules, label: it.label, sublabel: it.content.length > 60 ? `${it.content.slice(0, 57)}...` : it.content }));
+      const cells = await each(items, (it) => ({ modules: encodeText(it.content, { ecl: 'M' }).modules, label: it.label, sublabel: it.content.length > 60 ? `${it.content.slice(0, 57)}...` : it.content }));
       return { name: `${base}.pdf`, mime: 'application/pdf', data: makeQrSheet(cells, { color: input.color, title: input.title || undefined }) };
     }
     const rgb = [1, 3, 5].map((i) => parseInt(input.color.slice(i, i + 2), 16));
     const used = new Set<string>();
     const cell = (v: unknown) => `"${String(v).replace(/"/g, '""')}"`;
-    const files = items.map((it, i) => {
+    const files = await each(items, (it, i) => {
       let name = `${String(i + 1).padStart(4, '0')}-${it.label.replace(/[^\w-]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40) || 'code'}.png`;
       while (used.has(name)) name = name.replace(/\.png$/, '-x.png');
       used.add(name);
@@ -179,7 +190,7 @@ export function mount(app: express.Express, ctx: AppCtx): () => void {
       await db.query("update jobs set status = 'failed', error = $2, updated_at = $3 where id = $1", [job.id, `No codes could be made. First problem: row ${report.errors![0]?.row}: ${report.errors![0]?.error}`, Date.now()]);
       return;
     }
-    const file = render(job.input, report);
+    const file = await render(job.input, report);
     const fileId = newId();
     await db.tx(async (q) => {
       await q('insert into files (id, user_id, name, mime, data, created_at) values ($1, $2, $3, $4, $5, $6)', [fileId, job.user_id, file.name, file.mime, file.data, Date.now()]);
