@@ -58,9 +58,11 @@ try {
     await page.locator('.back-btn').waitFor();
     await shot(page, `page${p.replace('/', '-')}`);
   }
-  // Next / previous buttons and the back button.
+  // Page tabs and the back button; no Home tab or "Page n of 5" labels on these pages.
   await page.goto(`${BASE}/studio`, { waitUntil: 'domcontentloaded' });
-  await page.locator('.ex-pg.next').click();
+  assert.deepEqual((await page.locator('.ex-tabs a').allTextContents()).map((t) => t.trim()), ['Studio', 'Growth', 'Venues', 'Trust', 'Engine']);
+  assert.equal(await page.getByText(/Page \d of 5/).count(), 0);
+  await page.locator('.ex-tabs a', { hasText: 'Growth' }).click();
   await page.waitForURL(`${BASE}/growth`);
   await page.locator('.back-btn').click();
   await page.waitForURL(`${BASE}/studio`);

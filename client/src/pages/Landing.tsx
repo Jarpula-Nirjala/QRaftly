@@ -240,6 +240,32 @@ export function Landing() {
         </div>
       </section>
 
+      <section id="privacy" className="section">
+        <div className="wrap">
+          <div className="v-show flip">
+            <div className="v-show-text">
+              <span className="kicker">
+                <ShieldCheck size={15} /> Privacy
+              </span>
+              <h3>Analytics without surveillance</h3>
+              <p>Scans are counted without storing IP addresses. Unique visitors use a daily keyed hash that cannot be reversed or linked across days.</p>
+              <ul>
+                <li>
+                  <Check size={17} /> No tracking cookies for people who scan your codes
+                </li>
+                <li>
+                  <Check size={17} /> Download your scan history as CSV at any time
+                </li>
+                <li>
+                  <Check size={17} /> Delete a code or your account and its data goes with it
+                </li>
+              </ul>
+            </div>
+            <GlassPrism />
+          </div>
+        </div>
+      </section>
+
       <section id="how" className="section">
         <div className="wrap">
           <span id="engine" className="anchor" />
@@ -313,31 +339,6 @@ export function Landing() {
         </div>
       </section>
 
-      <section id="privacy" className="section">
-        <div className="wrap">
-          <div className="v-show flip">
-            <div className="v-show-text">
-              <span className="kicker">
-                <ShieldCheck size={15} /> Privacy
-              </span>
-              <h3>Analytics without surveillance</h3>
-              <p>Scans are counted without storing IP addresses. Unique visitors use a daily keyed hash that cannot be reversed or linked across days.</p>
-              <ul>
-                <li>
-                  <Check size={17} /> No tracking cookies for people who scan your codes
-                </li>
-                <li>
-                  <Check size={17} /> Download your scan history as CSV at any time
-                </li>
-                <li>
-                  <Check size={17} /> Delete a code or your account and its data goes with it
-                </li>
-              </ul>
-            </div>
-            <GlassPrism />
-          </div>
-        </div>
-      </section>
 
       <section className="section">
         <div className="wrap">

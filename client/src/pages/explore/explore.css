@@ -477,3 +477,16 @@
   font-size: 84px;
   line-height: 1;
 }
+
+/* Light mode: the same soft white backing as the home page, behind each block of text. */
+:root:not([data-theme='dark']) .ex-copy,
+:root:not([data-theme='dark']) .ex-head > div:first-child {
+  background: rgb(255 255 255 / 0.84);
+  box-shadow: 0 0 40px 30px rgb(255 255 255 / 0.84);
+  border-radius: 32px;
+}
+/* QR previews inside the demos stay a modest size. */
+.ex-demo .preview-col {
+  position: static;
+  max-width: 320px;
+}

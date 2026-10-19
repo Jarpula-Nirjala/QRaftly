@@ -80,21 +80,14 @@ function palette(src: CanvasImageSource, k = 6): Array<{ c: string; n: number }>
   return centres.map((ce, j) => ({ c: hex(ce[0], ce[1], ce[2]), n: counts[j] })).filter((x) => x.n > 0).sort((a, b) => b.n - a.n);
 }
 
-/** Darkens or lightens a colour until the pair reaches the contrast phone cameras need. */
+/** The darkest colour from the photo, darkened only as much as needed to scan on a white background. */
 function scannablePair(cols: string[]): { fg: string; bg: string } {
-  const byLum = [...cols].sort((a, b) => contrastRatio(a, '#000000') - contrastRatio(b, '#000000'));
-  let fg = byLum[0];
-  let bg = byLum[byLum.length - 1];
-  const mix = (a: string, b: string, t: number) => {
-    const x = rgbOf(a);
-    const y = rgbOf(b);
-    return hex(x[0] + (y[0] - x[0]) * t, x[1] + (y[1] - x[1]) * t, x[2] + (y[2] - x[2]) * t);
-  };
-  for (let t = 0; t <= 1 && contrastRatio(fg, bg) < 4.5; t += 0.1) {
-    fg = mix(byLum[0], '#000000', t);
-    bg = mix(byLum[byLum.length - 1], '#ffffff', t);
-  }
-  return { fg, bg };
+  const byLum = [...cols].sort((a, b) => contrastRatio(a, '#ffffff') - contrastRatio(b, '#ffffff')).reverse();
+  const base = byLum[0] ?? '#14243a';
+  const [r, g, b] = rgbOf(base);
+  let fg = base;
+  for (let t = 0; t <= 1 && contrastRatio(fg, '#ffffff') < 4.5; t += 0.1) fg = hex(r * (1 - t), g * (1 - t), b * (1 - t));
+  return { fg, bg: '#ffffff' };
 }
 
 function PaletteDemo() {
