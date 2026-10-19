@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
-import jsQR from 'jsqr';
+import jsQRModule from 'jsqr';
 import { div, mul } from '../shared/qr/gf.ts';
 import { decode as rsDecode, generator, remainder } from '../shared/qr/rs.ts';
 import { addEccAndInterleave, encodeText } from '../shared/qr/encode.ts';
@@ -8,6 +8,9 @@ import { decodeMatrix } from '../shared/qr/decode.ts';
 import { rasterize } from '../shared/qr/raster.ts';
 import { makeSegment, toCodewords } from '../shared/qr/segments.ts';
 import { blockLayout, ECLS } from '../shared/qr/tables.ts';
+
+// jsQR is CommonJS; its default export is the decoder function.
+const jsQR = jsQRModule as unknown as (data: Uint8ClampedArray, width: number, height: number, opts?: { inversionAttempts?: string }) => { data: string; binaryData: number[] } | null;
 
 /** Reads a matrix with jsQR, an independent decoder, from a rendered image. */
 function readWithJsQR(modules: boolean[][]) {
