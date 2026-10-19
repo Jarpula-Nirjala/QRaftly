@@ -114,8 +114,12 @@ export function LampScene({ className = '' }: { className?: string }) {
 export function HeroWave({ className = '' }: { className?: string }) {
   return (
     <div className={`hw ${className}`} role="img" aria-label="A glossy QR code made of glass cubes, floating over a pedestal">
+      <div className="hw-glow" />
       <div className="hw-img" />
       <div className="hw-glint" />
+      {Array.from({ length: 10 }, (_, k) => (
+        <span key={k} className="hw-spark" style={{ '--k': k } as CSSProperties} />
+      ))}
     </div>
   );
 }

@@ -496,3 +496,15 @@
   width: fit-content;
   max-width: 100%;
 }
+
+#f1 .ex-demo .preview-col {
+  max-width: none;
+  width: 100%;
+}
+#f1 .preview {
+  aspect-ratio: auto;
+  height: 400px;
+}
+#f1 .preview .qr {
+  width: 290px !important;
+}

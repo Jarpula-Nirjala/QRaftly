@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { useCanvas } from './scene.tsx';
 import './backdrop.css';
 
@@ -60,7 +60,6 @@ function GoldWaves() {
         ))}
       </svg>
       <div className="gw-sheen" />
-      <FloatingQr />
       <Glitter />
     </div>
   );
@@ -106,68 +105,6 @@ function Corridor() {
       <div className="co-sheen" />
       <div className="co-veil" />
       <LightMotes />
-    </div>
-  );
-}
-
-/** A small QR-like pattern for a cube face: finder corners and random modules (decorative, not scannable). */
-function faceSvg(seed: number): string {
-  let v = seed * 9301 + 49297;
-  const rnd = () => ((v = (v * 9301 + 49297) % 233280) / 233280);
-  const n = 11;
-  let d = '';
-  let glow = '';
-  for (let y = 0; y < n; y++)
-    for (let x = 0; x < n; x++) {
-      const corner = (x < 3 && y < 3) || (x > 7 && y < 3) || (x < 3 && y > 7);
-      const ring = corner && (x % 8 === 0 || x % 8 === 2 || y % 8 === 0 || y % 8 === 2 || (x % 8 === 1 && y % 8 === 1));
-      if (corner ? ring : rnd() < 0.46) {
-        if (!corner && rnd() < 0.06) glow += `M${x + 0.12} ${y + 0.12}h0.76v0.76h-0.76z`;
-        else d += `M${x + 0.12} ${y + 0.12}h0.76v0.76h-0.76z`;
-      }
-    }
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${n} ${n}"><path d="${d}" fill="#d9dde3"/><path d="${glow}" fill="#3b82f6"/></svg>`;
-}
-
-// Cubes and tiles keep to the side margins, so they never sit behind text; only tiny sparks drift in the middle.
-const OBJECTS: Array<{ x: number; y: number; s: number; d: number; z: number; kind: 'cube' | 'tile' | 'spark' }> = [
-  { x: 0.2, y: 16, s: 44, d: 34, z: 1, kind: 'cube' },
-  { x: 91, y: 10, s: 66, d: 40, z: 1, kind: 'cube' },
-  { x: 93, y: 58, s: 46, d: 30, z: 0, kind: 'cube' },
-  { x: 0.2, y: 70, s: 46, d: 38, z: 1, kind: 'cube' },
-  { x: 88, y: 84, s: 38, d: 28, z: 0, kind: 'cube' },
-  { x: 0.6, y: 44, s: 26, d: 26, z: 0, kind: 'tile' },
-  { x: 95, y: 34, s: 32, d: 32, z: 1, kind: 'tile' },
-  { x: 0.6, y: 92, s: 26, d: 30, z: 0, kind: 'tile' },
-  { x: 90, y: 72, s: 26, d: 27, z: 0, kind: 'tile' },
-  { x: 22, y: 6, s: 7, d: 18, z: 1, kind: 'spark' },
-  { x: 52, y: 30, s: 6, d: 16, z: 0, kind: 'spark' },
-  { x: 80, y: 22, s: 8, d: 20, z: 1, kind: 'spark' },
-  { x: 38, y: 64, s: 6, d: 17, z: 0, kind: 'spark' },
-  { x: 70, y: 90, s: 8, d: 22, z: 1, kind: 'spark' },
-  { x: 24, y: 52, s: 7, d: 19, z: 0, kind: 'spark' },
-  { x: 62, y: 48, s: 5, d: 15, z: 0, kind: 'spark' },
-];
-
-/** Small glossy QR cubes, flat QR tiles and glowing blue modules drifting through the dark (inspired by a QR landscape). */
-function FloatingQr() {
-  return (
-    <div className="fq">
-      {OBJECTS.map((o, i) => (
-        <div key={i} className={`fq-o ${o.kind}${o.z ? '' : ' far'}`} style={{ left: `${o.x}%`, top: `${o.y}%`, '--dx': o.x < 50 ? '-1.2vw' : '1.2vw', '--s': `${o.s}px`, '--d': `${o.d}s`, '--delay': `${-i * 3.7}s` } as CSSProperties}>
-          {o.kind === 'cube' ? (
-            <div className="fq-cube">
-              {['f', 'b', 'l', 'r', 't', 'u'].map((f, k) => (
-                <div key={f} className={`fq-face ${f}`} dangerouslySetInnerHTML={{ __html: k < 2 || k === 4 ? faceSvg(i * 7 + k + 1) : '' }} />
-              ))}
-            </div>
-          ) : o.kind === 'tile' ? (
-            <div className="fq-tile" dangerouslySetInnerHTML={{ __html: faceSvg(i * 13 + 5) }} />
-          ) : (
-            <div className="fq-spark" />
-          )}
-        </div>
-      ))}
     </div>
   );
 }

@@ -2121,3 +2121,13 @@ section[id],
 #privacy {
   padding-top: 0;
 }
+
+/* About 1.5 cm between the header links (Home keeps its own spot at the start). */
+@media (min-width: 1181px) {
+  .nav {
+    gap: clamp(20px, 2.4vw, 36px);
+  }
+  .nav .home-link {
+    margin-right: 0;
+  }
+}

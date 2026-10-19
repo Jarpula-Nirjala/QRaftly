@@ -434,8 +434,10 @@
 
 .hw {
   position: relative;
-  /* Its column's width, about 2 cm clear of the window's right edge. */
-  width: 100%;
+  /* 1.2× its column, growing into the picture's own white space; about 2 cm clear of the right edge. */
+  width: 120%;
+  margin-left: -20%;
+  perspective: 1400px;
   margin-right: max(0px, calc(76px - clamp(28px, 5vw, 96px)));
   aspect-ratio: 1600 / 900;
   z-index: 0;
@@ -462,11 +464,14 @@
   }
 }
 @keyframes hw-float {
-  from {
-    transform: translateY(0.6%) scale(1);
+  0% {
+    transform: translateY(0.8%) rotateY(-2.5deg) rotateX(1deg) scale(1);
   }
-  to {
-    transform: translateY(-0.9%) scale(1.012);
+  50% {
+    transform: translateY(-0.6%) rotateY(0deg) rotateX(0deg) scale(1.015);
+  }
+  100% {
+    transform: translateY(-1.2%) rotateY(2.5deg) rotateX(-1deg) scale(1.01);
   }
 }
 .hw-glint {
@@ -497,7 +502,9 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .hw-img,
-  .hw-glint {
+  .hw-glint,
+  .hw-glow,
+  .hw-spark {
     animation: none !important;
   }
 }
@@ -507,4 +514,58 @@
 :root:not([data-theme='dark']) .v-hero-grid {
   isolation: auto;
   z-index: auto;
+}
+
+/* A soft blue light behind the code, breathing slowly. */
+.hw-glow {
+  position: absolute;
+  left: 52%;
+  top: 46%;
+  width: 46%;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgb(80 150 255 / 0.35), rgb(80 150 255 / 0.1) 60%, transparent);
+  mix-blend-mode: normal;
+  animation: hw-glow 5s ease-in-out infinite alternate;
+}
+@keyframes hw-glow {
+  from {
+    opacity: 0.45;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.08);
+  }
+}
+/* Small blue specks rising around the code, like loose modules. */
+.hw-spark {
+  position: absolute;
+  left: calc(30% + var(--k) * 5.2%);
+  bottom: 18%;
+  width: calc(5px + var(--k) * 0.7px);
+  aspect-ratio: 1;
+  border-radius: 2px;
+  background: #3b82f6;
+  box-shadow: 0 0 10px rgb(59 130 246 / 0.8);
+  opacity: 0;
+  animation: hw-rise calc(5s + var(--k) * 0.45s) ease-in-out infinite;
+  animation-delay: calc(var(--k) * -0.9s);
+}
+@keyframes hw-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(0) rotate(0deg);
+  }
+  20% {
+    opacity: 0.85;
+  }
+  80% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-260px) rotate(180deg);
+  }
 }
