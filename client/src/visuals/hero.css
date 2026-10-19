@@ -434,9 +434,8 @@
 
 .hw {
   position: relative;
-  /* 1.5× its column, growing leftwards into the picture's own white space; about 2 cm clear of the right edge. */
-  width: 150%;
-  margin-left: -50%;
+  /* Its column's width, about 2 cm clear of the window's right edge. */
+  width: 100%;
   margin-right: max(0px, calc(76px - clamp(28px, 5vw, 96px)));
   aspect-ratio: 1600 / 900;
   z-index: 0;
