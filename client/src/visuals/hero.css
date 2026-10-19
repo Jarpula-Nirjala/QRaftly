@@ -434,15 +434,17 @@
 
 .hw {
   position: relative;
-  /* Reaches to the right edge of the window. */
-  width: calc(100% + clamp(28px, 5vw, 96px));
-  margin-right: calc(-1 * clamp(28px, 5vw, 96px));
+  /* Inside the page margins: about 2 cm clear of the window's right edge. */
+  width: 100%;
+  max-width: 900px;
+  justify-self: end;
+  margin-right: max(0px, calc(76px - clamp(28px, 5vw, 96px)));
   aspect-ratio: 1500 / 846;
-  /* White in the picture blends away, so the corridor shows through; cubes and blue light stay. */
+  /* The whole picture: its white melts into the page, and every edge is softly feathered, so no border shows. */
   mix-blend-mode: multiply;
-  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 16%), linear-gradient(to bottom, transparent 0%, #000 6%, #000 90%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 12%, #000 94%, transparent 100%), linear-gradient(to bottom, transparent 0%, #000 10%, #000 90%, transparent 100%);
   -webkit-mask-composite: source-in;
-  mask-image: linear-gradient(to right, transparent 0%, #000 16%), linear-gradient(to bottom, transparent 0%, #000 6%, #000 90%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0%, #000 12%, #000 94%, transparent 100%), linear-gradient(to bottom, transparent 0%, #000 10%, #000 90%, transparent 100%);
   mask-composite: intersect;
 }
 .hw-img {
@@ -492,8 +494,8 @@
 }
 @media (max-width: 900px) {
   .hw {
-    width: 100%;
     margin-right: 0;
+    justify-self: stretch;
   }
 }
 @media (prefers-reduced-motion: reduce) {
