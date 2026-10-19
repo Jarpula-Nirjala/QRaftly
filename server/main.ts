@@ -1,8 +1,12 @@
+import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { startServer } from './app.ts';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+
+// Private local settings (Google sign-in keys and the like) from an uncommitted .env file; Render sets its own.
+if (fs.existsSync(path.join(root, '.env'))) process.loadEnvFile(path.join(root, '.env'));
 
 if (!process.env.DATABASE_URL && process.env.RENDER)
   console.warn('DATABASE_URL is not set: starting the embedded database, which needs about 400 MB of memory and is lost on every redeploy. Set DATABASE_URL (a free Neon Postgres) in Render → Environment.');
