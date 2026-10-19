@@ -1,4 +1,4 @@
-import { ArrowRight, BarChart3, Box, CheckCircle2, Circle, Crown, Database, Eye, FileCheck2, Link2, Lock, QrCode, Settings, ShieldCheck, SlidersHorizontal, XCircle, Zap } from 'lucide-react';
+import { ArrowRight, BarChart3, CheckCircle2, Circle, Crown, Eye, FileCheck2, Link2, Lock, QrCode, Settings, ShieldCheck, SlidersHorizontal, XCircle, Zap } from 'lucide-react';
 import { Link } from '../router.tsx';
 import './why.css';
 
@@ -6,32 +6,7 @@ type Mark = 'yes' | 'no' | 'part';
 const Tick = ({ m }: { m: Mark }) =>
   m === 'yes' ? <CheckCircle2 className="wy-yes" size={19} aria-label="Yes" /> : m === 'no' ? <XCircle className="wy-no" size={19} aria-label="No" /> : <Circle className="wy-part" size={19} aria-label="Partly" />;
 
-const PLANS: Array<{ name: string; sub: string; icon: typeof Box; rows: Array<[string, Mark]>; foot: string; best?: boolean }> = [
-  {
-    name: 'Typical Free Generator',
-    sub: 'Good for one-time, basic use.',
-    icon: Box,
-    rows: [['Change destination after printing', 'no'], ['Scan check before download', 'no'], ['Analytics tracking', 'no'], ['Rules by time, location, language', 'no'], ['A/B testing', 'no'], ['Signed tickets / certificates', 'no'], ['Price', 'no']],
-    foot: 'Free',
-  },
-  {
-    name: 'Typical Paid Platform',
-    sub: 'More features, but still limited.',
-    icon: Database,
-    rows: [['Change destination after printing', 'yes'], ['Scan check before download', 'yes'], ['Analytics tracking', 'yes'], ['Rules by time, location, language', 'yes'], ['A/B testing', 'yes'], ['Signed tickets / certificates', 'no'], ['Price', 'no']],
-    foot: 'Monthly fee',
-  },
-  {
-    name: 'QRaftly',
-    sub: 'More control. More possibilities.',
-    icon: Crown,
-    best: true,
-    rows: [['Change destination after printing', 'yes'], ['Scan check before download', 'yes'], ['Analytics without storing IPs', 'yes'], ['Rules by time, location, language', 'yes'], ['A/B tests on one printed code', 'yes'], ['Signed event tickets & certificates', 'yes'], ['Link safety check before opening', 'yes']],
-    foot: 'Free to use',
-  },
-];
-
-const BENEFITS: Array<{ icon: typeof Box; title: string; text: string; win: string }> = [
+const BENEFITS: Array<{ icon: typeof Eye; title: string; text: string; win: string }> = [
   { icon: Link2, title: 'Change destination anytime', text: 'No need to reprint. Update the link even after printing.', win: 'Save time and cost' },
   { icon: Eye, title: 'Validate before download', text: 'Check if your QR design scans correctly.', win: 'No broken QR codes' },
   { icon: BarChart3, title: 'Privacy-first analytics', text: 'Get useful insights without storing IP addresses.', win: 'Your users’ privacy is protected' },
@@ -40,7 +15,7 @@ const BENEFITS: Array<{ icon: typeof Box; title: string; text: string; win: stri
   { icon: FileCheck2, title: 'Signed tickets & certificates', text: 'Create tamper-proof event tickets, passes or certificates.', win: 'Trusted and verifiable' },
 ];
 
-const STEPS: Array<{ icon: typeof Box; title: string; text: string; tag: string; good: boolean }> = [
+const STEPS: Array<{ icon: typeof Eye; title: string; text: string; tag: string; good: boolean }> = [
   { icon: QrCode, title: 'Static QR', text: 'Most free tools just generate a picture that always points to the same link.', tag: 'Fixed forever', good: false },
   { icon: Link2, title: 'Dynamic QR', text: 'Paid platforms let you change the link, but advanced features are limited.', tag: 'Limited flexibility', good: false },
   { icon: Settings, title: 'Validated QR', text: 'QRaftly checks your design before download so you don’t end up with a broken code.', tag: 'Scan-ready design', good: true },
@@ -58,52 +33,10 @@ const TABLE: Array<[string, Mark, Mark, Mark]> = [
   ['Step-by-step inspection', 'no', 'yes', 'yes'],
 ];
 
-/** "Why QRaftly", in four parts: the comparison cards, the benefits, the evolution of a code, and the table. */
+/** "Why QRaftly", in three parts: the benefits, the evolution of a code, and the comparison table. */
 export function WhySection() {
   return (
     <div className="wy">
-      {/* 1. Three plans side by side */}
-      <div className="wy-panel">
-        <div className="wy-head">
-          <span className="wy-kicker">Why QRaftly</span>
-          <h2>
-            Not just a QR generator,
-            <br />
-            built for real-world use.
-          </h2>
-          <p>Compare the usual QR tools with paid platforms and see what makes QRaftly truly different.</p>
-        </div>
-        <div className="wy-plans">
-          {PLANS.map(({ name, sub, icon: Icon, rows, foot, best }) => (
-            <div key={name} className={`wy-plan${best ? ' best' : ''}`}>
-              <div className="wy-plan-head">
-                <span className="wy-plan-ic">
-                  <Icon size={26} />
-                </span>
-                <div>
-                  <h3>{name}</h3>
-                  <span>{sub}</span>
-                </div>
-              </div>
-              <ul>
-                {rows.map(([t, m]) => (
-                  <li key={t}>
-                    <Tick m={m} /> {t}
-                  </li>
-                ))}
-              </ul>
-              {best ? (
-                <Link to="/signup" className="wy-cta">
-                  {foot}
-                </Link>
-              ) : (
-                <div className="wy-foot">{foot}</div>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
-
       {/* 2. Benefits */}
       <div className="wy-panel wy-split">
         <div className="wy-intro">

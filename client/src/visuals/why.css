@@ -62,100 +62,6 @@
   flex: none;
 }
 
-/* 1. plans */
-.wy-plans {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 22px;
-  align-items: stretch;
-}
-.wy-plan {
-  display: flex;
-  flex-direction: column;
-  padding: 26px 24px 22px;
-  border-radius: 22px;
-  background: #fff;
-  border: 1px solid var(--wy-line);
-  box-shadow: 0 16px 40px -28px rgb(13 26 51 / 0.3);
-}
-.wy-plan.best {
-  border: 2px solid var(--wy-blue);
-  box-shadow: 0 0 0 6px rgb(29 95 216 / 0.08), 0 26px 50px -24px rgb(29 95 216 / 0.45);
-  transform: translateY(-6px);
-}
-.wy-plan-head {
-  display: flex;
-  gap: 14px;
-  align-items: center;
-  padding-bottom: 18px;
-  border-bottom: 1px solid var(--wy-line);
-}
-.wy-plan-ic {
-  display: grid;
-  place-items: center;
-  width: 54px;
-  height: 54px;
-  flex: none;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #ffffff, #e6ebf3);
-  color: #7c8aa3;
-  box-shadow: inset 0 0 0 1px var(--wy-line);
-}
-.wy-plan.best .wy-plan-ic {
-  background: radial-gradient(circle at 35% 30%, #fff7df, #f3dfaa);
-  color: #b8862c;
-}
-.wy-plan h3 {
-  font-size: 21px;
-  margin: 0;
-  color: var(--wy-ink);
-}
-.wy-plan.best h3 {
-  color: var(--wy-blue);
-  font-size: 25px;
-}
-.wy-plan-head span {
-  font-size: 15.5px;
-  color: var(--wy-text);
-}
-.wy-plan ul {
-  list-style: none;
-  margin: 10px 0 18px;
-  padding: 0;
-  flex: 1;
-}
-.wy-plan li {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  padding: 11px 2px;
-  border-bottom: 1px solid #eef1f7;
-  font-size: 16.5px;
-  color: var(--wy-text);
-}
-.wy-foot,
-.wy-cta {
-  display: block;
-  text-align: center;
-  padding: 13px;
-  border-radius: 12px;
-  font-weight: 700;
-  font-size: 17px;
-}
-.wy-foot {
-  background: #f1f4f9;
-  color: var(--wy-text);
-}
-.wy-cta {
-  background: linear-gradient(180deg, var(--wy-blue), var(--wy-blue-2));
-  color: #fff;
-  box-shadow: 0 10px 24px -10px rgb(29 95 216 / 0.7);
-}
-.wy-cta:hover {
-  text-decoration: none;
-  filter: brightness(1.08);
-}
-
 /* 2. benefits */
 .wy-split {
   display: grid;
@@ -478,12 +384,6 @@
   }
 }
 @media (max-width: 900px) {
-  .wy-plans {
-    grid-template-columns: 1fr;
-  }
-  .wy-plan.best {
-    transform: none;
-  }
   .wy-steps {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     row-gap: 40px;
