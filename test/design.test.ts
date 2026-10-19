@@ -69,7 +69,7 @@ describe('Payload formats', () => {
   });
 
   it('UPI builds a payment link and validates the amount', () => {
-    assert.equal(buildPayload({ type: 'upi', vpa: 'nirjala@okaxis', name: 'Nirjala J', amount: '250', note: 'Lunch' }), 'upi://pay?pa=nirjala%40okaxis&pn=Nirjala%20J&am=250.00&cu=INR&tn=Lunch');
+    assert.equal(buildPayload({ type: 'upi', vpa: 'nirjala@okaxis', name: 'Nirjala J', amount: '250', note: 'Lunch' }), 'upi://pay?pa=nirjala@okaxis&pn=Nirjala%20J&am=250.00&cu=INR&tn=Lunch');
     assert.throws(() => buildPayload({ type: 'upi', vpa: 'not-a-vpa', name: 'x' }), /UPI ID/);
     assert.throws(() => buildPayload({ type: 'upi', vpa: 'asha@ybl', name: 'x', amount: '-3' }), /amount/);
   });

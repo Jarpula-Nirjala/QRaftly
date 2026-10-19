@@ -89,15 +89,18 @@ export function buildPayload(d: PayloadData): string {
       return `WIFI:T:${d.security};S:${escField(d.ssid)};${pass}${d.hidden ? 'H:true;' : ''};`;
     }
     case 'upi': {
-      if (!/^[\w.\-]{2,256}@[a-zA-Z][a-zA-Z0-9.\-]{1,63}$/.test(d.vpa)) throw new Error('Enter a valid UPI ID, like name@bank.');
-      const q = new URLSearchParams({ pa: d.vpa, pn: d.name || d.vpa });
+      if (!/^[\w.\-]{2,256}@[a-zA-Z][a-zA-Z0-9.\-]{1,63}$/.test(d.vpa.trim())) throw new Error('Enter a valid UPI ID, like name@bank.');
+      const vpa = d.vpa.trim();
+      // The UPI ID goes in as-is: UPI apps expect a literal "@", and many reject "%40" as an invalid ID.
+      // It can only contain letters, digits, ".", "-", "_" and "@" (checked above), so nothing needs escaping.
+      const parts = [`pa=${vpa}`, `pn=${encodeURIComponent((d.name || vpa).trim())}`];
       if (d.amount) {
         if (!/^\d+(\.\d{1,2})?$/.test(d.amount) || Number(d.amount) <= 0) throw new Error('Enter the amount in rupees, like 250 or 99.50.');
-        q.set('am', Number(d.amount).toFixed(2));
+        parts.push(`am=${Number(d.amount).toFixed(2)}`);
       }
-      q.set('cu', 'INR');
-      if (d.note) q.set('tn', d.note.slice(0, 80));
-      return `upi://pay?${q.toString().replace(/\+/g, '%20')}`;
+      parts.push('cu=INR');
+      if (d.note) parts.push(`tn=${encodeURIComponent(d.note.slice(0, 80))}`);
+      return `upi://pay?${parts.join('&')}`;
     }
     case 'whatsapp': {
       const n = digits(d.phone).replace(/^\+/, '');
