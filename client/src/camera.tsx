@@ -17,6 +17,9 @@ export function Camera({ onResult, paused = false, repeatMs = 2500 }: { onResult
   const video = useRef<HTMLVideoElement>(null);
   const [error, setError] = useState('');
   const [facing, setFacing] = useState<'environment' | 'user'>('environment');
+  /** Bumped by "Turn on camera" to ask for the camera again. */
+  const [attempt, setAttempt] = useState(0);
+  const [starting, setStarting] = useState(false);
   const [box, setBox] = useState<string | null>(null);
   const cb = useRef(onResult);
   cb.current = onResult;
@@ -79,6 +82,7 @@ export function Camera({ onResult, paused = false, repeatMs = 2500 }: { onResult
         setError('This browser cannot open the camera here. Use HTTPS, or upload a photo of the code.');
         return;
       }
+      setStarting(true);
       try {
         stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: facing }, width: { ideal: 1280 }, height: { ideal: 720 } }, audio: false });
         if (stopped) return stream.getTracks().forEach((t) => t.stop());
@@ -89,6 +93,8 @@ export function Camera({ onResult, paused = false, repeatMs = 2500 }: { onResult
         tick();
       } catch (e) {
         setError((e as DOMException).name === 'NotAllowedError' ? 'Camera access was blocked. Allow it in the address bar, or upload a photo.' : 'No camera was found. You can upload a photo or type the code instead.');
+      } finally {
+        if (!stopped) setStarting(false);
       }
     })();
 
@@ -98,7 +104,7 @@ export function Camera({ onResult, paused = false, repeatMs = 2500 }: { onResult
       worker.terminate();
       stream?.getTracks().forEach((t) => t.stop());
     };
-  }, [facing, repeatMs]);
+  }, [facing, repeatMs, attempt]);
 
   return (
     <div className="stack" style={{ gap: 10 }}>
@@ -108,6 +114,10 @@ export function Camera({ onResult, paused = false, repeatMs = 2500 }: { onResult
             <div>
               <CameraIcon size={36} style={{ opacity: 0.6 }} />
               <p style={{ margin: '10px 0 0' }}>{error}</p>
+              <button type="button" className="btn primary sm" style={{ marginTop: 16 }} disabled={starting} onClick={() => setAttempt((a) => a + 1)}>
+                <CameraIcon size={16} /> {starting ? 'Asking for the camera…' : 'Turn on camera'}
+              </button>
+              {error.startsWith('Camera access was blocked') && <p className="small" style={{ margin: '10px 0 0', opacity: 0.75 }}>If nothing happens, click the camera icon in the address bar and choose “Allow”.</p>}
             </div>
           </div>
         ) : (

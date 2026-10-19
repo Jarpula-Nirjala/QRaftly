@@ -2131,3 +2131,15 @@ section[id],
     margin-right: 0;
   }
 }
+
+/* Light mode: soft white backing behind page headings on the background (e.g. Verify). */
+:root:not([data-theme='dark']) .bg-stage .page-head > div {
+  background: rgb(255 255 255 / 0.84);
+  box-shadow: 0 0 40px 30px rgb(255 255 255 / 0.84);
+  border-radius: 32px;
+}
+:root:not([data-theme='dark']) .bg-stage .page .studio > .stack {
+  background: rgb(255 255 255 / 0.8);
+  box-shadow: 0 0 36px 26px rgb(255 255 255 / 0.8);
+  border-radius: 28px;
+}
