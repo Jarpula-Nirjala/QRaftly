@@ -91,7 +91,7 @@ Where a palette colour would be too faint as text, a deeper or lighter shade of 
 
 **Every visual is built in code**, with no stock images or video files. The page includes:
 
-- the two hero scenes, and a fixed, animated backdrop below them: a corridor of light in light mode, and a gold-and-black wave artwork (drifting, with a light sweep, gold strands and glitter) in dark mode;
+- one fixed, animated page background per theme: in light mode, a corridor photograph that drifts towards its glowing doorway; in dark mode, a single scene from the top of the page down, near-black at the top and warming into brown, orange and gold as you scroll, over a gold-and-black wave artwork with a light sweep, gold strands and glitter. The lamp studio in the hero sits on the same background;
 - a phone and business card, an analytics monitor, a scan globe, styled codes on pedestals, a crystal shield, an event ticket, print sheets and product packaging;
 - an exploded view of a real symbol from the encoder;
 - floating glass cubes, and a tunnel call to action.

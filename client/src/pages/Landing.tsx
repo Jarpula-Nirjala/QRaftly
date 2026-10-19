@@ -80,6 +80,7 @@ export function Landing() {
   };
   return (
     <>
+      <BackdropStage>
       <section className="v-hero">
         <RibbonBackdrop className="only-light" />
         <LampScene className="only-dark lamps-desktop" />
@@ -121,7 +122,6 @@ export function Landing() {
         </div>
       </section>
 
-      <BackdropStage>
       <section id="generator" className="section">
         <div className="wrap" style={{ position: 'relative' }}>
           <div className="section-title">

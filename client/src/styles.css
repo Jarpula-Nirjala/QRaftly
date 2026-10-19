@@ -2024,3 +2024,8 @@ section[id],
   line-height: inherit;
   vertical-align: middle;
 }
+/* Dark header: a smoked-glass band over the page's black-to-gold background. */
+:root[data-theme='dark'] .header {
+  background: rgb(10 8 6 / 0.72);
+  border-bottom-color: rgb(212 175 101 / 0.12);
+}

@@ -199,7 +199,7 @@
   container-type: inline-size;
   overflow: hidden;
   z-index: 0;
-  background: radial-gradient(70% 80% at 55% 35%, #2a2723 0%, #161411 55%, #0c0b09 100%);
+  background: radial-gradient(55% 60% at 55% 40%, rgb(60 48 34 / 0.35), transparent 70%);
   -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 26%);
   mask-image: linear-gradient(90deg, transparent 0%, #000 26%);
 }
@@ -242,6 +242,9 @@
   bottom: -6%;
   display: flex;
   flex-direction: column;
+  /* The stone fades out downwards, so the pedestals melt into the page background instead of ending in an edge. */
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 26%, transparent 74%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 26%, transparent 74%);
 }
 .pedestal .ptop {
   position: relative;
@@ -470,12 +473,12 @@
   inset: 0;
   z-index: 4;
   pointer-events: none;
-  background: radial-gradient(90% 90% at 55% 40%, transparent 55%, rgb(0 0 0 / 0.55) 100%), linear-gradient(to top, #0c0b09 0%, transparent 18%);
+  background: none;
 }
 
 /* The hero in dark mode is the lamp studio: near-black, fading into espresso below. */
 :root[data-theme='dark'] .v-hero {
-  background: linear-gradient(180deg, #0c0b09 0%, #12100d 75%, var(--bg) 100%);
+  background: transparent;
   border-bottom-color: transparent;
 }
 :root[data-theme='dark'] .v-hero .v-hero-copy {

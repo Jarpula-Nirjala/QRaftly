@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactNode } from 'react';
+import { useEffect, useRef, type CSSProperties, type ReactNode } from 'react';
 import { useCanvas } from './scene.tsx';
 import './backdrop.css';
 
@@ -12,7 +12,7 @@ function Glitter() {
       const x = (r(0) * w + t * (4 + r(3) * 8)) % w;
       const y = (r(10) * h - t * (2 + r(7) * 5) + h * 2) % h;
       const twinkle = 0.5 + 0.5 * Math.sin(t * (1.2 + r(13) * 2.4) + i);
-      const a = (0.15 + r(5) * 0.55) * twinkle;
+      const a = (0.12 + r(5) * 0.5) * twinkle;
       const s = 0.6 + r(17) * 1.6;
       ctx.fillStyle = `rgba(246, 214, 150, ${a})`;
       ctx.beginPath();
@@ -34,12 +34,19 @@ function Glitter() {
   return <canvas ref={ref} className="gw-glitter" />;
 }
 
-/** Your white, gold and black waves, darkened for the dark theme and brought to life. */
+/**
+ * The dark theme's one background, for the whole page: near-black at the top that warms into espresso and
+ * brown as you scroll, with the white-gold-black wave artwork, orange and gold light, gold strands and dust.
+ */
 function GoldWaves() {
   return (
     <div className="gw only-dark">
       <div className="gw-img" />
-      <div className="gw-veil" />
+      <div className="gw-veil black" />
+      <div className="gw-veil warm" />
+      <div className="gw-glow g1" />
+      <div className="gw-glow g2" />
+      <div className="gw-glow g3" />
       <svg className="gw-strands" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
         <defs>
           <linearGradient id="gwStrand" x1="0" x2="1">
@@ -58,34 +65,45 @@ function GoldWaves() {
   );
 }
 
-/** The bright corridor: white arches receding to a glowing doorway, glass walls with blue light, a glossy floor. */
+/** Your corridor of light, drifting slowly towards its glowing doorway (light theme). */
 function Corridor() {
   return (
     <div className="co only-light">
-      <div className="co-ceil" />
-      <div className="co-floor">
-        <div className="co-lines" />
-      </div>
-      <div className="co-end" />
-      {Array.from({ length: 10 }, (_, i) => (
-        <div key={i} className="co-frame" style={{ animationDelay: `${-i * 2.8}s`, '--k': (0.08 + i * 0.16).toFixed(2) } as CSSProperties} />
-      ))}
-      <div className="co-wall left" />
-      <div className="co-wall right" />
-      <div className="co-seam left" />
-      <div className="co-seam right" />
+      <div className="co-img" />
+      <div className="co-door" />
+      <div className="co-sheen" />
       <div className="co-veil" />
     </div>
   );
 }
 
 /**
- * Everything inside scrolls over one fixed background: the corridor in light mode, the gold waves in dark mode.
- * The layer is sticky to the viewport but only within this block, so the hero above keeps its own scene.
+ * One fixed background behind everything inside. In dark mode it also tracks how far the page has scrolled
+ * (--sp, 0 at the top to 1 a screen and a half down), which warms it from black to brown.
  */
 export function BackdropStage({ children }: { children: ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const sp = Math.min(1, window.scrollY / (window.innerHeight * 1.5));
+      ref.current?.style.setProperty('--sp', sp.toFixed(3));
+    };
+    const on = () => {
+      if (!raf) raf = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener('scroll', on, { passive: true });
+    window.addEventListener('resize', on);
+    return () => {
+      window.removeEventListener('scroll', on);
+      window.removeEventListener('resize', on);
+      cancelAnimationFrame(raf);
+    };
+  }, []);
   return (
-    <div className="bg-stage">
+    <div ref={ref} className="bg-stage" style={{ '--sp': 0 } as CSSProperties}>
       <div className="bg-layer" aria-hidden="true">
         <Corridor />
         <GoldWaves />
