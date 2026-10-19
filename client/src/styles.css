@@ -2156,11 +2156,13 @@ section[id],
   position: fixed;
   inset: 0;
   z-index: -1;
-  background:
-    linear-gradient(100deg, rgb(8 16 36 / 0.25) 0%, rgb(8 16 36 / 0.55) 55%, rgb(8 16 36 / 0.82) 100%),
-    var(--auth-photo, radial-gradient(80% 90% at 20% 60%, #1c2f57 0%, #0d1730 55%, #070d1d 100%));
-  background-size: cover;
-  background-position: center;
+  /* The blue smoke photograph, sharp and unfiltered: landscape on wide screens, upright on phones. */
+  background: #dceaf6 url('/bg/signin.jpg') center / cover no-repeat;
+}
+@media (max-aspect-ratio: 1/1) {
+  .auth::before {
+    background-image: url('/bg/signin-portrait.jpg');
+  }
 }
 .auth .card {
   background: rgb(16 28 56 / 0.72);
