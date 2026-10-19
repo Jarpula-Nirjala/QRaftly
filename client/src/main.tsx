@@ -3,7 +3,8 @@ import { createRoot } from 'react-dom/client';
 import { AuthProvider, useAuth } from './auth.tsx';
 import { match, navigate, scrollToHash, useLocation } from './router.tsx';
 import { BackBar, Footer, Header, Loading, ToastProvider } from './ui.tsx';
-import { AuthPage } from './pages/Auth.tsx';
+import { AccountPage } from './pages/Account.tsx';
+import { AuthPage, ForgotPage, ResetPage } from './pages/Auth.tsx';
 import { BulkPage } from './pages/Bulk.tsx';
 import { CertificatesPage, VerifyPage } from './pages/Certificates.tsx';
 import { Dashboard } from './pages/Dashboard.tsx';
@@ -93,6 +94,8 @@ function Routes() {
     } else page = <Landing />;
   } else if (Explore) page = <Explore />;
   else if (path === '/signin' || path === '/signup') page = <AuthPage key={path} mode={path === '/signin' ? 'signin' : 'signup'} />;
+  else if (path === '/forgot') page = <ForgotPage />;
+  else if (path === '/reset') page = <ResetPage />;
   else if (path === '/verify') (page = <BackdropStage><VerifyPage /></BackdropStage>), (footer = true);
   else if ((m = match('/v/:payload', path))) (page = <BackdropStage><VerifyPage initial={location.href} /></BackdropStage>), (footer = true);
   else if (path === '/app') page = <Private><Dashboard /></Private>;
@@ -108,6 +111,7 @@ function Routes() {
   else if (path === '/app/queues') page = <Private><QueueList /></Private>;
   else if ((m = match('/app/queues/:id', path))) page = <Private><QueueDesk key={m.id} id={m.id} /></Private>;
   else if (path === '/app/keys') page = <Private><KeysPage /></Private>;
+  else if (path === '/app/account') page = <Private><AccountPage /></Private>;
   else
     page = (
       <div className="page wrap empty">
@@ -119,7 +123,7 @@ function Routes() {
   return (
     <>
       <Header />
-      {path !== '/' && path !== '/signin' && path !== '/signup' && <BackBar />}
+      {!['/', '/signin', '/signup', '/forgot', '/reset'].includes(path) && <BackBar />}
       <main>
         <Suspense fallback={<Loading />}>{page}</Suspense>
       </main>

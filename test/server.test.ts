@@ -3,6 +3,7 @@ import { after, before, describe, it } from 'node:test';
 import jsQRModule from 'jsqr';
 import { PNG } from 'pngjs';
 import { startServer, type RunningServer } from '../server/app.ts';
+import { outbox } from '../server/mail.ts';
 
 const jsQR = jsQRModule as unknown as (d: Uint8ClampedArray, w: number, h: number) => { data: string } | null;
 const IPHONE = 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1';
@@ -53,6 +54,44 @@ describe('QRaftly server', () => {
     assert.equal(out.status, 200);
     assert.equal((await api('/api/auth/me', { as: s.cookie })).json.user, null);
     assert.equal((await api('/api/qrs', { as: '' })).status, 401);
+  });
+
+  it('accounts: forgotten password, changing email and password, Google off without keys', async () => {
+    const m = (await api('/api/auth/signup', { body: { name: 'Meera', email: 'meera@example.com', password: 'password123' }, as: '' })).cookie!;
+    const second = (await api('/api/auth/signin', { body: { email: 'meera@example.com', password: 'password123' }, as: '' })).cookie!;
+    // The answer never says whether the email has an account.
+    assert.deepEqual((await api('/api/auth/forgot', { body: { email: 'nobody@example.com' }, as: '' })).json, { ok: true, delivery: 'log' });
+    outbox.length = 0;
+    assert.equal((await api('/api/auth/forgot', { body: { email: 'Meera@example.com' }, as: '' })).status, 200);
+    const token = /reset\?token=([\w-]+)/.exec(outbox[0]?.text ?? '')?.[1];
+    assert.ok(token, 'reset link in the email');
+    assert.equal(outbox[0].to, 'meera@example.com');
+    assert.equal((await api('/api/auth/reset', { body: { token: 'wrong', password: 'brand-new-pass' }, as: '' })).status, 400);
+    const reset = await api('/api/auth/reset', { body: { token, password: 'brand-new-pass' }, as: '' });
+    assert.equal(reset.status, 200);
+    assert.equal(reset.json.user.email, 'meera@example.com');
+    // A link works once, and the reset signed out the older sessions.
+    assert.equal((await api('/api/auth/reset', { body: { token, password: 'another-pass' }, as: '' })).status, 400);
+    assert.equal((await api('/api/auth/me', { as: m })).json.user, null);
+    assert.equal((await api('/api/auth/me', { as: second })).json.user, null);
+    assert.equal((await api('/api/auth/signin', { body: { email: 'meera@example.com', password: 'password123' }, as: '' })).status, 401);
+    const me = reset.cookie!;
+
+    const acc = await api('/api/auth/account', { as: me });
+    assert.deepEqual([acc.json.hasPassword, acc.json.google], [true, false]);
+    assert.equal((await api('/api/auth/account', { method: 'PATCH', body: { email: 'meera.k@example.com', currentPassword: 'wrong' }, as: me })).status, 403);
+    assert.equal((await api('/api/auth/account', { method: 'PATCH', body: { email: 'ravi@example.com', currentPassword: 'brand-new-pass' }, as: me })).status, 409);
+    const changed = await api('/api/auth/account', { method: 'PATCH', body: { name: 'Meera K', email: 'Meera.K@example.com', currentPassword: 'brand-new-pass' }, as: me });
+    assert.equal(changed.status, 200);
+    assert.deepEqual(changed.json.user, { id: acc.json.user.id, name: 'Meera K', email: 'meera.k@example.com' });
+    assert.equal((await api('/api/auth/account', { method: 'PATCH', body: { password: 'final-password', currentPassword: 'brand-new-pass' }, as: me })).status, 200);
+    assert.equal((await api('/api/auth/me', { as: me })).json.user.email, 'meera.k@example.com', 'this device stays signed in');
+    assert.equal((await api('/api/auth/signin', { body: { email: 'meera.k@example.com', password: 'final-password' }, as: '' })).status, 200);
+
+    assert.deepEqual((await api('/api/auth/providers', { as: '' })).json, { google: false, email: false });
+    const g = await api('/api/auth/oauth/google', { as: '' });
+    assert.equal(g.status, 302);
+    assert.match(g.location!, /^\/signin\?error=/);
   });
 
   it('static codes store the payload and validate it', async () => {

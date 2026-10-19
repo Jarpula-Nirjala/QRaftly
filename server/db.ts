@@ -222,6 +222,14 @@ const MIGRATIONS: string[] = [
      created_at double precision not null,
      last_used_at double precision
    );`,
+  // Google sign-in (an account made with Google has an empty password_hash) and password reset links.
+  `alter table users add column google_sub text unique;
+   create table password_resets (
+     token_hash text primary key,
+     user_id text not null references users(id) on delete cascade,
+     expires_at double precision not null,
+     used boolean not null default false
+   );`,
 ];
 
 async function migrate(db: Db): Promise<void> {

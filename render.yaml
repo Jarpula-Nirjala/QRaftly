@@ -19,3 +19,14 @@ services:
       # Signs tickets, unlock links and visitor ids. Keep it fixed: changing it invalidates issued tickets.
       - key: HMAC_SECRET
         generateValue: true
+      # Optional: "Continue with Google". Create an OAuth client (Web application) in Google Cloud and add the
+      # redirect URI <PUBLIC_URL>/api/auth/oauth/google/callback. Without these the button explains it is off.
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      # Optional: emails password reset links through Resend (resend.com). Without it the link goes to the log.
+      - key: RESEND_API_KEY
+        sync: false
+      - key: MAIL_FROM
+        sync: false

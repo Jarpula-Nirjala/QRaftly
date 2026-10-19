@@ -2223,3 +2223,104 @@ section[id],
     place-items: center;
   }
 }
+
+/* ------------------------------------------------------------ password eye, Google button, account settings */
+.pw-wrap {
+  position: relative;
+  display: block;
+}
+.pw-wrap .input {
+  width: 100%;
+  padding-right: 46px;
+}
+.pw-eye {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  opacity: 0.7;
+  cursor: pointer;
+}
+.pw-eye:hover,
+.pw-eye:focus-visible {
+  opacity: 1;
+  background: rgb(127 127 127 / 0.16);
+}
+.btn.google-btn {
+  width: 100%;
+  justify-content: center;
+  background: #ffffff;
+  color: #1f1f1f;
+  border: 1px solid #dadce0;
+  font-weight: 600;
+}
+.btn.google-btn:hover {
+  background: #f4f6fa;
+}
+.auth-or {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  opacity: 0.75;
+}
+.auth-or::before,
+.auth-or::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.35;
+}
+.btn.auth-create {
+  width: 100%;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid #f0cf7f;
+  color: #f0cf7f !important;
+  text-decoration: none;
+}
+.btn.auth-create:hover {
+  background: rgb(240 207 127 / 0.12);
+}
+.linkish {
+  border: 0;
+  padding: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.auth .card .linkish {
+  color: #f0cf7f;
+}
+.account {
+  display: grid;
+  gap: 20px;
+  max-width: 640px;
+}
+.account .card {
+  padding: 24px;
+}
+.account .card > .btn {
+  justify-self: start;
+}
+.acc-h {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+}
+.btn.acc-link {
+  text-decoration: none;
+  gap: 8px;
+}

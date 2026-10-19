@@ -106,7 +106,11 @@ try {
   await ctx.clearCookies();
   await page.goto(`${BASE}/signin`, { waitUntil: 'domcontentloaded' });
   await page.getByLabel('Email').fill(email);
-  await page.getByLabel('Password').fill('password123');
+  await page.getByLabel('Password', { exact: true }).fill('password123');
+  // The eye button shows the typed password, and hides it again.
+  await page.getByRole('button', { name: 'Show password' }).click();
+  assert.equal(await page.getByLabel('Password', { exact: true }).getAttribute('type'), 'text');
+  await page.getByRole('button', { name: 'Hide password' }).click();
   await page.getByRole('button', { name: 'Sign in' }).click();
   await page.waitForURL(`${BASE}/app`);
   await page.getByRole('heading', { name: 'Your codes' }).waitFor();

@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useId, useState, type CSSProperties, type ReactNode } from 'react';
-import { AlertCircle, ArrowLeft, CalendarCheck, ChevronDown, Files, Home, KeyRound, LayoutGrid, Loader2, LogOut, Menu, MessageSquareHeart, Moon, ScrollText, Sun, Ticket, X } from 'lucide-react';
+import { AlertCircle, ArrowLeft, CalendarCheck, ChevronDown, Files, Home, KeyRound, LayoutGrid, Loader2, LogOut, Menu, MessageSquareHeart, Moon, ScrollText, Sun, Ticket, UserRound, X } from 'lucide-react';
 import { EXPLORE } from './explore.ts';
 import { useAuth } from './auth.tsx';
 import { goBack, Link, navigate, useLocation } from './router.tsx';
@@ -247,6 +247,9 @@ export function Header() {
                 <Link to="/app/keys">
                   <KeyRound size={16} /> API keys
                 </Link>
+                <Link to="/app/account">
+                  <UserRound size={16} /> Your account
+                </Link>
                 <hr />
                 {explore}
               </DropMenu>
@@ -269,7 +272,9 @@ export function Header() {
           </button>
           {user ? (
             <>
-              <span className="muted hide-sm">{user.name}</span>
+              <Link to="/app/account" className="btn ghost hide-sm acc-link" title="Your account: name, email, password">
+                <UserRound size={17} /> {user.name}
+              </Link>
               <button
                 className="btn ghost icon"
                 title="Sign out"
