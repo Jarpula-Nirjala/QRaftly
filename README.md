@@ -56,6 +56,20 @@ server/
 - **Camera decoder benchmark** (`node bench/decoder-sweep.ts`): 200 synthetic photos with random rotation, strong perspective, blur, noise and shadow. QRForge reads **89%**; jsQR reads 44% of the same frames, at about 15 ms per 640×480 frame.
 - **Print output.** Printed PDF sheets were rasterised and every code decoded with OpenCV.
 
+## Visual design
+
+The site uses a white studio look: frosted glass, ceramic, paper and brushed metal, in navy with electric-blue and cyan accents. Every visual is built in code, with no stock images or video files:
+
+- **Hero:** a glass scanner holding a real code under a moving scan beam, with drifting daylight and data particles.
+- **Generator band:** a "QR universe" of modules.
+- **Mockups:** a phone and business card, an analytics monitor, a scan globe, styled codes on pedestals, a crystal shield, an event ticket, print sheets and product packaging.
+- **The engine section:** an exploded view of a real symbol from the encoder.
+- **Closing sections:** floating glass cubes and a tunnel call to action.
+
+The codes in the mockups are real and pass the same scan check as the studio, and the browser test decodes them from screenshots. Patterns that are only decorative are random, so they cannot be scanned. Animations are slow, pause when off-screen, and stop for visitors who prefer reduced motion. Everything scales down to phone width without sideways scrolling.
+
+The logo is a finder-pattern square with a doorway in its right wall, and one blue module stepping through it from the physical code into the digital world. It is flat, two colours and legible at 16 px.
+
 ## Run it
 
 ```bash

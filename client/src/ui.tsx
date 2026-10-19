@@ -5,18 +5,19 @@ import { Link, navigate, useLocation } from './router.tsx';
 
 // ------------------------------------------------------------ brand
 
-export function BrandMark({ size = 30 }: { size?: number }) {
+/**
+ * The QRForge mark: a finder-pattern square with a doorway in its right wall, and one module stepping
+ * through it from the physical code into the digital world. Flat, two colours, legible at 16 px.
+ */
+export const BRAND_SVG = (ink = '#0b1530', accent = '#2563eb') =>
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M21 13V8H5v16h16v-5" fill="none" stroke="${ink}" stroke-width="4"/><rect x="9" y="13" width="6" height="6" fill="${ink}"/><rect x="24" y="13" width="6" height="6" fill="${accent}"/></svg>`;
+
+export function BrandMark({ size = 30, mono = false }: { size?: number; mono?: boolean }) {
   return (
     <svg className="brand-mark" width={size} height={size} viewBox="0 0 32 32" aria-hidden="true">
-      <defs>
-        <linearGradient id="bm" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#4f46e5" />
-          <stop offset="1" stopColor="#9333ea" />
-        </linearGradient>
-      </defs>
-      <rect width="32" height="32" rx="8" fill="url(#bm)" />
-      <path fill="none" stroke="#fff" strokeWidth="2.6" d="M7.3 7.3h7v7h-7zM17.7 7.3h7v7h-7zM7.3 17.7h7v7h-7z" />
-      <path fill="#fff" d="M9.8 9.8h2v2h-2zM20.2 9.8h2v2h-2zM9.8 20.2h2v2h-2zM17.5 17.5h3v3h-3zM21.5 21.5h3v3h-3zM21.5 17.5h3v2.2h-3zM17.5 21.8h2.2v2.7h-2.2z" />
+      <path d="M21 13V8H5v16h16v-5" fill="none" stroke="var(--navy)" strokeWidth="4" />
+      <rect x="9" y="13" width="6" height="6" fill="var(--navy)" />
+      <rect x="24" y="13" width="6" height="6" fill={mono ? 'var(--navy)' : 'var(--accent)'} className="brand-step" />
     </svg>
   );
 }
@@ -71,8 +72,8 @@ export const Spinner = ({ size = 18 }: { size?: number }) => <Loader2 size={size
 export function Loading({ label = 'Loading…' }: { label?: string }) {
   return (
     <div className="center-load">
-      <div className="row">
-        <Spinner /> {label}
+      <div className="row brand-loading" role="status">
+        <BrandMark size={28} /> {label}
       </div>
     </div>
   );
@@ -120,7 +121,7 @@ export function Segmented<T extends string>({ value, options, onChange, label }:
 }
 
 export function useTheme() {
-  const [dark, setDark] = useState(() => document.documentElement.dataset.theme === 'dark' || (!document.documentElement.dataset.theme && matchMedia('(prefers-color-scheme: dark)').matches));
+  const [dark, setDark] = useState(() => document.documentElement.dataset.theme === 'dark');
   const toggle = () => {
     const next = !dark;
     setDark(next);

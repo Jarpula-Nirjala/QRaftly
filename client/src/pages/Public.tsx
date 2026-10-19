@@ -69,11 +69,11 @@ export function ProfilePage({ slug }: { slug: string }) {
   if (!data) return <Shell><Spinner /></Shell>;
   const p = data.data;
   const name = [p.firstName, p.lastName].filter(Boolean).join(' ');
-  const accent = p.accent ?? '#4338ca';
+  const accent = p.accent ?? '#2563eb';
   return (
     <Shell>
       <div className="sheet">
-        <div className="band" style={{ background: `linear-gradient(135deg, ${accent}, color-mix(in srgb, ${accent} 55%, #db2777))` }} />
+        <div className="band" style={{ background: `linear-gradient(135deg, ${accent}, color-mix(in srgb, ${accent} 55%, #06b6d4))` }} />
         <div className="body">
           {p.avatar ? <img className="avatar" src={p.avatar} alt="" /> : <div className="avatar">{p.firstName?.[0]}</div>}
           <h1 style={{ fontSize: 26, margin: '12px 0 2px' }}>{name}</h1>

@@ -225,7 +225,7 @@ export function DesignPanel({ design, onChange, onError }: { design: Design; onC
         </Field>
         <Field label="Gradient to">
           <div className="row" style={{ flexWrap: 'nowrap' }}>
-            {design.fg2 ? <ColorInput label="Gradient colour" value={design.fg2} onChange={(fg2) => set({ fg2 })} /> : <button type="button" className="btn sm" onClick={() => set({ fg2: '#db2777' })}>Add gradient</button>}
+            {design.fg2 ? <ColorInput label="Gradient colour" value={design.fg2} onChange={(fg2) => set({ fg2 })} /> : <button type="button" className="btn sm" onClick={() => set({ fg2: '#06b6d4' })}>Add gradient</button>}
             {design.fg2 && (
               <button type="button" className="btn ghost icon sm" aria-label="Remove gradient" onClick={() => set({ fg2: null })}>
                 <XCircle size={16} />
@@ -235,7 +235,7 @@ export function DesignPanel({ design, onChange, onError }: { design: Design; onC
         </Field>
         <Field label="Eyes">
           <div className="row" style={{ flexWrap: 'nowrap' }}>
-            {design.eyeColor ? <ColorInput label="Eye colour" value={design.eyeColor} onChange={(eyeColor) => set({ eyeColor })} /> : <button type="button" className="btn sm" onClick={() => set({ eyeColor: '#db2777' })}>Own colour</button>}
+            {design.eyeColor ? <ColorInput label="Eye colour" value={design.eyeColor} onChange={(eyeColor) => set({ eyeColor })} /> : <button type="button" className="btn sm" onClick={() => set({ eyeColor: '#2563eb' })}>Own colour</button>}
             {design.eyeColor && (
               <button type="button" className="btn ghost icon sm" aria-label="Same colour as dots" onClick={() => set({ eyeColor: null })}>
                 <XCircle size={16} />

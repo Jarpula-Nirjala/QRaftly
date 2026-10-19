@@ -95,7 +95,7 @@ function cleanData(kind: Kind, type: QrType, raw: unknown): Record<string, unkno
           })
         : [];
       const avatar = typeof o.avatar === 'string' && o.avatar.length < 250_000 && DATA_URL.test(o.avatar) ? o.avatar : undefined;
-      return { ...c, bio: s(o, 'bio', 500), links, avatar, accent: typeof o.accent === 'string' && COLOR.test(o.accent) ? o.accent : '#1f3a68' };
+      return { ...c, bio: s(o, 'bio', 500), links, avatar, accent: typeof o.accent === 'string' && COLOR.test(o.accent) ? o.accent : '#2563eb' };
     }
     if (kind === 'medical') {
       const pub = cleanMedical((o.public ?? {}) as Record<string, unknown>);

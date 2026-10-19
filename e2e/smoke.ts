@@ -10,6 +10,8 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { chromium, type Page } from 'playwright-core';
+import { PNG } from 'pngjs';
+import { scanImage } from '../shared/qr/detect.ts';
 import { encodeText } from '../shared/qr/encode.ts';
 
 const BASE = process.env.BASE ?? 'http://localhost:3100';
@@ -81,6 +83,16 @@ try {
   await page.locator('.preview .qr svg').waitFor();
   await page.getByText('Safe to print').waitFor();
   await shot(page, '01-landing');
+  // The codes drawn inside the home page's mockups must really scan (decoded from the rendered pixels).
+  let scannable = 0;
+  for (const stage of await page.locator('.v-scene, .v-stage').all()) {
+    await stage.scrollIntoViewIfNeeded();
+    await page.waitForTimeout(300);
+    const png = PNG.sync.read(await stage.screenshot());
+    if (scanImage(png.data, png.width, png.height)?.text === BASE) scannable++;
+  }
+  assert.ok(scannable >= 6, `only ${scannable} mockup codes scanned`);
+  await page.evaluate(() => scrollTo(0, 0));
   await page.getByRole('button', { name: 'Wi-Fi' }).click();
   await page.getByLabel('Network name (SSID)').fill('Home-WiFi');
   await page.getByLabel('Password').fill('secret123');

@@ -1,85 +1,65 @@
 :root {
-  --bg: #f6f7fb;
+  --bg: #ffffff;
   --surface: #ffffff;
-  --surface-2: #f1f2f8;
-  --ink: #141622;
-  --ink-2: #464b5e;
-  --muted: #6c7287;
-  --line: #e2e4ee;
-  --line-2: #cfd3e1;
-  --accent: #4338ca;
-  --accent-hover: #3730a3;
+  --surface-2: #f4f6fa;
+  --ink: #0b1530;
+  --ink-2: #3d4863;
+  --muted: #6b7590;
+  --line: #e6e9f0;
+  --line-2: #d3d9e4;
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
   --accent-ink: #ffffff;
-  --accent-soft: #eceefe;
-  --accent-text: #3730a3;
+  --accent-soft: #edf3ff;
+  --accent-text: #1d4ed8;
+  --cyan: #06b6d4;
+  --navy: #0b1530;
+  --pearl: #f3f5f9;
+  --silver: #c9d1dd;
   --good: #15803d;
   --good-soft: #e7f6ec;
   --warn: #a15c07;
   --warn-soft: #fdf3e2;
   --bad: #b42318;
   --bad-soft: #fdecea;
-  --chart: #4f46e5;
-  --chart-2: #a5b4fc;
-  --grid: #eceef4;
-  --shadow: 0 1px 2px rgb(20 22 34 / 0.05), 0 4px 16px rgb(20 22 34 / 0.06);
-  --shadow-lg: 0 12px 40px rgb(20 22 34 / 0.14);
+  --chart: #2563eb;
+  --chart-2: #93c5fd;
+  --grid: #edf0f5;
+  --shadow: 0 1px 2px rgb(11 21 48 / 0.04), 0 6px 20px rgb(11 21 48 / 0.06);
+  --shadow-lg: 0 18px 50px rgb(11 21 48 / 0.12);
   --radius: 12px;
   --radius-sm: 8px;
   color-scheme: light;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) {
-    --bg: #0d0f16;
-    --surface: #151821;
-    --surface-2: #1c202b;
-    --ink: #eceef6;
-    --ink-2: #b9bed0;
-    --muted: #8b91a7;
-    --line: #262b38;
-    --line-2: #343a4b;
-    --accent: #7c83ff;
-    --accent-hover: #959bff;
-    --accent-ink: #0d0f16;
-    --accent-soft: #22254a;
-    --accent-text: #aab0ff;
-    --good: #4ade80;
-    --good-soft: #12301f;
-    --warn: #fbbf24;
-    --warn-soft: #3a2a0a;
-    --bad: #f87171;
-    --bad-soft: #3b1414;
-    --chart: #7c83ff;
-    --chart-2: #4b4f8f;
-    --grid: #232735;
-    --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 4px 16px rgb(0 0 0 / 0.3);
-    --shadow-lg: 0 12px 40px rgb(0 0 0 / 0.5);
-    color-scheme: dark;
-  }
-}
+/* The site is white for everyone; dark is only used when chosen with the theme button. */
 :root[data-theme='dark'] {
-  --bg: #0d0f16;
-  --surface: #151821;
-  --surface-2: #1c202b;
-  --ink: #eceef6;
-  --ink-2: #b9bed0;
-  --muted: #8b91a7;
-  --line: #262b38;
-  --line-2: #343a4b;
-  --accent: #7c83ff;
-  --accent-hover: #959bff;
-  --accent-ink: #0d0f16;
-  --accent-soft: #22254a;
-  --accent-text: #aab0ff;
+  --bg: #0b1020;
+  --surface: #121826;
+  --surface-2: #1a2132;
+  --ink: #eef1f8;
+  --ink-2: #b9c1d6;
+  --muted: #8a93ab;
+  --line: #242c3e;
+  --line-2: #323b51;
+  --accent: #5b8cff;
+  --accent-hover: #7aa2ff;
+  --accent-ink: #0b1020;
+  --accent-soft: #1b2748;
+  --accent-text: #9db9ff;
+  --cyan: #22d3ee;
+  --navy: #eef1f8;
+  --pearl: #161d2c;
+  --silver: #3a445c;
   --good: #4ade80;
   --good-soft: #12301f;
   --warn: #fbbf24;
   --warn-soft: #3a2a0a;
   --bad: #f87171;
   --bad-soft: #3b1414;
-  --chart: #7c83ff;
-  --chart-2: #4b4f8f;
-  --grid: #232735;
+  --chart: #5b8cff;
+  --chart-2: #2b3d6b;
+  --grid: #1f2738;
   --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 4px 16px rgb(0 0 0 / 0.3);
   --shadow-lg: 0 12px 40px rgb(0 0 0 / 0.5);
   color-scheme: dark;
@@ -861,7 +841,7 @@ table.table {
 }
 .hero h1 em {
   font-style: normal;
-  background: linear-gradient(100deg, var(--accent), #db2777);
+  background: linear-gradient(100deg, var(--accent), var(--cyan));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -904,7 +884,7 @@ table.table {
 .features {
   display: grid;
   gap: 16px;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 460px), 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 210px), 1fr));
 }
 .feature {
   padding: 22px;
@@ -979,7 +959,7 @@ table.table {
   text-align: center;
   padding: 44px 24px;
   border-radius: 18px;
-  background: linear-gradient(135deg, var(--accent), #7c3aed 60%, #db2777);
+  background: linear-gradient(135deg, #0b1530, var(--accent) 60%, var(--cyan));
   color: #fff;
 }
 .cta h2 {
@@ -992,7 +972,7 @@ table.table {
 }
 .cta .btn {
   background: #fff;
-  color: #312e81;
+  color: #0b1530;
   border-color: #fff;
 }
 
@@ -1391,7 +1371,7 @@ table.table {
 }
 .ticket .top {
   padding: 22px 24px;
-  background: linear-gradient(135deg, var(--accent), #7c3aed);
+  background: linear-gradient(135deg, #0b1530, var(--accent));
   color: #fff;
 }
 .ticket .perf {
@@ -1570,5 +1550,15 @@ table.table {
     border: 0;
     box-shadow: none;
     padding: 0;
+  }
+}
+
+/* Loading symbol: the brand's module steps out through the doorway and back. */
+.brand-loading .brand-step {
+  animation: brand-step 1.1s ease-in-out infinite alternate;
+}
+@keyframes brand-step {
+  from {
+    transform: translateX(-9px);
   }
 }
