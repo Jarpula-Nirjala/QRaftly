@@ -1,7 +1,8 @@
 import { createContext, useCallback, useContext, useEffect, useId, useState, type CSSProperties, type ReactNode } from 'react';
-import { AlertCircle, CalendarCheck, Files, LayoutGrid, Loader2, LogOut, Menu, Moon, ScrollText, Sun, X } from 'lucide-react';
+import { AlertCircle, ArrowLeft, CalendarCheck, ChevronDown, Files, KeyRound, LayoutGrid, Loader2, LogOut, Menu, MessageSquareHeart, Moon, ScrollText, Sun, Ticket, X } from 'lucide-react';
+import { EXPLORE } from './explore.ts';
 import { useAuth } from './auth.tsx';
-import { Link, navigate, useLocation } from './router.tsx';
+import { goBack, Link, navigate, useLocation } from './router.tsx';
 
 // ------------------------------------------------------------ brand
 
@@ -161,7 +162,7 @@ export function Segmented<T extends string>({ value, options, onChange, label }:
 }
 
 export function useTheme() {
-  const [dark, setDark] = useState(() => document.documentElement.dataset.theme === 'dark');
+  const [dark, setDark] = useState(() => document.documentElement.dataset.theme !== 'light');
   const toggle = () => {
     const next = !dark;
     setDark(next);
@@ -188,6 +189,27 @@ const APP_NAV = [
   { to: '/app/bulk', label: 'Bulk', icon: Files },
 ];
 
+/** A small dropdown menu for the header (closes on navigation and on outside clicks). */
+function DropMenu({ label, children }: { label: string; children: ReactNode }) {
+  const [open, setOpen] = useState(false);
+  const { path } = useLocation();
+  useEffect(() => setOpen(false), [path]);
+  useEffect(() => {
+    if (!open) return;
+    const close = (e: MouseEvent) => !(e.target as HTMLElement).closest?.('.dd') && setOpen(false);
+    document.addEventListener('click', close);
+    return () => document.removeEventListener('click', close);
+  }, [open]);
+  return (
+    <div className={open ? 'dd open' : 'dd'}>
+      <button type="button" className="dd-btn" aria-expanded={open} onClick={() => setOpen(!open)}>
+        {label} <ChevronDown size={15} />
+      </button>
+      <div className="dd-panel">{children}</div>
+    </div>
+  );
+}
+
 export function Header() {
   const { user, signOut } = useAuth();
   const { path } = useLocation();
@@ -195,33 +217,53 @@ export function Header() {
   const [open, setOpen] = useState(false);
   useEffect(() => setOpen(false), [path]);
   const on = (to: string) => (to === '/app' ? path === '/app' || path.startsWith('/app/qr') || path.startsWith('/app/new') : path.startsWith(to));
+  const explore = EXPLORE.map(({ to, title, icon: Icon }) => (
+    <Link key={to} to={to} className={path === to ? 'on' : ''}>
+      <Icon size={16} /> {title}
+    </Link>
+  ));
   return (
     <header className="header">
       <div className="wrap">
         <Brand />
-        <nav className={`nav${open ? ' open' : ''}`} aria-label="Main">
+        <nav className={open ? 'nav open' : 'nav'} aria-label="Main">
           {user ? (
-            APP_NAV.map(({ to, label, icon: Icon }) => (
-              <Link key={to} to={to} className={on(to) ? 'on' : ''}>
-                <Icon size={16} /> {label}
-              </Link>
-            ))
+            <>
+              {APP_NAV.map(({ to, label, icon: Icon }) => (
+                <Link key={to} to={to} className={on(to) ? 'on' : ''}>
+                  <Icon size={16} /> {label}
+                </Link>
+              ))}
+              <DropMenu label="More">
+                <Link to="/app/feedback">
+                  <MessageSquareHeart size={16} /> Feedback forms
+                </Link>
+                <Link to="/app/queues">
+                  <Ticket size={16} /> Queue tickets
+                </Link>
+                <Link to="/app/keys">
+                  <KeyRound size={16} /> API keys
+                </Link>
+                <hr />
+                {explore}
+              </DropMenu>
+            </>
           ) : (
             <>
-              <Link to="/#generator">Generator</Link>
               <Link to="/#features">Features</Link>
-              <Link to="/#engine">How it works</Link>
-              <Link to="/verify">Verify a certificate</Link>
+              <Link to="/#how">How it works</Link>
+              <DropMenu label="Explore">{explore}</DropMenu>
+              <Link to="/verify">Verify</Link>
             </>
           )}
         </nav>
         <div className="header-end">
           <button className="btn ghost icon" onClick={toggle} aria-label={dark ? 'Use light theme' : 'Use dark theme'} title={dark ? 'Light theme' : 'Dark theme'}>
-            {dark ? <Sun size={18} /> : <Moon size={18} />}
+            {dark ? <Sun size={19} /> : <Moon size={19} />}
           </button>
           {user ? (
             <>
-              <span className="muted small hide-sm">{user.name}</span>
+              <span className="muted hide-sm">{user.name}</span>
               <button
                 className="btn ghost icon"
                 title="Sign out"
@@ -231,7 +273,7 @@ export function Header() {
                   navigate('/');
                 }}
               >
-                <LogOut size={18} />
+                <LogOut size={19} />
               </button>
             </>
           ) : (
@@ -245,11 +287,22 @@ export function Header() {
             </>
           )}
           <button className="btn ghost icon menu-btn" onClick={() => setOpen(!open)} aria-label="Menu" aria-expanded={open}>
-            {open ? <X size={19} /> : <Menu size={19} />}
+            {open ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
       </div>
     </header>
+  );
+}
+
+/** "Back" at the top left of every page except the home page. */
+export function BackBar() {
+  return (
+    <div className="wrap back-bar">
+      <button type="button" className="back-btn" onClick={goBack}>
+        <ArrowLeft size={18} /> Back
+      </button>
+    </div>
   );
 }
 
@@ -260,7 +313,7 @@ export function Footer() {
         <div className="footer-grid">
           <div>
             <Brand />
-            <p className="muted small" style={{ marginTop: 12, maxWidth: 340 }}>
+            <p className="muted" style={{ marginTop: 14, maxWidth: 360 }}>
               QR codes that keep working after you print them. Every code is drawn by a QR engine written from scratch, from Reed–Solomon error correction to the camera decoder.
             </p>
           </div>
@@ -269,28 +322,37 @@ export function Footer() {
             <ul>
               <li><Link to="/#generator">Free generator</Link></li>
               <li><Link to="/#features">Features</Link></li>
+              <li><Link to="/#how">How it works</Link></li>
+              <li><Link to="/#compare">Compared with others</Link></li>
               <li><Link to="/signup">Create an account</Link></li>
             </ul>
           </div>
           <div>
-            <h4>Use cases</h4>
+            <h4>Explore</h4>
             <ul>
-              <li><Link to="/signup">Event check-in</Link></li>
-              <li><Link to="/signup">Restaurant menus</Link></li>
-              <li><Link to="/verify">Certificate checks</Link></li>
+              {EXPLORE.map((p) => (
+                <li key={p.to}>
+                  <Link to={p.to}>{p.title}</Link>
+                </li>
+              ))}
             </ul>
           </div>
           <div>
             <h4>Trust</h4>
             <ul>
-              <li><Link to="/#engine">How it works</Link></li>
+              <li><Link to="/verify">Verify a certificate</Link></li>
+              <li><Link to="/trust">Check a link before you open it</Link></li>
               <li><a href="/api/certs/public-key">Signing public key</a></li>
               <li><Link to="/#privacy">Privacy</Link></li>
             </ul>
           </div>
         </div>
+        <div className="credit">
+          <span className="muted">Designed &amp; built by</span>
+          <span className="signature">Jarpula Nirjala</span>
+        </div>
         <div className="footer-base">
-          <span>© {new Date().getFullYear()} QRaftly</span>
+          <span>© {new Date().getFullYear()} QRaftly · Designed by Jarpula Nirjala</span>
           <span>No IP addresses stored. No tracking cookies.</span>
         </div>
       </div>

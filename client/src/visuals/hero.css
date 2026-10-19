@@ -21,7 +21,7 @@
   line-height: 0.98;
   letter-spacing: 0;
   perspective: 900px;
-  padding-bottom: 0.14em;
+  padding-bottom: 0.2em;
   margin: 6px 0 4px;
 }
 .hero-name .float {
@@ -31,6 +31,9 @@
 }
 .hero-name .ch {
   display: inline-block;
+  /* Room below and beside each glyph, so background-clipped text keeps descenders (the "y") and overhangs. */
+  padding: 0 0.04em 0.22em;
+  margin: 0 -0.04em -0.22em;
   transform-origin: 50% 85%;
   /* Ink with a narrow band of light that sweeps through it; the "Q" is gold foil. */
   background: linear-gradient(105deg, var(--ink) 0%, var(--ink) 40%, var(--gold-2) 47%, #fff8e6 50%, var(--gold-2) 53%, var(--ink) 60%, var(--ink) 100%);
@@ -126,7 +129,7 @@
 .hero-kicker {
   font-family: var(--font-script);
   font-weight: 700;
-  font-size: 22px;
+  font-size: 30px;
   color: var(--accent-text);
 }
 

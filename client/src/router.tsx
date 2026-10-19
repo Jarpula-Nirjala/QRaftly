@@ -2,11 +2,38 @@ import { useEffect, useState, type AnchorHTMLAttributes, type MouseEvent } from 
 
 const listeners = new Set<() => void>();
 
+/** Scrolls to the element with this id, waiting a few frames for a page that is still rendering. */
+export function scrollToHash(id: string) {
+  let tries = 0;
+  const go = () => {
+    const el = document.getElementById(decodeURIComponent(id));
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    else if (tries++ < 90) requestAnimationFrame(go);
+  };
+  requestAnimationFrame(go);
+}
+
+/** How many pages this tab has opened inside the app, so "Back" never leaves the site. */
+let steps = 0;
+
 export function navigate(to: string, opts: { replace?: boolean } = {}) {
   if (opts.replace) history.replaceState(null, '', to);
-  else history.pushState(null, '', to);
+  else {
+    history.pushState(null, '', to);
+    steps++;
+  }
   listeners.forEach((l) => l());
-  if (!to.includes('#')) window.scrollTo(0, 0);
+  const hash = to.indexOf('#');
+  if (hash >= 0) scrollToHash(to.slice(hash + 1));
+  else window.scrollTo(0, 0);
+}
+
+/** Goes back one page inside the app, or to the home page when this is the first page opened. */
+export function goBack() {
+  if (steps > 0) {
+    steps--;
+    history.back();
+  } else navigate('/', { replace: true });
 }
 
 window.addEventListener('popstate', () => listeners.forEach((l) => l()));
@@ -42,7 +69,7 @@ export function Link({ to, onClick, ...rest }: AnchorHTMLAttributes<HTMLAnchorEl
     onClick?.(e);
     if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || rest.target) return;
     e.preventDefault();
-    if (to.startsWith('#')) document.getElementById(to.slice(1))?.scrollIntoView({ behavior: 'smooth' });
+    if (to.startsWith('#')) scrollToHash(to.slice(1));
     else navigate(to);
   };
   return <a href={to} onClick={go} {...rest} />;

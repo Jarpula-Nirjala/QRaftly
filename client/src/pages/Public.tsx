@@ -220,7 +220,7 @@ export function MedicalPage({ slug }: { slug: string }) {
 // ------------------------------------------------------------ gate & blocked
 
 export function GatePage({ slug }: { slug: string }) {
-  const { data, error } = usePublic<{ title: string; kind: string; needsPin: boolean; blocked: string | null; scansLeft: number | null }>(`/api/r/${encodeURIComponent(slug)}`);
+  const { data, error } = usePublic<{ title: string; kind: string; needsPin: boolean; blocked: string | null; scansLeft: number | null; preview: string | null }>(`/api/r/${encodeURIComponent(slug)}`);
   const [pin, setPin] = useState('');
   const [err, setErr] = useState('');
   const [busy, setBusy] = useState(false);
@@ -245,8 +245,13 @@ export function GatePage({ slug }: { slug: string }) {
         {data.needsPin ? <LockKeyhole size={40} style={{ margin: '0 auto', color: 'var(--accent)' }} /> : <ShieldCheck size={40} style={{ margin: '0 auto', color: 'var(--accent)' }} />}
         <h1 style={{ fontSize: 22, margin: 0 }}>{data.title}</h1>
         <p className="muted" style={{ margin: 0 }}>
-          {data.needsPin ? 'Enter the PIN to open this code.' : data.scansLeft === 1 ? 'This code works once. Open it now?' : `This code can be opened ${data.scansLeft} more times.`}
+          {data.needsPin ? 'Enter the PIN to open this code.' : data.preview ? 'This code opens:' : data.scansLeft === 1 ? 'This code works once. Open it now?' : `This code can be opened ${data.scansLeft} more times.`}
         </p>
+        {data.preview && (
+          <div className="mono" style={{ fontSize: 17, padding: '10px 12px', borderRadius: 10, background: 'var(--surface-2)', wordBreak: 'break-all' }}>
+            {data.preview}
+          </div>
+        )}
         {data.needsPin && <input className="input" style={{ textAlign: 'center', fontSize: 22, letterSpacing: '0.3em' }} inputMode="numeric" autoFocus value={pin} onChange={(e) => setPin(e.target.value.replace(/\D/g, '').slice(0, 8))} aria-label="PIN" />}
         {err && <div className="note bad">{err}</div>}
         <button className="btn primary lg" disabled={busy || (data.needsPin && pin.length < 4)}>

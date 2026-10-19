@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { IdCard, MonitorSmartphone } from 'lucide-react';
 import { ArrowLeft, CalendarCheck, CheckCircle2, Copy, FileDown, FileUp, Keyboard, MapPin, Plus, RotateCcw, ScanLine, Search, Trash2, UserCheck, Users, XCircle } from 'lucide-react';
 import { api, ApiError, errorText } from '../api.ts';
 import { Camera } from '../camera.tsx';
@@ -199,6 +200,12 @@ export function EventDetail({ id }: { id: string }) {
             <a className="btn" href={`/api/events/${id}/tickets.csv`}>
               <FileDown size={16} /> Ticket links (CSV)
             </a>
+            <a className="btn" href={`/api/events/${id}/badges.pdf`}>
+              <IdCard size={16} /> Name badges (PDF)
+            </a>
+            <Link to={`/app/events/${id}/kiosk`} className="btn">
+              <MonitorSmartphone size={16} /> Self check-in kiosk
+            </Link>
             <button className="btn danger icon" aria-label="Delete event" title="Delete event" onClick={del}>
               <Trash2 size={16} />
             </button>

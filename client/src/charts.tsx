@@ -86,7 +86,7 @@ export function ColumnChart({ data, height = 220, unit = 'scans', caption, label
             {tk.map((t) => (
               <g key={t}>
                 <line x1={left} x2={width} y1={y(t)} y2={y(t)} stroke="var(--grid)" strokeWidth={1} shapeRendering="crispEdges" />
-                <text x={left - 8} y={y(t)} dy="0.32em" textAnchor="end" fontSize={11} fill="var(--muted)">
+                <text x={left - 8} y={y(t)} dy="0.32em" textAnchor="end" fontSize={13.5} fill="var(--muted)">
                   {compact(t)}
                 </text>
               </g>
@@ -100,7 +100,7 @@ export function ColumnChart({ data, height = 220, unit = 'scans', caption, label
                 <g key={d.title}>
                   {path && <path d={path} fill="var(--chart)" opacity={hover === null || hover === i ? 1 : 0.45} />}
                   {d.label && (labelAll || i % every === 0) && (
-                    <text x={left + i * slot + slot / 2} y={height - 6} textAnchor="middle" fontSize={11} fill="var(--muted)">
+                    <text x={left + i * slot + slot / 2} y={height - 6} textAnchor="middle" fontSize={13.5} fill="var(--muted)">
                       {d.label}
                     </text>
                   )}
@@ -110,7 +110,7 @@ export function ColumnChart({ data, height = 220, unit = 'scans', caption, label
               );
             })}
             {data[peak]?.n > 0 && hover === null && (
-              <text x={left + peak * slot + slot / 2} y={y(data[peak].n) - 6} textAnchor="middle" fontSize={11} fontWeight={600} fill="var(--ink-2)">
+              <text x={left + peak * slot + slot / 2} y={y(data[peak].n) - 6} textAnchor="middle" fontSize={13.5} fontWeight={600} fill="var(--ink-2)">
                 {compact(data[peak].n)}
               </text>
             )}

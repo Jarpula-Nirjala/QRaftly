@@ -1,14 +1,30 @@
 import { useState, type ReactNode } from 'react';
 import {
-  ArrowRight, BadgeCheck, BarChart3, CalendarCheck, Check, Cpu, Files, Globe2, HeartPulse, LockKeyhole, Package, Paintbrush, Route, ShieldCheck, Sparkles, UserRound, Wifi,
+  ArrowRight, BadgeCheck, BarChart3, CalendarCheck, Check, CheckCircle2, Cpu, XCircle, Files, Globe2, HeartPulse, LockKeyhole, Package, Paintbrush, Route, ShieldCheck, Sparkles, UserRound, Wifi,
 } from 'lucide-react';
 import { DEFAULT_DESIGN, type Design } from '../../../shared/qr/render.ts';
+import { EXPLORE } from '../explore.ts';
 import { Link } from '../router.tsx';
+import { Pipeline, ScanFlow } from '../visuals/howitworks.tsx';
 import { DesignPanel, PayloadForm, payloadOf, QrPreview, TYPES, type StaticType } from '../studio.tsx';
 import { Footer, useToast } from '../ui.tsx';
 import { DashboardScene, EncoderScene, GlobeScene, PackagingScene, PedestalScene, ProfileScene, SheetsScene, ShieldScene, TicketScene } from '../visuals/mockups.tsx';
 import { AnimatedName, LampScene, RibbonBackdrop } from '../visuals/hero.tsx';
 import { FloatingBand, GlassPrism, HeroScanner, ModuleField, Particles, Tunnel } from '../visuals/scene.tsx';
+
+const COMPARE: Array<[string, boolean | string, boolean | string, boolean | string]> = [
+  ['Change the destination after printing', false, true, true],
+  ['Scan check of your design before download', false, false, true],
+  ['Analytics without storing IP addresses', false, false, true],
+  ['Rules by time, phone, language and country', false, 'Some plans', true],
+  ['A/B tests on one printed code', false, 'Some plans', true],
+  ['Single-use codes that are safe against two scans at once', false, 'Rare', true],
+  ['Signed event tickets with a phone door scanner', false, 'Separate product', true],
+  ['Certificates anyone can verify, even offline', false, false, true],
+  ['Link safety check before opening a code', false, false, true],
+  ['Open engine you can inspect step by step', false, false, true],
+  ['Price for these features', 'Free', 'Monthly fee', 'Free'],
+];
 
 const FEATURES = [
   { icon: UserRound, title: 'Living profile cards', text: 'A hosted page with your links and a one-tap "Save contact". Change jobs, keep the code.' },
@@ -23,7 +39,7 @@ const FEATURES = [
   { icon: BadgeCheck, title: 'Scan-to-verify certificates', text: 'Signed certificates that show "Valid", or "Tampered" if a single letter changed.' },
 ];
 
-function Show({ kicker, icon: Icon, title, text, points, visual, flip }: { kicker: string; icon: typeof Cpu; title: string; text: string; points: string[]; visual: ReactNode; flip?: boolean }) {
+function Show({ kicker, icon: Icon, title, text, points, visual, flip, example }: { kicker: string; icon: typeof Cpu; title: string; text: string; points: string[]; visual: ReactNode; flip?: boolean; example?: string }) {
   return (
     <div className={`v-show${flip ? ' flip' : ''}`}>
       <div>
@@ -39,6 +55,11 @@ function Show({ kicker, icon: Icon, title, text, points, visual, flip }: { kicke
             </li>
           ))}
         </ul>
+        {example && (
+          <p className="v-example">
+            <span>For example</span> {example}
+          </p>
+        )}
       </div>
       {visual}
     </div>
@@ -162,6 +183,7 @@ export function Landing() {
             text="Print the code on your business card once. It opens a hosted profile with your photo, links and a one-tap “Save contact”, and you can change any of it later."
             points={['A vCard download that phones add straight to contacts', 'Up to 8 links, a short bio and your own colour', 'Optional PIN for a private profile']}
             visual={<ProfileScene />}
+            example="A freelance designer prints 500 cards in January, changes studio in June, and every card still opens the right portfolio."
           />
           <Show
             flip
@@ -171,6 +193,7 @@ export function Landing() {
             text="Dynamic codes point to a short link you control. Swap the destination after printing, switch the code off, and watch scans arrive by day and hour, in your own timezone."
             points={['Unique visitors without storing IP addresses', 'Phones, browsers, countries and languages', 'Export the scan history as CSV']}
             visual={<DashboardScene />}
+            example="A café moves its menu from a PDF to a new website without reprinting a single table tent, and sees that Saturday 1 pm is its busiest scan hour."
           />
           <Show
             kicker="Context-aware rules"
@@ -179,6 +202,7 @@ export function Landing() {
             text="Rules pick the destination at the moment of the scan: the time of day, the day of the week, the phone's operating system or its language. The first rule that matches wins."
             points={['Breakfast and dinner menus from one code', 'App Store for iPhones, Google Play for Android', 'A Hindi page for phones set to Hindi']}
             visual={<GlobeScene />}
+            example="A travel brochure code opens Dubai prices for visitors scanning in the UAE and London prices for UK readers, with an A/B test on the cover photo."
           />
           <Show
             flip
@@ -188,6 +212,7 @@ export function Landing() {
             text="Five dot styles, four corner styles, gradients and your logo. Before you download, we decode the design ourselves with every module under the logo counted as misread."
             points={['Shows how much error correction the logo uses', 'Warns about low contrast and light-on-dark colours', 'PNG up to 2048 px, or vector SVG']}
             visual={<PedestalScene />}
+            example="A bakery adds its logo at 25% size; the scan check shows it uses 61% of the error-correction budget, safely under the limit."
           />
           <Show
             kicker="Secure codes"
@@ -196,6 +221,7 @@ export function Landing() {
             text="Protect a code with a PIN, let it expire on a date, cap the number of scans or make it single-use. The scan limit is enforced in one database statement, so a single-use code really opens once."
             points={['Chat-app link previews never use up a scan', 'Expired codes show a friendly page, not an error', 'Every refused scan is counted in your analytics']}
             visual={<ShieldScene />}
+            example="A one-time Wi-Fi voucher for a hotel guest: single-use, PIN-protected and expiring at checkout."
           />
           <Show
             flip
@@ -205,6 +231,7 @@ export function Landing() {
             text="Each guest gets a signed ticket that cannot be guessed or copied into a new one. Staff scan at the door with a phone camera; a reused ticket shows when and where it was first used."
             points={['“Already used at 7:42 pm, North gate”', 'Live headcount across every door', 'Import guests from a spreadsheet']}
             visual={<TicketScene />}
+            example="A 300-guest meetup with two doors: a ticket screenshot passed to a friend is refused with “already used at 6:42 pm, North gate”."
           />
           <Show
             kicker="Bulk generation"
@@ -213,6 +240,7 @@ export function Landing() {
             text="Upload a CSV and a background job makes up to 1,000 codes, as a ZIP of PNG images or a print-ready A4 PDF with labels. Each code can be a dynamic link with its own analytics."
             points={['Live progress; leave the page and come back', 'Bad rows are listed, not silently dropped', 'Certificates in bulk, each one signed']}
             visual={<SheetsScene />}
+            example="A school issues 420 signed certificates from one spreadsheet in under a minute, as one PDF ready for the printer."
           />
           <Show
             flip
@@ -222,6 +250,7 @@ export function Landing() {
             text="Put a dynamic code on a box, a pouch or a bottle and update the page behind it: instructions, offers or a recall notice, without changing the packaging."
             points={['Vector PDF labels stay sharp at any size', 'Wi-Fi, UPI and contact codes for counters and shops', 'Medical cards readable with no signal']}
             visual={<PackagingScene />}
+            example="A spice brand prints one code per product line and later points it at a recall notice for one batch, overnight."
           />
         </div>
       </section>
@@ -245,21 +274,33 @@ export function Landing() {
         </div>
       </section>
 
-      <section id="engine" className="section">
+      <section id="how" className="section">
         <div className="wrap">
-          <div className="v-show">
+          <span id="engine" className="anchor" />
+          <div className="section-title">
+            <span className="hero-kicker">How it works</span>
+            <h2>From your words to a printed square, in six steps</h2>
+            <p>QRaftly encodes, draws, checks and reads QR codes with its own implementation of the ISO/IEC 18004 standard. Each picture below is drawn from the real intermediate data for one link.</p>
+          </div>
+          <Pipeline />
+          <div className="section-title" style={{ marginTop: 56 }}>
+            <h2>What happens when someone scans</h2>
+            <p>A dynamic code is a short link that QRaftly answers in a few milliseconds. Here is everything that happens in between.</p>
+          </div>
+          <ScanFlow />
+          <div className="v-show" style={{ marginTop: 40 }}>
             <div>
               <span className="kicker">
                 <Cpu size={15} /> Under the hood
               </span>
               <h3>No QR library. Every layer is our own code.</h3>
-              <p>QRaftly encodes, draws, checks and reads QR codes with its own implementation of the ISO/IEC 18004 standard, tested against independent decoders across all 40 versions and 4 error-correction levels.</p>
+              <p>Tested against independent decoders across all 40 versions and 4 error-correction levels, and read back from photos by our own camera decoder.</p>
               <ul>
                 {[
-                  'Reed–Solomon error correction over GF(256), with a full decoder',
+                  'Reed–Solomon error correction over GF(256), with a full decoder (Berlekamp–Massey, Chien search, Forney)',
                   'Numeric, alphanumeric and UTF-8 modes; all 8 masks scored by the 4 penalty rules',
-                  'A camera decoder for the door scanner: thresholding, finder search, perspective correction',
-                  'Ed25519-signed certificates and HMAC-signed tickets',
+                  'A camera decoder: adaptive thresholding, finder search, perspective correction',
+                  'Ed25519-signed certificates, HMAC-signed tickets, AES-GCM view-once notes',
                   'PNG, ZIP and PDF files written byte by byte',
                 ].map((t) => (
                   <li key={t}>
@@ -267,6 +308,9 @@ export function Landing() {
                   </li>
                 ))}
               </ul>
+              <p className="v-example">
+                <span>See it live</span> <Link to="/engine">The Engine Room</Link> lets you X-ray any QR code and watch the encoder work, step by step.
+              </p>
             </div>
             <EncoderScene />
           </div>
@@ -293,6 +337,87 @@ export function Landing() {
                 </div>
               </div>
             </FloatingBand>
+          </div>
+        </div>
+      </section>
+
+      <section id="compare" className="section">
+        <div className="wrap">
+          <div className="section-title">
+            <span className="hero-kicker">Why QRaftly</span>
+            <h2>How it is different from the usual QR tools</h2>
+            <p>Most QR generators make a picture and stop. Paid platforms add tracking but keep the engine a black box. QRaftly treats a code as something that lives for years.</p>
+          </div>
+          <div className="compare-cards">
+            {[
+              { old: 'The link is baked into the picture forever.', now: 'The printed code points to a link you can change at any time.' },
+              { old: 'You find out a design does not scan after printing 1,000 copies.', now: 'Every design is decoded before download, with the logo counted as damage.' },
+              { old: 'Scans are counted by logging IP addresses and fingerprints.', now: 'A daily keyed hash; no IP addresses are stored.' },
+              { old: 'Anyone can screenshot a ticket or edit a certificate.', now: 'Tickets and certificates are cryptographically signed; copies and edits are caught.' },
+            ].map((c) => (
+              <div key={c.old} className="compare-card">
+                <div className="was">
+                  <XCircle size={18} /> {c.old}
+                </div>
+                <div className="is">
+                  <CheckCircle2 size={18} /> {c.now}
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="table-wrap" style={{ marginTop: 26 }}>
+            <table className="table compare-table">
+              <thead>
+                <tr>
+                  <th>What you get</th>
+                  <th>Typical free generator</th>
+                  <th>Typical paid platform</th>
+                  <th>QRaftly</th>
+                </tr>
+              </thead>
+              <tbody>
+                {COMPARE.map(([what, free, paid, ours]) => (
+                  <tr key={what}>
+                    <td>{what}</td>
+                    {[free, paid, ours].map((v, i) => (
+                      <td key={i} className={i === 2 ? 'ours' : ''}>
+                        {v === true ? <CheckCircle2 size={19} color="var(--good)" aria-label="Yes" /> : v === false ? <XCircle size={19} color="var(--bad)" aria-label="No" /> : <span className="small">{v}</span>}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="small muted" style={{ marginTop: 10 }}>“Typical” describes common products in general, not any one company; features vary by plan.</p>
+        </div>
+      </section>
+
+      <section id="explore" className="section">
+        <div className="wrap">
+          <div className="section-title">
+            <span className="hero-kicker">Explore</span>
+            <h2>Five more pages, twenty-five more tools</h2>
+            <p>Each page has five working features you can try right now, most of them without an account.</p>
+          </div>
+          <div className="explore-grid">
+            {EXPLORE.map(({ to, title, blurb, icon: Icon, features }) => (
+              <Link key={to} to={to} className="explore-card">
+                <div className="ic">
+                  <Icon size={22} />
+                </div>
+                <h3>{title}</h3>
+                <p>{blurb}</p>
+                <ul>
+                  {features.map((f) => (
+                    <li key={f}>{f}</li>
+                  ))}
+                </ul>
+                <span className="go">
+                  Open <ArrowRight size={16} />
+                </span>
+              </Link>
+            ))}
           </div>
         </div>
       </section>

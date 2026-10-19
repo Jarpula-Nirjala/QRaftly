@@ -164,3 +164,44 @@ describe('growth, venue and trust features', () => {
     assert.match(text, /\/Count 1 /);
   });
 });
+
+describe('encoding explained', () => {
+  it('the explained steps rebuild exactly the code the encoder makes', async () => {
+    const { explain } = await import('../shared/qr/explain.ts');
+    const e = explain('HELLO WORLD', 'M');
+    assert.equal(e.mode, 'alphanumeric');
+    assert.equal(e.header.modeBits, '0010');
+    assert.equal(e.header.count, 11);
+    // The published HELLO WORLD 1-M data codewords.
+    assert.deepEqual(e.dataCodewords.slice(0, 4), [32, 91, 11, 120]);
+    const best = e.masks.reduce((a, b) => (b.total < a.total ? b : a));
+    assert.equal(best.mask, e.chosen);
+    assert.deepEqual(e.masks[e.chosen].modules, e.modules);
+    // Every codeword bit has a module; a few remainder bits may be left over.
+    assert.ok(e.order.length >= e.interleaved.length * 8 && e.order.length - e.interleaved.length * 8 < 8);
+  });
+});
+
+describe('link safety checker', () => {
+  it('flags the usual scam patterns and passes ordinary links', async () => {
+    const { checkLink } = await import('../shared/linkcheck.ts');
+    assert.equal(checkLink('https://www.google.com/maps').verdict, 'safe-looking');
+    assert.equal(checkLink('https://paypa1.com/login').verdict, 'danger');
+    assert.equal(checkLink('https://secure-paypa1.com.account-verify.xyz/login').verdict, 'danger');
+    assert.equal(checkLink('https://www.paypal.com/in/home').verdict, 'safe-looking');
+    assert.equal(checkLink('https://secure-sbi.kyc-update.xyz/verify').verdict, 'danger');
+    assert.equal(checkLink('https://kyc-update.xyz/verify').verdict, 'caution');
+    assert.equal(checkLink('https://www.google.com@evil.example/').verdict, 'danger');
+    assert.equal(checkLink('http://192.168.4.20/pay').verdict, 'danger');
+    assert.equal(checkLink('https://xn--pple-43d.com').verdict, 'danger');
+    assert.equal(checkLink('https://bit.ly/3abc').verdict, 'caution');
+    assert.equal(checkLink('javascript:alert(1)').verdict, 'danger');
+    const upi = checkLink('upi://pay?pa=asha@okaxis&pn=Asha%20Stores&am=250.00&cu=INR');
+    assert.equal(upi.kind, 'upi');
+    assert.equal(upi.verdict, 'safe-looking');
+    assert.match(upi.summary, /Asha Stores/);
+    assert.equal(checkLink('upi://pay?pa=x@ybl&pn=Refund%20Desk&am=5000&tn=cashback%20refund').verdict, 'danger');
+    assert.equal(checkLink('WIFI:T:nopass;S:Free Airport WiFi;;').verdict, 'caution');
+    assert.equal(checkLink('Just a note').kind, 'text');
+  });
+});

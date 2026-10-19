@@ -85,13 +85,14 @@ try {
   await shot(page, '01-landing');
   // The codes drawn inside the home page's mockups must really scan (decoded from the rendered pixels).
   let scannable = 0;
-  for (const stage of await page.locator('.v-scene, .v-stage').all()) {
+  for (const stage of await page.locator('.v-scene:visible, .v-stage:visible').all()) {
     await stage.scrollIntoViewIfNeeded();
     await page.waitForTimeout(300);
     const png = PNG.sync.read(await stage.screenshot());
     if (scanImage(png.data, png.width, png.height)?.text === BASE) scannable++;
   }
-  assert.ok(scannable >= 6, `only ${scannable} mockup codes scanned`);
+  // Dark is the default theme: the phone, pedestals, shield, ticket and packaging all carry real codes.
+  assert.ok(scannable >= 5, `only ${scannable} mockup codes scanned`);
   await page.evaluate(() => scrollTo(0, 0));
   await page.getByRole('button', { name: 'Wi-Fi' }).click();
   await page.getByLabel('Network name (SSID)').fill('Home-WiFi');

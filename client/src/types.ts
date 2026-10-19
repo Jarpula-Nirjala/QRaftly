@@ -10,6 +10,7 @@ export interface Rule {
   to?: string;
   os?: Array<'ios' | 'android' | 'windows' | 'mac' | 'linux'>;
   lang?: string[];
+  country?: string[];
   target: string;
 }
 
@@ -22,7 +23,7 @@ export interface Qr {
   data: Record<string, any>;
   design: Design;
   rules: Rule[];
-  security: { expiresAt?: number | null; maxScans?: number | null; hasPin: boolean; hasPrivatePin: boolean };
+  security: { expiresAt?: number | null; maxScans?: number | null; preview?: boolean; hasPin: boolean; hasPrivatePin: boolean };
   timezone: string;
   scanCount: number;
   active: boolean;

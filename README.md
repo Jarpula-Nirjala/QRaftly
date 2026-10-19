@@ -21,6 +21,18 @@ Everything QR-related is written from scratch. There is no QR library in the dep
 | 9 | **Bulk generation** | Upload up to 1,000 CSV rows and get a ZIP of PNGs (with a manifest and skipped-row report) or a vector PDF sheet. A background job reports live progress. |
 | 10 | **Scan-to-verify certificates** | The QR carries the certificate as canonical JSON plus an **Ed25519** signature. Verification returns *valid*, *tampered* (any edited field) or *revoked*. Anyone can check it offline with the published public key. |
 
+## Five more pages, 25 more tools
+
+Each page has five working features, most of which you can try without an account.
+
+| Page | Features |
+|---|---|
+| **Design Studio Lab** (`/studio`) | **Palette from a photo:** k-means colours, with a scannable pair chosen by contrast. **Picture QR codes:** a photo woven into the modules, decoded from its own pixels before download. **Print size calculator.** **Damage simulator:** scratch or sticker the code and watch Reed–Solomon repair it, block by block. **Animated SVG codes.** |
+| **Smart Links & Growth** (`/growth`) | **A/B split testing:** weighted, the same variant for a person all day. **Country targeting rules.** **UTM campaign builder.** **Scan simulator:** the server's own routing for a chosen day, time, phone, language and country. **Year-long scan heatmap.** |
+| **Events & Venues** (`/venues`) | **Feedback forms:** star ratings and comments. **Queue tickets:** atomic numbering, live position, race-safe "call next". **Printable Wi-Fi posters.** **Name-badge PDFs:** each badge carries the guest's signed ticket. **Self check-in kiosk.** |
+| **Trust & Safety** (`/trust`) | **Link safety checker:** look-alike brands, punycode, "@" disguises, IP hosts, shorteners, open redirects, and UPI "refund" scams. **Offline certificate verification:** Ed25519 checked in the browser with WebCrypto. **View-once notes:** AES-256-GCM in the browser, with the key kept in the URL fragment, and deleted on first read. **Destination preview before opening.** **Unusual-activity alerts:** a robust median/MAD test on daily scans. |
+| **The Engine Room** (`/engine`) | **QR X-ray inspector:** any photo, with version, level, mask, repairs and a pattern map. **Step-by-step encoder:** bits, codewords, error correction and an animated zigzag. **Mask scoreboard:** the four penalty rules for all eight masks. **Developer API:** `POST /api/v1/qr` and `/api/v1/links`, with hashed keys and per-key rate limits. **In-browser decoder benchmark.** |
+
 ## Written from scratch
 
 ```
@@ -105,8 +117,8 @@ For development, run `npm run dev:server` and `npm run dev:client` in two termin
 ## Tests
 
 ```bash
-npm test          # 55 tests: QR engine, design check, server, events, certificates, bulk, camera decoder
-npm run e2e       # browser smoke test against a running server (BASE=http://localhost:3000)
+npm test          # 66 tests: QR engine, design check, server, events, certificates, bulk, camera decoder, the 25 newer features
+npm run e2e       # two browser tests against a running server (BASE=http://localhost:3000): the core app, and all five feature pages
 ```
 
 The browser test drives the Edge or Chrome already installed on the machine (`playwright-core`, no browser download). It covers the whole app. The door scanner is tested end to end: a real ticket's QR code is written into a Y4M video that the browser uses as its camera.
@@ -129,6 +141,10 @@ Measured on this codebase:
 - **Sessions.** Only a SHA-256 hash of the session token is stored. Sessions last 30 days and renew as you use the app. Passwords and PINs are hashed with scrypt.
 - **Resumable jobs.** Each 25-row batch commits its own progress in one transaction (with a savepoint per row), so a job interrupted by a restart resumes instead of duplicating codes. Workers claim jobs with `FOR UPDATE SKIP LOCKED`.
 - **Signed data.** Certificates are signed over a canonical (sorted-key) JSON form, so the same certificate always produces the same bytes. Tickets and unlock links use truncated HMAC-SHA256 tags compared in constant time.
+
+## Credits
+
+Designed and built by **Jarpula Nirjala**.
 
 ## License
 

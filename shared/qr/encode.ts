@@ -155,7 +155,7 @@ export function formatPositions(size: number): [Array<[number, number]>, Array<[
   return [a, b];
 }
 
-function drawFormat(modules: boolean[][], ecl: Ecl, mask: number, isFunction?: boolean[][]) {
+export function drawFormat(modules: boolean[][], ecl: Ecl, mask: number, isFunction?: boolean[][]) {
   const size = modules.length;
   const bits = formatBits(ecl, mask);
   const [a, b] = formatPositions(size);
@@ -185,7 +185,7 @@ export function forEachDataModule(isFunction: boolean[][], fn: (x: number, y: nu
   }
 }
 
-function placeCodewords(modules: boolean[][], isFunction: boolean[][], codewords: number[]) {
+export function placeCodewords(modules: boolean[][], isFunction: boolean[][], codewords: number[]) {
   let i = 0;
   forEachDataModule(isFunction, (x, y) => {
     // Remainder bits after the last codeword stay light.

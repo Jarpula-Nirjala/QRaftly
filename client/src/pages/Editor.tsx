@@ -34,6 +34,7 @@ function blankData(kind: Kind): Data {
   return { ...TYPES[0].blank };
 }
 
+
 const toLocalInput = (ms?: number | null) => {
   if (!ms) return '';
   const d = new Date(ms);
@@ -71,6 +72,7 @@ export function Editor({ existing, onSaved }: { existing?: Qr; onSaved?(q: Qr): 
   const [expires, setExpires] = useState(toLocalInput(existing?.security.expiresAt));
   const [limit, setLimit] = useState<'none' | 'once' | 'n'>(existing?.security.maxScans === 1 ? 'once' : existing?.security.maxScans ? 'n' : 'none');
   const [maxScans, setMaxScans] = useState(String(existing?.security.maxScans ?? 100));
+  const [showFirst, setShowFirst] = useState(!!(existing?.security as { preview?: boolean } | undefined)?.preview);
   const [tab, setTab] = useState<'content' | 'design' | 'rules' | 'security'>('content');
   const [busy, setBusy] = useState(false);
   const avatarRef = useRef<HTMLInputElement>(null);
@@ -103,6 +105,7 @@ export function Editor({ existing, onSaved }: { existing?: Qr; onSaved?(q: Qr): 
       const security: Record<string, unknown> = {
         expiresAt: expires ? new Date(expires).getTime() : null,
         maxScans: limit === 'once' ? 1 : limit === 'n' ? Number(maxScans) || null : null,
+        preview: showFirst,
       };
       if (pin) security.pin = pin;
       if (removePin) security.removePin = true;
@@ -192,6 +195,40 @@ export function Editor({ existing, onSaved }: { existing?: Qr; onSaved?(q: Qr): 
               <Field label="Where the code goes" hint="You can change this any time; the printed code stays the same.">
                 <input className="input" value={data.url ?? ''} onChange={(e) => setData({ ...data, url: e.target.value })} placeholder="https://example.com/menu" inputMode="url" autoFocus />
               </Field>
+              <label className="check">
+                <input
+                  type="checkbox"
+                  checked={!!data.split?.length}
+                  onChange={(e) => setData({ ...data, split: e.target.checked ? [{ url: data.url || '', weight: 50 }, { url: '', weight: 50 }] : undefined })}
+                />
+                A/B test: split visitors between two or more pages
+              </label>
+              {!!data.split?.length && (
+                <div className="rule">
+                  <p className="small muted" style={{ margin: 0 }}>
+                    Everyone not caught by a rule is split by these weights. A person keeps the same variant all day; see which wins under Analytics → Destinations.
+                  </p>
+                  {data.split.map((a: { url: string; weight: number }, i: number) => (
+                    <div key={i} className="row" style={{ flexWrap: 'nowrap' }}>
+                      <b style={{ width: 22 }}>{String.fromCharCode(65 + i)}</b>
+                      <input className="input" value={a.url} placeholder="https://example.com/version" aria-label={`Variant ${String.fromCharCode(65 + i)} link`} onChange={(e) => setData({ ...data, split: data.split.map((x: object, j: number) => (j === i ? { ...x, url: e.target.value } : x)) })} />
+                      <input className="input" style={{ width: 90 }} type="number" min={1} max={100} value={a.weight} aria-label="Weight" onChange={(e) => setData({ ...data, split: data.split.map((x: object, j: number) => (j === i ? { ...x, weight: Number(e.target.value) } : x)) })} />
+                      {data.split.length > 2 && (
+                        <button type="button" className="btn ghost icon" aria-label="Remove variant" onClick={() => setData({ ...data, split: data.split.filter((_: unknown, j: number) => j !== i) })}>
+                          <Trash2 size={16} />
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                  {data.split.length < 5 && (
+                    <div>
+                      <button type="button" className="btn sm" onClick={() => setData({ ...data, split: [...data.split, { url: '', weight: 25 }] })}>
+                        <Plus size={15} /> Add variant
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           )}
 
@@ -322,6 +359,11 @@ export function Editor({ existing, onSaved }: { existing?: Qr; onSaved?(q: Qr): 
                   <input type="checkbox" checked={removePin} onChange={(e) => setRemovePin(e.target.checked)} /> Remove the PIN
                 </label>
               )}
+              {kind === 'dynamic' && (
+                <label className="check">
+                  <input type="checkbox" checked={showFirst} onChange={(e) => setShowFirst(e.target.checked)} /> Show the destination first: people see the exact address and tap to open it (protects against fake stickers)
+                </label>
+              )}
               <Field label="Stops working after" hint="Optional. Scans after this show a friendly “expired” page.">
                 <input className="input" style={{ maxWidth: 260 }} type="datetime-local" value={expires} onChange={(e) => setExpires(e.target.value)} />
               </Field>
@@ -406,6 +448,9 @@ function RulesEditor({ rules, onChange }: { rules: Rule[]; onChange(r: Rule[]): 
               ))}
             </div>
           </div>
+          <Field label="Country" hint="Two-letter codes, comma separated: IN, AE, GB">
+            <input className="input" defaultValue={(r.country ?? []).join(', ')} onChange={(e) => set(i, { country: e.target.value.toUpperCase().split(/[,\s]+/).filter(Boolean) })} />
+          </Field>
           <Field label="Phone language" hint="Language codes, comma separated: hi, ta, en">
             {/* Uncontrolled, so typing "hi, " keeps the comma while the list is parsed. */}
             <input className="input" defaultValue={(r.lang ?? []).join(', ')} onChange={(e) => set(i, { lang: e.target.value.toLowerCase().split(/[,\s]+/).filter(Boolean) })} />

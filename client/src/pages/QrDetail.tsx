@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { ArrowLeft, BarChart3, Copy, ExternalLink, FileDown, Pencil, Power, Trash2 } from 'lucide-react';
+import { ArrowLeft, BarChart3, Copy, ExternalLink, FileDown, FlaskConical, Pencil, Power, Trash2 } from 'lucide-react';
+import { AnomalyList, CalendarHeatmap, findAnomalies, type DayCount } from '../insights.tsx';
 import { api, errorText } from '../api.ts';
 import { BarList, ColumnChart } from '../charts.tsx';
 import { Link, navigate } from '../router.tsx';
@@ -13,7 +14,7 @@ export function QrDetail({ id }: { id: string }) {
   const toast = useToast();
   const [qr, setQr] = useState<Qr | null>(null);
   const [error, setError] = useState('');
-  const [tab, setTab] = useState<'stats' | 'edit'>(() => (location.hash === '#edit' ? 'edit' : 'stats'));
+  const [tab, setTab] = useState<'stats' | 'simulate' | 'edit'>(() => (location.hash === '#edit' ? 'edit' : 'stats'));
   useEffect(() => {
     api<{ qr: Qr }>(`/api/qrs/${id}`)
       .then((r) => {
@@ -83,12 +84,17 @@ export function QrDetail({ id }: { id: string }) {
             <button role="tab" aria-selected={tab === 'stats'} onClick={() => setTab('stats')}>
               <BarChart3 size={15} /> Analytics
             </button>
+            {qr.kind === 'dynamic' && (
+              <button role="tab" aria-selected={tab === 'simulate'} onClick={() => setTab('simulate')}>
+                <FlaskConical size={15} /> Simulate
+              </button>
+            )}
             <button role="tab" aria-selected={tab === 'edit'} onClick={() => setTab('edit')}>
               <Pencil size={15} /> Edit &amp; design
             </button>
           </div>
         )}
-        {tab === 'stats' ? <Analytics qr={qr} /> : <Editor existing={qr} onSaved={setQr} />}
+        {tab === 'stats' ? <Analytics qr={qr} /> : tab === 'simulate' ? <Simulate qr={qr} /> : <Editor existing={qr} onSaved={setQr} />}
       </div>
     </div>
   );
@@ -184,6 +190,7 @@ function Analytics({ qr }: { qr: Qr }) {
               </div>
             )}
           </div>
+          <YearView qr={qr} />
           <div className="card" style={{ marginTop: 16 }}>
             <div className="card-head">
               <h2>Latest scans</h2>
@@ -223,6 +230,97 @@ function Analytics({ qr }: { qr: Qr }) {
           </div>
         </>
       )}
+    </div>
+  );
+}
+
+/** A year of scans as a calendar, and the days that stood out. */
+function YearView({ qr }: { qr: Qr }) {
+  const [days, setDays] = useState<DayCount[] | null>(null);
+  useEffect(() => {
+    api<Stats>(`/api/qrs/${qr.id}/stats?days=365`).then((s) => setDays(s.byDay));
+  }, [qr.id]);
+  if (!days) return null;
+  return (
+    <div className="charts" style={{ marginTop: 16 }}>
+      <div className="card">
+        <div className="card-head">
+          <h2>The last year</h2>
+        </div>
+        <CalendarHeatmap days={days} caption="Scans per day over the last year" />
+      </div>
+      <div className="card">
+        <div className="card-head">
+          <h2>Unusual activity</h2>
+        </div>
+        <AnomalyList items={findAnomalies(days)} />
+      </div>
+    </div>
+  );
+}
+
+const WEEKDAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+/** Runs this code's real routing for a made-up visitor; nothing is counted. */
+function Simulate({ qr }: { qr: Qr }) {
+  const [os, setOs] = useState('android');
+  const [lang, setLang] = useState('en');
+  const [country, setCountry] = useState('IN');
+  const [when, setWhen] = useState(() => {
+    const d = new Date();
+    return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+  });
+  const [r, setR] = useState<{ target: string; label: string; localDay: number; localMinutes: number } | null>(null);
+  useEffect(() => {
+    api<NonNullable<typeof r>>(`/api/qrs/${qr.id}/simulate`, { body: { os, lang, country, at: new Date(when).getTime(), visitor: `${os}|${lang}|${country}` } }).then(setR).catch(() => setR(null));
+  }, [qr.id, os, lang, country, when]);
+  return (
+    <div className="studio" style={{ gridTemplateColumns: 'minmax(0,1fr) minmax(0,1fr)' }}>
+      <div className="card stack">
+        <h2 style={{ margin: 0 }}>A scan…</h2>
+        <label className="field">
+          At this moment (your time)
+          <input className="input" type="datetime-local" value={when} onChange={(e) => setWhen(e.target.value)} />
+        </label>
+        <label className="field">
+          From this phone
+          <select className="input" value={os} onChange={(e) => setOs(e.target.value)}>
+            <option value="android">Android</option>
+            <option value="ios">iPhone</option>
+            <option value="windows">Windows</option>
+            <option value="mac">Mac</option>
+            <option value="linux">Linux</option>
+          </select>
+        </label>
+        <label className="field">
+          Language (two letters)
+          <input className="input" value={lang} maxLength={3} onChange={(e) => setLang(e.target.value.toLowerCase())} />
+        </label>
+        <label className="field">
+          Country (two letters)
+          <input className="input" value={country} maxLength={2} onChange={(e) => setCountry(e.target.value.toUpperCase())} />
+        </label>
+      </div>
+      <div className="card stack">
+        <h2 style={{ margin: 0 }}>…would open</h2>
+        {r ? (
+          <>
+            <div className="note good">
+              <span>
+                <b>{r.label}</b>
+              </span>
+            </div>
+            <a className="mono" href={r.target} target="_blank" rel="noreferrer">
+              {r.target}
+            </a>
+            <p className="small muted" style={{ margin: 0 }}>
+              In the code’s timezone ({qr.timezone}) that is {WEEKDAYS[r.localDay]}, {String(Math.floor(r.localMinutes / 60)).padStart(2, '0')}:{String(r.localMinutes % 60).padStart(2, '0')}. Simulations are never counted as scans.
+            </p>
+          </>
+        ) : (
+          <Loading />
+        )}
+      </div>
     </div>
   );
 }

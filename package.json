@@ -14,7 +14,7 @@
     "start": "node --max-old-space-size=256 server/main.ts",
     "test": "node --test \"test/**/*.test.ts\"",
     "typecheck": "tsc --noEmit",
-    "e2e": "node e2e/smoke.ts"
+    "e2e": "node e2e/smoke.ts && node e2e/pages.ts"
   },
   "dependencies": {
     "express": "^5.3.0",
