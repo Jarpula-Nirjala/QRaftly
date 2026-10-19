@@ -303,11 +303,22 @@ export function Header() {
 
 /** "Back" at the top left of every page except the home page. */
 export function BackBar() {
+  const { path } = useLocation();
+  const onFeaturePage = EXPLORE.some((p) => p.to === path);
   return (
     <div className="back-bar">
       <button type="button" className="back-btn" onClick={goBack}>
         <ArrowLeft size={18} /> Back
       </button>
+      {onFeaturePage && (
+        <nav className="ex-tabs" aria-label="Feature pages">
+          {EXPLORE.map(({ to, label, icon: Icon }) => (
+            <Link key={to} to={to} className={path === to ? 'on' : ''}>
+              <Icon size={16} /> {label}
+            </Link>
+          ))}
+        </nav>
+      )}
     </div>
   );
 }

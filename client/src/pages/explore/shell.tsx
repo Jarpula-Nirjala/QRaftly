@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { EXPLORE } from '../../explore.ts';
-import { Link, useLocation } from '../../router.tsx';
+import { useLocation } from '../../router.tsx';
 import { Footer } from '../../ui.tsx';
 import { BackdropStage } from '../../visuals/backdrop.tsx';
 import './explore.css';
@@ -14,7 +14,6 @@ export function ExploreShell({ children, visual }: { children: ReactNode; visual
     <BackdropStage>
       <div className="top-veil">
       <div className="wrap">
-        <PageTabs />
         <header className="ex-head">
           <div>
             <h1>{page.title}</h1>
@@ -38,20 +37,6 @@ export function ExploreShell({ children, visual }: { children: ReactNode; visual
       </div>
       <Footer />
     </BackdropStage>
-  );
-}
-
-/** Tabs across the five feature pages (Home is in the header). */
-export function PageTabs() {
-  const { path } = useLocation();
-  return (
-    <div className="ex-tabs" role="navigation" aria-label="Feature pages">
-      {EXPLORE.map(({ to, label, icon: Icon }) => (
-        <Link key={to} to={to} className={path === to ? 'on' : ''}>
-          <Icon size={16} /> {label}
-        </Link>
-      ))}
-    </div>
   );
 }
 

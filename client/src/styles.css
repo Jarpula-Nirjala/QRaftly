@@ -2101,3 +2101,23 @@ section[id],
 .v-hero {
   padding-bottom: 24px;
 }
+
+.back-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding-right: clamp(12px, 1.6vw, 28px);
+}
+.back-bar .ex-tabs {
+  margin: 0;
+  justify-content: flex-end;
+}
+/* Privacy follows the last showcase row at the same spacing as the rows themselves. */
+#features {
+  padding-bottom: 0;
+}
+#privacy {
+  padding-top: 0;
+}
