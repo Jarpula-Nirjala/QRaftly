@@ -2135,37 +2135,6 @@ section[id],
   font-size: 17px !important;
   color: var(--muted) !important;
 }
-/* Explore: three wide cards, then two centred below. */
-.explore-grid {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 22px;
-}
-.explore-card {
-  flex: 0 1 calc((100% - 44px) / 3);
-  min-width: min(100%, 300px);
-  overflow: hidden;
-}
-.explore-card .card-img {
-  aspect-ratio: 16 / 9;
-}
-@media (max-width: 1000px) {
-  .explore-card {
-    flex-basis: calc((100% - 22px) / 2);
-  }
-}
-@media (max-width: 640px) {
-  .explore-card {
-    flex-basis: 100%;
-  }
-}
-:root[data-theme='dark'] .bg-stage .card-img {
-  border-radius: var(--radius);
-  width: 100%;
-  margin: 0 0 14px;
-}
-
 /* ------------------------------------------------------------ the generator preview: your steel-framed screen */
 
 .preview {

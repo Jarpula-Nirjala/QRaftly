@@ -1,0 +1,207 @@
+/* Explore: a three-up carousel (side, middle, side) that moves on by itself. */
+
+.xc {
+  --cw: min(560px, 46vw);
+}
+.xc-stage {
+  position: relative;
+  /* Every card shares one grid cell, so the stage is exactly as tall as the tallest card. */
+  display: grid;
+  justify-items: center;
+  align-items: center;
+  padding: 10px 0 24px;
+  perspective: 1600px;
+  /* Cards tucked away at the sides never widen the page. */
+  overflow-x: clip;
+  overflow-y: visible;
+}
+.xc-card {
+  grid-area: 1 / 1;
+  position: relative;
+  width: var(--cw);
+  display: flex;
+  flex-direction: column;
+  border-radius: 24px;
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  box-shadow: 0 30px 70px -30px rgb(20 36 58 / 0.4);
+  cursor: pointer;
+  /* Middle at full size; neighbours to each side, smaller and turned slightly inwards; the rest tucked behind. */
+  transform: translateX(calc(var(--rel) * var(--cw) * 0.82)) scale(calc(1 - var(--far) * 0.2)) rotateY(calc(var(--rel) * -14deg));
+  opacity: calc(1 - var(--far) * 0.45);
+  filter: saturate(calc(1 - var(--far) * 0.35));
+  z-index: calc(10 - var(--depth) * 3);
+  transition:
+    transform 0.8s cubic-bezier(0.65, 0, 0.25, 1),
+    opacity 0.8s ease,
+    filter 0.8s ease;
+}
+.xc-card[data-rel='2'],
+.xc-card[data-rel='-2'] {
+  opacity: 0;
+  pointer-events: none;
+}
+.xc-card.active {
+  cursor: default;
+  box-shadow: 0 40px 90px -30px rgb(20 36 58 / 0.5), 0 0 0 2px color-mix(in srgb, var(--accent) 55%, transparent);
+}
+.xc-photo {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: radial-gradient(120% 90% at 30% 10%, #ffffff, #f1f3f7 60%, #e4e8ee);
+}
+.xc-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transform: scale(1.02);
+  transition: transform 2.4s ease-out;
+}
+/* The middle card's photo eases slowly towards the viewer while it is shown. */
+.xc-card.active .xc-photo img {
+  transform: scale(1.1);
+}
+.xc-badge {
+  position: absolute;
+  left: 14px;
+  top: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.9);
+  color: #14243a;
+  font-weight: 700;
+  font-size: 15px;
+  box-shadow: 0 4px 14px rgb(20 36 58 / 0.15);
+}
+.xc-body {
+  padding: 22px 26px 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.xc-body h3 {
+  font-size: clamp(24px, 2.2vw, 30px);
+  margin: 0;
+}
+.xc-body p {
+  margin: 0;
+  font-family: var(--font-read);
+  font-size: 19px;
+  color: var(--ink-2);
+}
+.xc-body .xc-more {
+  font-size: 17px;
+  color: var(--muted);
+}
+.xc-body ul {
+  margin: 8px 0 14px;
+  padding-left: 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 18px;
+  font-size: 16.5px;
+  color: var(--ink-2);
+}
+.xc-body li::marker {
+  color: var(--gold);
+}
+.xc-body .btn {
+  align-self: flex-start;
+}
+/* The middle card's text rises in each time it arrives. */
+.xc-card.active .xc-body > * {
+  animation: xc-in 0.6s ease both;
+}
+.xc-card.active .xc-body > :nth-child(2) {
+  animation-delay: 0.08s;
+}
+.xc-card.active .xc-body > :nth-child(3) {
+  animation-delay: 0.16s;
+}
+.xc-card.active .xc-body > :nth-child(4),
+.xc-card.active .xc-body > :nth-child(5) {
+  animation-delay: 0.24s;
+}
+@keyframes xc-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+/* How long until the next card. */
+.xc-timer {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 4px;
+  width: 100%;
+  background: linear-gradient(90deg, var(--gold-deep), var(--gold));
+  transform-origin: left;
+  animation: xc-timer 2s linear both;
+}
+@keyframes xc-timer {
+  from {
+    transform: scaleX(0);
+  }
+}
+.xc-nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 18px;
+}
+.xc-dot {
+  width: 11px;
+  height: 11px;
+  padding: 0;
+  border-radius: 99px;
+  border: 0;
+  background: var(--line-2);
+  cursor: pointer;
+  transition:
+    width 0.3s,
+    background 0.3s;
+}
+.xc-dot.on {
+  width: 34px;
+  background: var(--accent);
+}
+:root[data-theme='dark'] .xc-card {
+  background: rgb(20 16 12 / 0.75);
+  border-color: rgb(212 175 101 / 0.2);
+  box-shadow: 0 30px 70px -30px rgb(0 0 0 / 0.7);
+}
+:root[data-theme='dark'] .xc-card.active {
+  box-shadow: 0 40px 90px -30px rgb(0 0 0 / 0.8), 0 0 0 2px rgb(212 175 101 / 0.5);
+}
+@media (max-width: 760px) {
+  .xc {
+    --cw: min(440px, 88vw);
+  }
+
+  /* Phones: only the middle card, sliding in from the side. */
+  .xc-card:not(.active) {
+    opacity: 0;
+    pointer-events: none;
+  }
+  .xc-body ul {
+    grid-template-columns: 1fr;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .xc-card,
+  .xc-photo img {
+    transition: none;
+  }
+  .xc-card.active .xc-body > *,
+  .xc-timer {
+    animation: none;
+  }
+}
