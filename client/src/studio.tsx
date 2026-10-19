@@ -73,10 +73,10 @@ export function PayloadForm({ type, data, onChange }: { type: StaticType; data: 
       return (
         <div className="stack">
           <div className="grid-2">
-            {input('vpa', 'UPI ID', { placeholder: 'yourname@okbank' })}
-            {input('name', 'Payee name', { placeholder: 'Asha Stores' })}
-            {input('amount', 'Amount (₹)', { placeholder: 'Leave empty to let them type it', inputMode: 'decimal' }, 'Fixed amounts suit bills and fees.')}
-            {input('note', 'Note', { placeholder: 'Invoice 1042' })}
+            {input('vpa', 'UPI ID', { placeholder: 'yourname@okbank' }, 'The only required field. Copy it from your UPI app.')}
+            {input('name', 'Payee name (optional)', { placeholder: 'Asha Stores' }, 'A label only: the app shows the bank-registered name before paying.')}
+            {input('amount', 'Amount in ₹ (optional)', { placeholder: 'Leave empty to let them type it', inputMode: 'decimal' }, 'Fixed amounts suit bills and fees. Most banks allow up to ₹1,00,000 per payment.')}
+            {input('note', 'Note (optional)', { placeholder: 'Invoice 1042' }, 'Shown to the payer and saved with the payment.')}
           </div>
           <p className="muted small" style={{ margin: 0 }}>Works with every UPI app: GPay, PhonePe, Paytm, BHIM and bank apps.</p>
         </div>
