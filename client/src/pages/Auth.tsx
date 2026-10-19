@@ -30,6 +30,9 @@ export function AuthPage({ mode }: { mode: 'signin' | 'signup' }) {
 
   return (
     <div className="auth">
+      <figure className="auth-showcase" aria-hidden="true">
+        <img src="/bg/signin-stand.jpg" alt="" width={1122} height={1402} decoding="async" />
+      </figure>
       <form className="card stack" onSubmit={submit} noValidate>
         <div style={{ textAlign: 'center' }}>
           <BrandMark size={40} />
