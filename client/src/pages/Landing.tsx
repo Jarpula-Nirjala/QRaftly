@@ -1,6 +1,6 @@
 import { useState, type CSSProperties, type ReactNode } from 'react';
 import {
-  ArrowRight, BarChart3, CalendarCheck, Check, CheckCircle2, Cpu, XCircle, Files, Globe2, Package, Paintbrush, ShieldCheck, Sparkles, UserRound,
+  ArrowRight, BarChart3, CalendarCheck, Check, Cpu, Files, Globe2, Package, Paintbrush, ShieldCheck, Sparkles, UserRound,
 } from 'lucide-react';
 import { DEFAULT_DESIGN, type Design } from '../../../shared/qr/render.ts';
 import { EXPLORE } from '../explore.ts';
@@ -11,21 +11,9 @@ import { Footer, useToast } from '../ui.tsx';
 import { DashboardScene, EncoderScene, GlobeScene, PackagingScene, PedestalScene, ProfileScene, SheetsScene, ShieldScene, TicketScene } from '../visuals/mockups.tsx';
 import { AnimatedName, HeroWave, LampScene } from '../visuals/hero.tsx';
 import { BackdropStage } from '../visuals/backdrop.tsx';
+import { WhySection } from '../visuals/why.tsx';
 import { FloatingBand, GlassPrism, Particles, Tunnel } from '../visuals/scene.tsx';
 
-const COMPARE: Array<[string, boolean | string, boolean | string, boolean | string]> = [
-  ['Change the destination after printing', false, true, true],
-  ['Scan check of your design before download', false, false, true],
-  ['Analytics without storing IP addresses', false, false, true],
-  ['Rules by time, phone, language and country', false, 'Some plans', true],
-  ['A/B tests on one printed code', false, 'Some plans', true],
-  ['Single-use codes that are safe against two scans at once', false, 'Rare', true],
-  ['Signed event tickets with a phone door scanner', false, 'Separate product', true],
-  ['Certificates anyone can verify, even offline', false, false, true],
-  ['Link safety check before opening a code', false, false, true],
-  ['Open engine you can inspect step by step', false, false, true],
-  ['Price for these features', 'Free', 'Monthly fee', 'Free'],
-];
 
 
 function Show({ kicker, icon: Icon, title, text, points, visual, flip, example, size = 1 }: { kicker: string; icon: typeof Cpu; title: string; text: string; points: string[]; visual: ReactNode; flip?: boolean; example?: string; size?: number }) {
@@ -322,53 +310,7 @@ export function Landing() {
 
       <section id="compare" className="section">
         <div className="wrap">
-          <div className="section-title">
-            <span className="hero-kicker">Why QRaftly</span>
-            <h2>How it is different from the usual QR tools</h2>
-            <p>Most QR generators make a picture and stop. Paid platforms add tracking but keep the engine a black box. QRaftly treats a code as something that lives for years.</p>
-          </div>
-          <div className="compare-cards">
-            {[
-              { old: 'The link is baked into the picture forever.', now: 'The printed code points to a link you can change at any time.' },
-              { old: 'You find out a design does not scan after printing 1,000 copies.', now: 'Every design is decoded before download, with the logo counted as damage.' },
-              { old: 'Scans are counted by logging IP addresses and fingerprints.', now: 'A daily keyed hash; no IP addresses are stored.' },
-              { old: 'Anyone can screenshot a ticket or edit a certificate.', now: 'Tickets and certificates are cryptographically signed; copies and edits are caught.' },
-            ].map((c) => (
-              <div key={c.old} className="compare-card">
-                <div className="was">
-                  <XCircle size={18} /> {c.old}
-                </div>
-                <div className="is">
-                  <CheckCircle2 size={18} /> {c.now}
-                </div>
-              </div>
-            ))}
-          </div>
-          <div className="table-wrap" style={{ marginTop: 26 }}>
-            <table className="table compare-table">
-              <thead>
-                <tr>
-                  <th>What you get</th>
-                  <th>Typical free generator</th>
-                  <th>Typical paid platform</th>
-                  <th>QRaftly</th>
-                </tr>
-              </thead>
-              <tbody>
-                {COMPARE.map(([what, free, paid, ours]) => (
-                  <tr key={what}>
-                    <td>{what}</td>
-                    {[free, paid, ours].map((v, i) => (
-                      <td key={i} className={i === 2 ? 'ours' : ''}>
-                        {v === true ? <CheckCircle2 size={19} color="var(--good)" aria-label="Yes" /> : v === false ? <XCircle size={19} color="var(--bad)" aria-label="No" /> : <span className="small">{v}</span>}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <p className="small muted" style={{ marginTop: 10 }}>“Typical” describes common products in general, not any one company; features vary by plan.</p>
+          <WhySection />
         </div>
       </section>
 
