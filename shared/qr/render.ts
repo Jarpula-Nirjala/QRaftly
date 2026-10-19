@@ -132,8 +132,10 @@ export function toSvg(qr: Pick<QrCode, 'size' | 'modules'>, partial: Partial<Des
     balls += e.ball;
   }
 
-  const gradient = d.fg2 ? `<defs><linearGradient id="qrg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${fg}"/><stop offset="1" stop-color="${safeColor(d.fg2, fg)}"/></linearGradient></defs>` : '';
-  const dotFill = d.fg2 ? 'url(#qrg)' : fg;
+  // Named after its colours: several codes on one page each keep their own gradient (ids are page-global).
+  const gid = `qrg-${`${fg}-${d.fg2 ?? ''}`.replace(/[^\w-]/g, '')}`;
+  const gradient = d.fg2 ? `<defs><linearGradient id="${gid}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${fg}"/><stop offset="1" stop-color="${safeColor(d.fg2, fg)}"/></linearGradient></defs>` : '';
+  const dotFill = d.fg2 ? `url(#${gid})` : fg;
   let logo = '';
   if (box && d.logo && /^data:image\/(png|jpeg|webp|gif|svg\+xml);base64,[A-Za-z0-9+/=]+$/.test(d.logo)) {
     const pad = 0.5;

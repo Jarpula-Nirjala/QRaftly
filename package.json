@@ -13,7 +13,8 @@
     "build": "vite build",
     "start": "node server/main.ts",
     "test": "node --test \"test/**/*.test.ts\"",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "e2e": "node e2e/smoke.ts"
   },
   "dependencies": {
     "express": "^5.3.0",
@@ -29,6 +30,8 @@
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.2",
     "jsqr": "^1.4.0",
+    "lucide-react": "1.49.0",
+    "playwright-core": "1.63.0",
     "pngjs": "^7.0.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",

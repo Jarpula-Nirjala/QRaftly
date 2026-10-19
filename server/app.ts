@@ -59,7 +59,7 @@ export async function startServer(opts: ServerOptions): Promise<RunningServer> {
     app.use(express.static(opts.staticDir, { index: false, maxAge: '1h', setHeaders: (res, p) => /[\\/]assets[\\/]/.test(p) && res.setHeader('Cache-Control', 'public, max-age=31536000, immutable') }));
     // The web app handles every other page.
     const index = path.join(opts.staticDir, 'index.html');
-    app.get('/*rest', (_req, res) => res.sendFile(index));
+    app.get('/{*rest}', (_req, res) => res.sendFile(index));
   }
 
   app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
