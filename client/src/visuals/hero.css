@@ -182,11 +182,11 @@
 .ribbons-wash {
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, #ffffff 0%, rgb(255 255 255 / 0.94) 30%, rgb(255 255 255 / 0.55) 48%, rgb(255 255 255 / 0) 66%), linear-gradient(to top, #ffffff 0%, rgb(255 255 255 / 0) 22%);
+  background: linear-gradient(90deg, rgb(255 255 255 / 0.72) 0%, rgb(255 255 255 / 0.5) 30%, rgb(255 255 255 / 0.18) 50%, rgb(255 255 255 / 0) 66%);
 }
 @media (max-width: 900px) {
   .ribbons-wash {
-    background: linear-gradient(180deg, rgb(255 255 255 / 0.92) 0%, rgb(255 255 255 / 0.75) 45%, rgb(255 255 255 / 0.4) 70%, #ffffff 100%);
+    background: linear-gradient(180deg, rgb(255 255 255 / 0.7) 0%, rgb(255 255 255 / 0.5) 45%, rgb(255 255 255 / 0.25) 70%, rgb(255 255 255 / 0) 100%);
   }
 }
 
@@ -518,4 +518,9 @@
   :root[data-theme='dark'] .lamps-mobile {
     display: none !important;
   }
+}
+
+/* Light hero: no edge of its own, so it and the sections below share one background. */
+:root:not([data-theme='dark']) .v-hero {
+  border-bottom-color: transparent;
 }

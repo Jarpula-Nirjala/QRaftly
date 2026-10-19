@@ -9,7 +9,7 @@ import { Pipeline, ScanFlow } from '../visuals/howitworks.tsx';
 import { DesignPanel, PayloadForm, payloadOf, QrPreview, TYPES, type StaticType } from '../studio.tsx';
 import { Footer, useToast } from '../ui.tsx';
 import { DashboardScene, EncoderScene, GlobeScene, PackagingScene, PedestalScene, ProfileScene, SheetsScene, ShieldScene, TicketScene } from '../visuals/mockups.tsx';
-import { AnimatedName, LampScene, RibbonBackdrop } from '../visuals/hero.tsx';
+import { AnimatedName, LampScene } from '../visuals/hero.tsx';
 import { BackdropStage } from '../visuals/backdrop.tsx';
 import { FloatingBand, GlassPrism, HeroScanner, Particles, Tunnel } from '../visuals/scene.tsx';
 
@@ -82,7 +82,6 @@ export function Landing() {
     <>
       <BackdropStage>
       <section className="v-hero">
-        <RibbonBackdrop className="only-light" />
         <LampScene className="only-dark lamps-desktop" />
         <Particles />
         <div className="wrap v-hero-grid">
@@ -333,7 +332,7 @@ export function Landing() {
                   <span>to decode a 640×480 camera frame</span>
                 </div>
                 <div>
-                  <b>55</b>
+                  <b>66</b>
                   <span>automated tests, plus a browser test with a fake camera</span>
                 </div>
               </div>

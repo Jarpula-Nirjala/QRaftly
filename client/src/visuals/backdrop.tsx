@@ -1,4 +1,5 @@
 import { useEffect, useRef, type CSSProperties, type ReactNode } from 'react';
+import { RibbonBackdrop } from './hero.tsx';
 import { useCanvas } from './scene.tsx';
 import './backdrop.css';
 
@@ -35,8 +36,8 @@ function Glitter() {
 }
 
 /**
- * The dark theme's one background, for the whole page: near-black at the top that warms into espresso and
- * brown as you scroll, with the white-gold-black wave artwork, orange and gold light, gold strands and dust.
+ * The dark theme's one background: blackest brown at the top and the bottom of the page, warming gently to a
+ * deep brown around the middle, over the white-gold-black wave artwork with orange and gold light and gold dust.
  */
 function GoldWaves() {
   return (
@@ -65,21 +66,32 @@ function GoldWaves() {
   );
 }
 
-/** Your corridor of light, drifting slowly towards its glowing doorway (light theme). */
+/**
+ * The light theme's one background: the corridor of light, shaded with navy, light blue and a touch of gold, a
+ * faint pattern and a little frosted glass, with the gold ribbons over it at the top that fade as you scroll.
+ */
 function Corridor() {
   return (
     <div className="co only-light">
       <div className="co-img" />
       <div className="co-door" />
+      <div className="co-tint" />
+      <div className="co-pattern" />
+      <div className="co-pane p1" />
+      <div className="co-pane p2" />
       <div className="co-sheen" />
       <div className="co-veil" />
+      <div className="co-ribbons">
+        <RibbonBackdrop />
+      </div>
     </div>
   );
 }
 
 /**
- * One fixed background behind everything inside. In dark mode it also tracks how far the page has scrolled
- * (--sp, 0 at the top to 1 a screen and a half down), which warms it from black to brown.
+ * One fixed background behind everything inside, for both themes. Two scroll values drive it:
+ *   --top: 0 → 1 over the first screen (the hero's ribbons fade as you leave it);
+ *   --sp:  0 at the top and the bottom of the page, rising gently to 1 at the middle (the dark theme's warmth).
  */
 export function BackdropStage({ children }: { children: ReactNode }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -87,8 +99,12 @@ export function BackdropStage({ children }: { children: ReactNode }) {
     let raf = 0;
     const update = () => {
       raf = 0;
-      const sp = Math.min(1, window.scrollY / (window.innerHeight * 1.5));
-      ref.current?.style.setProperty('--sp', sp.toFixed(3));
+      const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+      const p = Math.min(1, Math.max(0, window.scrollY / max));
+      // A smooth hill: no warmth at either end, the most in the middle, with no sudden step anywhere.
+      const warm = Math.sin(Math.PI * p) ** 2;
+      ref.current?.style.setProperty('--sp', warm.toFixed(3));
+      ref.current?.style.setProperty('--top', Math.min(1, window.scrollY / window.innerHeight).toFixed(3));
     };
     const on = () => {
       if (!raf) raf = requestAnimationFrame(update);
@@ -96,14 +112,17 @@ export function BackdropStage({ children }: { children: ReactNode }) {
     update();
     window.addEventListener('scroll', on, { passive: true });
     window.addEventListener('resize', on);
+    // The page grows as lazy content appears; re-measure once it has settled.
+    const t = setTimeout(update, 1500);
     return () => {
       window.removeEventListener('scroll', on);
       window.removeEventListener('resize', on);
       cancelAnimationFrame(raf);
+      clearTimeout(t);
     };
   }, []);
   return (
-    <div ref={ref} className="bg-stage" style={{ '--sp': 0 } as CSSProperties}>
+    <div ref={ref} className="bg-stage" style={{ '--sp': 0, '--top': 0 } as CSSProperties}>
       <div className="bg-layer" aria-hidden="true">
         <Corridor />
         <GoldWaves />

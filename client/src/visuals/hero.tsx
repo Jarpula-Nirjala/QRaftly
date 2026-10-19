@@ -102,7 +102,6 @@ export function RibbonBackdrop({ className = '' }: { className?: string }) {
             <feGaussianBlur stdDeviation="1.2" />
           </filter>
         </defs>
-        <rect width="1600" height="900" fill="#f6f7f9" />
         {glass.map((d, i) => (
           <g key={`g${i}`} className={`rib r${i}`} filter="url(#rbShadow)">
             <path d={d} fill="url(#rbGlass)" stroke="#ffffff" strokeOpacity="0.95" strokeWidth="1.4" />

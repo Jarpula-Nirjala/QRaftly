@@ -4,8 +4,9 @@
   --surface: #ffffff;
   --surface-2: #f3f5f8;
   --ink: #14243a;
-  --ink-2: #3b4a60;
-  --muted: #6b7688;
+  /* Near-black for reading text on the bright background: clear without being bold. */
+  --ink-2: #0d1320;
+  --muted: #39445a;
   --line: #e7e9ee;
   --line-2: #d6dae2;
   --accent: #d4af65;
@@ -1083,6 +1084,9 @@ table.table {
 }
 
 .footer {
+  /* Positioned so it paints above the fixed page background, which sits in the content's stacking context. */
+  position: relative;
+  z-index: 1;
   border-top: 1px solid var(--line);
   padding: 40px 0 28px;
   margin-top: 30px;
