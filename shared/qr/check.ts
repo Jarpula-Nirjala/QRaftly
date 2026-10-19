@@ -9,6 +9,8 @@ export interface Readability {
   ok: boolean;
   /** Plain-language problems, worst first. */
   issues: string[];
+  /** Advice that does not stop the code from being printed (e.g. inverted colours, which most phones read). */
+  notes: string[];
   /** Share of the error-correction budget the logo uses in the most affected block (0–1; above 1 cannot be read). */
   budgetUsed: number;
   /** WCAG contrast ratio between the dots and the background. */
@@ -76,9 +78,12 @@ export function checkReadability(text: string, partial: Partial<Design> = {}, ec
   const fgRgb = hexToRgb(design.fg);
   const bgRgb = hexToRgb(design.transparent ? '#ffffff' : design.bg);
   const contrast = contrastRatio(design.fg, design.transparent ? '#ffffff' : design.bg);
-  if (fgRgb && bgRgb && luminance(fgRgb) > luminance(bgRgb)) issues.push('Light dots on a dark background are read by fewer phone cameras. Use dark dots on a light background.');
+  // Reflectance reversal is allowed by ISO/IEC 18004:2015 and read by current phone cameras, but not by every
+  // older scanner app, so it is advice rather than a failure.
+  const notes: string[] = [];
+  if (fgRgb && bgRgb && luminance(fgRgb) > luminance(bgRgb)) notes.push('Light squares on a dark background: phone cameras read this, but some older scanner apps do not.');
   if (contrast < 3) issues.unshift(`Contrast is too low (${contrast.toFixed(1)}:1). Use a darker colour for the dots or a lighter background.`);
   else if (contrast < 4.5) issues.push(`Contrast is a little low (${contrast.toFixed(1)}:1). Darker dots scan more reliably.`);
   if (design.margin < 2) issues.push('Leave at least 2 modules of empty space around the code (4 is ideal).');
-  return { qr, ok: issues.length === 0, issues, budgetUsed, contrast };
+  return { qr, ok: issues.length === 0, issues, notes, budgetUsed, contrast };
 }

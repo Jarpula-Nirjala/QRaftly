@@ -422,6 +422,11 @@ export function QrPreview({ text, design, name, placeholder, extra }: { text: st
           <div className="small muted">
             Version {check.qr.version} · {check.qr.size}×{check.qr.size} · level {check.qr.ecl} · contrast {check.contrast.toFixed(1)}:1
           </div>
+          {check.notes.length > 0 && (
+            <p className="small" style={{ margin: '10px 0 0', color: 'var(--warn)' }}>
+              {check.notes.join(' ')}
+            </p>
+          )}
           {check.issues.length > 0 && (
             <ul className="small" style={{ margin: '10px 0 0', paddingLeft: 18, color: 'var(--bad)' }}>
               {check.issues.map((i) => (

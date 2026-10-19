@@ -57,7 +57,8 @@ describe('Readability check', () => {
     const pale = checkReadability('x', { fg: '#cccccc', bg: '#ffffff' });
     assert.ok(pale.issues.some((i) => /Contrast is too low/.test(i)));
     const inverted = checkReadability('x', { fg: '#ffffff', bg: '#000000' });
-    assert.ok(inverted.issues.some((i) => /Light dots/.test(i)));
+    assert.ok(inverted.notes.some((i) => /Light squares/.test(i)));
+    assert.ok(inverted.ok, 'inverted colours with full contrast are still printable');
   });
 });
 
