@@ -22,7 +22,6 @@ async function api(p: string, cookie: string, body?: unknown) {
 // A plain studio backdrop instead of the page background, so each picture stands on its own.
 const STUDIO_CSS = `
 .bg-layer, .header, .back-bar, .toast-box { display: none !important; }
-.ex-visual { max-width: 640px !important; width: 640px !important; }
 body { background: #f4f6f9 !important; }
 .v-stage { background: radial-gradient(120% 90% at 30% 10%, #ffffff 0%, #f3f5f8 55%, #e3e7ee 100%) !important;
   -webkit-mask-image: none !important; mask-image: none !important; border-radius: 0 !important; }
@@ -34,9 +33,11 @@ const shots: Array<[string, (p: Page) => Promise<Locator>]> = [];
 
 async function main() {
   const { cookie } = await api('/api/auth/signup', '', { name: 'Card Shots', email: `cards-${Date.now()}@example.com`, password: 'password123' });
-  // Each Explore card shows the main mockup from the top of its own page.
-  for (const [file, path] of [['x-studio', '/studio'], ['x-growth', '/growth'], ['x-venues', '/venues'], ['x-trust', '/trust'], ['x-engine', '/engine']])
-    shots.push([file, async (p) => (await p.goto(BASE + path, { waitUntil: 'domcontentloaded' }), p.locator('.ex-visual .v-stage'))]);
+  shots.push(['x-studio', async (p) => (await p.goto(`${BASE}/studio`), await p.locator('#f2').getByText('Scans: decoded').waitFor({ timeout: 15000 }), p.locator('#f2 canvas'))]);
+  shots.push(['x-growth', async (p) => (await p.goto(`${BASE}/growth`), p.locator('#f10 .ex-demo'))]);
+  shots.push(['x-venues', async (p) => (await p.goto(`${BASE}/venues`), p.locator('#f12 .grid-2'))]);
+  shots.push(['x-trust', async (p) => (await p.goto(`${BASE}/trust`), p.locator('#f16 .ex-demo'))]);
+  shots.push(['x-engine', async (p) => (await p.goto(`${BASE}/engine`), p.locator('#f23 .mask-grid'))]);
 
   const browser = await chromium.launch({ channel: process.env.CHANNEL ?? 'msedge', headless: true });
   const ctx = await browser.newContext({ viewport: { width: 1440, height: 1000 }, deviceScaleFactor: 2 });

@@ -3,6 +3,7 @@ import {
   ArrowRight, BarChart3, CalendarCheck, Check, CheckCircle2, Cpu, XCircle, Files, Globe2, Package, Paintbrush, ShieldCheck, Sparkles, UserRound,
 } from 'lucide-react';
 import { DEFAULT_DESIGN, type Design } from '../../../shared/qr/render.ts';
+import { EXPLORE } from '../explore.ts';
 import { Link } from '../router.tsx';
 import { Pipeline, ScanFlow } from '../visuals/howitworks.tsx';
 import { DesignPanel, PayloadForm, payloadOf, QrPreview, TYPES, type StaticType } from '../studio.tsx';
@@ -10,7 +11,6 @@ import { Footer, useToast } from '../ui.tsx';
 import { DashboardScene, EncoderScene, GlobeScene, PackagingScene, PedestalScene, ProfileScene, SheetsScene, ShieldScene, TicketScene } from '../visuals/mockups.tsx';
 import { AnimatedName, HeroWave, LampScene } from '../visuals/hero.tsx';
 import { BackdropStage } from '../visuals/backdrop.tsx';
-import { ExploreCarousel } from '../visuals/carousel.tsx';
 import { FloatingBand, GlassPrism, Particles, Tunnel } from '../visuals/scene.tsx';
 
 const COMPARE: Array<[string, boolean | string, boolean | string, boolean | string]> = [
@@ -379,7 +379,27 @@ export function Landing() {
             <h2>Five more pages, twenty-five more tools</h2>
             <p>Each page has five working features you can try right now, most of them without an account.</p>
           </div>
-          <ExploreCarousel />
+          <div className="explore-grid">
+            {EXPLORE.map(({ to, title, blurb, more, img, icon: Icon, features }) => (
+              <Link key={to} to={to} className="explore-card">
+                <img className="card-img" src={`/cards/${img}.jpg`} alt="" loading="lazy" decoding="async" />
+                <div className="ic">
+                  <Icon size={22} />
+                </div>
+                <h3>{title}</h3>
+                <p>{blurb}</p>
+                <p className="more">{more}</p>
+                <ul>
+                  {features.map((f) => (
+                    <li key={f}>{f}</li>
+                  ))}
+                </ul>
+                <span className="go">
+                  Open <ArrowRight size={16} />
+                </span>
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
 
