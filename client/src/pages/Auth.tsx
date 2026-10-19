@@ -62,7 +62,7 @@ export function AuthPage({ mode }: { mode: 'signin' | 'signup' }) {
             </>
           ) : (
             <>
-              New to QRForge? <Link to={`/signup${location.search}`}>Create an account</Link>
+              New to QRaftly? <Link to={`/signup${location.search}`}>Create an account</Link>
             </>
           )}
         </p>

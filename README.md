@@ -1,4 +1,4 @@
-# QRForge
+# QRaftly
 
 QR codes that keep working after you print them: editable links with scan analytics, context-aware redirects, PIN-protected and single-use codes, event tickets with a door scanner, signed certificates and bulk printing.
 
@@ -53,22 +53,38 @@ server/
 - **Every version and level, against an independent decoder.** All 160 version × level combinations are encoded and read back by [jsQR](https://github.com/cozmo/jsQR). The one exception is 23-L, which jsQR cannot read; OpenCV's decoder reads it, confirming the encoding.
 - **Reference codewords.** The output for "HELLO WORLD" at 1-M matches the published codewords.
 - **Error correction.** Reed–Solomon corrects up to ⌊n/2⌋ errors per block, and a 5×5 damaged patch still decodes.
-- **Camera decoder benchmark** (`node bench/decoder-sweep.ts`): 200 synthetic photos with random rotation, strong perspective, blur, noise and shadow. QRForge reads **89%**; jsQR reads 44% of the same frames, at about 15 ms per 640×480 frame.
+- **Camera decoder benchmark** (`node bench/decoder-sweep.ts`): 200 synthetic photos with random rotation, strong perspective, blur, noise and shadow. QRaftly reads **89%**; jsQR reads 44% of the same frames, at about 15 ms per 640×480 frame.
 - **Print output.** Printed PDF sheets were rasterised and every code decoded with OpenCV.
 
 ## Visual design
 
-The site uses a white studio look: frosted glass, ceramic, paper and brushed metal, in navy with electric-blue and cyan accents. Every visual is built in code, with no stock images or video files:
+**Two themes.**
 
-- **Hero:** a glass scanner holding a real code under a moving scan beam, with drifting daylight and data particles.
-- **Generator band:** a "QR universe" of modules.
-- **Mockups:** a phone and business card, an analytics monitor, a scan globe, styled codes on pedestals, a crystal shield, an event ticket, print sheets and product packaging.
-- **The engine section:** an exploded view of a real symbol from the encoder.
-- **Closing sections:** floating glass cubes and a tunnel call to action.
+- **Light:** white, gold (#D4AF65), navy (#14243A) and cloud grey (#F3F5F8). The hero is a backdrop of glass ribbons with polished gold bands that sway slowly, with a light shimmer running along the gold.
+- **Dark:** ivory (#FAF7F0), antique gold (#B69A58), espresso (#302B25) and sand (#E8DFCF). The hero becomes a studio of three glowing QR cube lamps on stone pedestals, whose light breathes while warm dust drifts through the beams.
 
-The codes in the mockups are real and pass the same scan check as the studio, and the browser test decodes them from screenshots. Patterns that are only decorative are random, so they cannot be scanned. Animations are slow, pause when off-screen, and stop for visitors who prefer reduced motion. Everything scales down to phone width without sideways scrolling.
+Where a palette colour would be too faint as text, a deeper or lighter shade of it is used. For example, gold links on white are #8A6A22, at 5:1 contrast.
 
-The logo is a finder-pattern square with a doorway in its right wall, and one blue module stepping through it from the physical code into the digital world. It is flat, two colours and legible at 16 px.
+**Type.**
+
+- Playfair Display for headings.
+- EB Garamond for reading text.
+- Times New Roman for the interface, with Tinos as its fallback.
+- Dancing Script for small flourishes and certificate signatures.
+- A geometric sans for the QRaftly wordmark.
+
+**The name.** "QRaftly" is animated letter by letter. Each letter rises out of the page in turn, a band of gold light then sweeps across the word and a gold swash draws beneath it. The letters drift gently, and each one lifts under the pointer.
+
+**The logo.** Two interlocking rounded squares, gold turning to black and back, with a small "q" where they overlap. It is drawn as vectors, so it stays sharp at any size, and its black turns bright ivory in dark mode.
+
+**Every visual is built in code**, with no stock images or video files. The page includes:
+
+- the two hero scenes, and a "QR universe" of modules above the generator;
+- a phone and business card, an analytics monitor, a scan globe, styled codes on pedestals, a crystal shield, an event ticket, print sheets and product packaging;
+- an exploded view of a real symbol from the encoder;
+- floating glass cubes, and a tunnel call to action.
+
+The codes in the mockups are real and pass the same scan check as the studio, and the browser test decodes them from screenshots. Patterns that are only decorative are random, so they cannot be scanned. Animations pause when off-screen and stop for visitors who prefer reduced motion. Everything scales down to phone width without sideways scrolling.
 
 ## Run it
 
@@ -82,7 +98,7 @@ For development, run `npm run dev:server` and `npm run dev:client` in two termin
 | Variable | Purpose |
 |---|---|
 | `DATABASE_URL` | Postgres connection string (required in production; without it the embedded PGlite is used) |
-| `PUBLIC_URL` | The address put inside QR codes, e.g. `https://qrforge.onrender.com` |
+| `PUBLIC_URL` | The address put inside QR codes, e.g. `https://qraftly.onrender.com` |
 | `HMAC_SECRET` | Key for ticket, unlock-link and visitor-id tags (generated and stored in the database if unset) |
 | `GEOIP` | `off` disables the country lookup for scans |
 

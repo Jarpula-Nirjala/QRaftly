@@ -108,7 +108,7 @@ describe('QR encoder (checked by an independent decoder)', () => {
   });
 
   it('survives damage: a scratched patch is repaired by error correction', () => {
-    const text = 'https://qrforge.app/r/damage-test';
+    const text = 'https://qraftly.app/r/damage-test';
     const qr = encodeText(text, { ecl: 'H', boostEcl: false });
     // A 5×5 scratch in the middle of the data area, every module inverted.
     const damaged = qr.modules.map((r) => r.slice());

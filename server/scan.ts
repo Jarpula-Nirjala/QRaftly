@@ -1,4 +1,4 @@
-/** What QRForge learns from a scan, and how it decides where a dynamic code sends someone. */
+/** What QRaftly learns from a scan, and how it decides where a dynamic code sends someone. */
 
 export interface Visitor {
   device: 'mobile' | 'tablet' | 'desktop' | 'bot';

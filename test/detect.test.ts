@@ -99,7 +99,7 @@ describe('camera decoder (from raw pixels)', () => {
 
   for (const deg of [17, 45, 90, 160, 210, 300]) {
     it(`reads a version 5 code rotated ${deg}°`, () => {
-      const text = 'https://qrforge.example/t/AbCdEfGhIjKl.0123456789abcdef';
+      const text = 'https://qraftly.example/t/AbCdEfGhIjKl.0123456789abcdef';
       const { got, version } = read({ text, quad: rotated(240, 180, 110, deg) });
       assert.ok(version >= 4);
       assert.equal(got?.text, text);
@@ -113,7 +113,7 @@ describe('camera decoder (from raw pixels)', () => {
   });
 
   it('reads a larger version (10+) tilted away from the camera', () => {
-    const text = `https://qrforge.example/v/${'x'.repeat(220)}`;
+    const text = `https://qraftly.example/v/${'x'.repeat(220)}`;
     const { got, version } = read({ text, ecl: 'Q', w: 800, h: 700, quad: [140, 90, 660, 60, 700, 640, 100, 620] });
     assert.ok(version >= 10, `version ${version}`);
     assert.equal(got?.text, text);

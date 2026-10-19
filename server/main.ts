@@ -15,7 +15,7 @@ const server = await startServer({
   publicUrl: process.env.PUBLIC_URL || undefined,
   geo: process.env.GEOIP !== 'off',
 });
-console.log(`QRForge listening on http://localhost:${server.port} (database: ${server.ctx.db.kind})`);
+console.log(`QRaftly listening on http://localhost:${server.port} (database: ${server.ctx.db.kind})`);
 
 let closing = false;
 for (const signal of ['SIGINT', 'SIGTERM'] as const)

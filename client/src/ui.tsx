@@ -1,34 +1,74 @@
-import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useId, useState, type CSSProperties, type ReactNode } from 'react';
 import { AlertCircle, CalendarCheck, Files, LayoutGrid, Loader2, LogOut, Menu, Moon, ScrollText, Sun, X } from 'lucide-react';
 import { useAuth } from './auth.tsx';
 import { Link, navigate, useLocation } from './router.tsx';
 
 // ------------------------------------------------------------ brand
 
-/**
- * The QRForge mark: a finder-pattern square with a doorway in its right wall, and one module stepping
- * through it from the physical code into the digital world. Flat, two colours, legible at 16 px.
+/*
+ * The QRaftly mark: two interlocking rounded squares that weave over and under each other, the front one in
+ * gold that turns to black and back, with a small "q" where they overlap. Drawn as vectors so it stays sharp
+ * at any size; its colours come from CSS variables, so in dark mode the black parts turn bright ivory.
  */
-export const BRAND_SVG = (ink = '#0b1530', accent = '#2563eb') =>
-  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M21 13V8H5v16h16v-5" fill="none" stroke="${ink}" stroke-width="4"/><rect x="9" y="13" width="6" height="6" fill="${ink}"/><rect x="24" y="13" width="6" height="6" fill="${accent}"/></svg>`;
+const FRONT = 'M24 38h24a12 12 0 0 1 12 12v24a12 12 0 0 1-12 12H24a12 12 0 0 1-12-12V50a12 12 0 0 1 12-12z';
+const BACK = 'M52 10h24a12 12 0 0 1 12 12v24a12 12 0 0 1-12 12H52a12 12 0 0 1-12-12V22a12 12 0 0 1 12-12z';
+const Q = 'M48.5 43.5h4a3.5 3.5 0 0 1 3.5 3.5v4a3.5 3.5 0 0 1-3.5 3.5h-4a3.5 3.5 0 0 1-3.5-3.5v-4a3.5 3.5 0 0 1 3.5-3.5zM56 49v11';
+/** Where the back square's lower edge passes over the front square's right edge. */
+const OVER = 'M50 58h22';
 
-export function BrandMark({ size = 30, mono = false }: { size?: number; mono?: boolean }) {
+/** The mark as a standalone SVG string (light colours), for the favicon and for logos placed inside codes. */
+export const BRAND_SVG = () =>
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="f" gradientUnits="userSpaceOnUse" x1="12" y1="38" x2="60" y2="86"><stop offset="0" stop-color="#f6dc9a"/><stop offset=".3" stop-color="#d4af65"/><stop offset=".46" stop-color="#15120f"/><stop offset=".62" stop-color="#15120f"/><stop offset=".8" stop-color="#a8782f"/><stop offset="1" stop-color="#f6dc9a"/></linearGradient><linearGradient id="b" gradientUnits="userSpaceOnUse" x1="40" y1="10" x2="88" y2="58"><stop offset="0" stop-color="#7a6440"/><stop offset=".4" stop-color="#3a3127"/><stop offset=".7" stop-color="#17130f"/><stop offset="1" stop-color="#7a6440"/></linearGradient></defs><path d="${BACK}" fill="none" stroke="url(#b)" stroke-width="10"/><path d="${FRONT}" fill="none" stroke="url(#f)" stroke-width="10"/><path d="${OVER}" stroke="#fff" stroke-width="16"/><path d="${OVER}" stroke="url(#b)" stroke-width="10"/><path d="${Q}" fill="none" stroke="#d4af65" stroke-width="4.5" stroke-linecap="round"/></svg>`;
+
+export function BrandMark({ size = 34, gap = 'var(--bg)' }: { size?: number; gap?: string }) {
+  const id = useId().replace(/:/g, '');
+  const stop = (offset: number, v: string) => <stop offset={offset} style={{ stopColor: `var(${v})` }} />;
   return (
-    <svg className="brand-mark" width={size} height={size} viewBox="0 0 32 32" aria-hidden="true">
-      <path d="M21 13V8H5v16h16v-5" fill="none" stroke="var(--navy)" strokeWidth="4" />
-      <rect x="9" y="13" width="6" height="6" fill="var(--navy)" />
-      <rect x="24" y="13" width="6" height="6" fill={mono ? 'var(--navy)' : 'var(--accent)'} className="brand-step" />
+    <svg className="brand-mark" width={size} height={size} viewBox="0 0 100 100" aria-hidden="true">
+      <defs>
+        <linearGradient id={`${id}f`} gradientUnits="userSpaceOnUse" x1="12" y1="38" x2="60" y2="86">
+          {stop(0, '--logo-g1')}
+          {stop(0.3, '--logo-g2')}
+          {stop(0.46, '--logo-k')}
+          {stop(0.62, '--logo-k')}
+          {stop(0.8, '--logo-g3')}
+          {stop(1, '--logo-g1')}
+        </linearGradient>
+        <linearGradient id={`${id}b`} gradientUnits="userSpaceOnUse" x1="40" y1="10" x2="88" y2="58">
+          {stop(0, '--logo-b2')}
+          {stop(0.4, '--logo-b1')}
+          {stop(0.7, '--logo-b3')}
+          {stop(1, '--logo-b2')}
+        </linearGradient>
+      </defs>
+      <path className="ring back" d={BACK} fill="none" stroke={`url(#${id}b)`} strokeWidth="10" pathLength={100} />
+      <path className="ring front" d={FRONT} fill="none" stroke={`url(#${id}f)`} strokeWidth="10" pathLength={100} />
+      {/* The weave: a gap in the background colour, then the back square crossing over. */}
+      <path d={OVER} stroke={gap} strokeWidth="16" />
+      <path d={OVER} stroke={`url(#${id}b)`} strokeWidth="10" />
+      <path className="q" d={Q} fill="none" stroke="var(--logo-g2)" strokeWidth="4.5" strokeLinecap="round" />
     </svg>
+  );
+}
+
+/** "QRaftly", one span per letter so each can animate on its own. */
+export function Wordmark({ className = '' }: { className?: string }) {
+  return (
+    <span className={`logo-word ${className}`} aria-label="QRaftly">
+      {[...'QRaftly'].map((ch, i) => (
+        <span key={i} className={i === 0 ? 'l q' : 'l'} style={{ '--i': i } as CSSProperties} aria-hidden="true">
+          {ch}
+        </span>
+      ))}
+    </span>
   );
 }
 
 export function Brand() {
   return (
-    <Link to="/" className="brand" aria-label="QRForge home">
+    <Link to="/" className="brand" aria-label="QRaftly home">
       <BrandMark />
-      <span>
-        QR<b>Forge</b>
-      </span>
+      <Wordmark />
     </Link>
   );
 }
@@ -250,7 +290,7 @@ export function Footer() {
           </div>
         </div>
         <div className="footer-base">
-          <span>© {new Date().getFullYear()} QRForge</span>
+          <span>© {new Date().getFullYear()} QRaftly</span>
           <span>No IP addresses stored. No tracking cookies.</span>
         </div>
       </div>

@@ -29,7 +29,7 @@ type Data = Record<string, any>;
 
 function blankData(kind: Kind): Data {
   if (kind === 'dynamic') return { url: '' };
-  if (kind === 'profile') return { firstName: '', lastName: '', title: '', org: '', phone: '', email: '', website: '', bio: '', links: [], accent: '#2563eb' };
+  if (kind === 'profile') return { firstName: '', lastName: '', title: '', org: '', phone: '', email: '', website: '', bio: '', links: [], accent: '#B08A3E' };
   if (kind === 'medical') return { public: { name: '', bloodGroup: '', allergies: '', conditions: '', medicines: '', contactName: '', contactPhone: '' }, private: { notes: '', doctor: '', insurance: '', address: '' } };
   return { ...TYPES[0].blank };
 }
@@ -220,7 +220,7 @@ export function Editor({ existing, onSaved }: { existing?: Qr; onSaved?(q: Qr): 
                   }}
                 />
                 <div style={{ marginLeft: 'auto' }}>
-                  <ColorInput label="Page colour" value={data.accent ?? '#2563eb'} onChange={(accent) => setData({ ...data, accent })} />
+                  <ColorInput label="Page colour" value={data.accent ?? '#B08A3E'} onChange={(accent) => setData({ ...data, accent })} />
                 </div>
               </div>
               <ContactFields data={data} onChange={setData} />

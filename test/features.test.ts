@@ -173,7 +173,7 @@ describe('events, certificates and bulk jobs', () => {
   });
 
   it('certificates: valid, tampered, revoked, and the public key checks the signature', async () => {
-    const c = await api('/api/certs', { body: { recipient: 'Asha Rao', title: 'Full-stack bootcamp', issuer: 'QRForge Academy', date: '2026-10-01' } });
+    const c = await api('/api/certs', { body: { recipient: 'Asha Rao', title: 'Full-stack bootcamp', issuer: 'QRaftly Academy', date: '2026-10-01' } });
     assert.equal(c.status, 201);
     const url: string = c.json.cert.url;
     const v = await api('/api/verify', { body: { code: url }, as: '' });
@@ -231,14 +231,14 @@ describe('events, certificates and bulk jobs', () => {
   });
 
   it('bulk: certificates from a CSV, each verifiable', async () => {
-    const j = await api('/api/bulk', { body: { kind: 'certificates', format: 'zip', csv: 'name,course,date\nAsha,Python,2026-09-01\nRavi,SQL,2026-09-02', title: 'QRForge Academy' } });
+    const j = await api('/api/bulk', { body: { kind: 'certificates', format: 'zip', csv: 'name,course,date\nAsha,Python,2026-09-01\nRavi,SQL,2026-09-02', title: 'QRaftly Academy' } });
     const done = await waitJob(j.json.job.id);
     assert.equal(done.made, 2);
     const zip = readZip((await api(done.download)).buf);
     const code = readPng(zip.get('0002-Ravi.png')!)!;
     const v = await api('/api/verify', { body: { code }, as: '' });
     assert.equal(v.json.status, 'valid');
-    assert.deepEqual([v.json.data.recipient, v.json.data.title, v.json.data.issuer], ['Ravi', 'SQL', 'QRForge Academy']);
+    assert.deepEqual([v.json.data.recipient, v.json.data.title, v.json.data.issuer], ['Ravi', 'SQL', 'QRaftly Academy']);
   });
 
   it('bulk: validation and limits', async () => {

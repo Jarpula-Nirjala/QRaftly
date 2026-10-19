@@ -1,5 +1,5 @@
 {
-  "name": "qrforge",
+  "name": "qraftly",
   "version": "1.0.0",
   "description": "QR codes from scratch: a hand-written QR encoder and decoder, dynamic codes with scan analytics, context rules, secure codes, event tickets, signed certificates and bulk generation.",
   "type": "module",

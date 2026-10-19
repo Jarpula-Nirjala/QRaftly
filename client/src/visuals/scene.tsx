@@ -90,7 +90,7 @@ export function Particles() {
       const y = p.y + Math.sin(x / 140 + p.ph) * p.amp;
       const fade = Math.max(0, Math.min(1, (x / w) * 1.8 - 0.35)); // keep the copy side clear
       if (fade <= 0) continue;
-      ctx.fillStyle = p.c < 0.6 ? `rgba(37, 99, 235, ${p.a * fade})` : `rgba(6, 182, 212, ${p.a * fade})`;
+      ctx.fillStyle = p.c < 0.6 ? `rgba(176, 138, 62, ${p.a * fade})` : `rgba(212, 175, 101, ${p.a * fade})`;
       ctx.fillRect(x, y, p.s, p.s);
     }
   }, 30);
@@ -105,6 +105,7 @@ export function ModuleField() {
   const ref = useCanvas((ctx, w, h, t) => {
     ctx.clearRect(0, 0, w, h);
     // A ground plane of square modules, seen from just above; rows are one module deep.
+    const dark = document.documentElement.dataset.theme === 'dark';
     const horizon = h * 0.02;
     const f = h * 0.62;
     const cell = 0.2;
@@ -132,11 +133,11 @@ export function ModuleField() {
         const wpx = px * 0.82;
         if (r > 0.985) {
           const pulse = 0.55 + 0.45 * Math.sin(t * 1.4 + X * 0.7 + zid);
-          const c = r > 0.993 ? '6, 182, 212' : '37, 99, 235';
+          const c = r > 0.993 ? '212, 175, 101' : '176, 138, 62';
           ctx.fillStyle = `rgba(${c}, ${0.16 * pulse * fog})`; // soft halo
           ctx.fillRect(x0 - wpx * 0.3, top - (bottom - top) * 0.3, wpx * 1.6, (bottom - top) * 1.6);
           ctx.fillStyle = `rgba(${c}, ${(0.6 + 0.35 * pulse) * fog})`;
-        } else ctx.fillStyle = `rgba(71, 85, 105, ${(0.12 + 0.26 * (r - 0.5) * 2) * fog})`;
+        } else ctx.fillStyle = `rgba(${dark ? '232, 223, 207' : '71, 85, 105'}, ${(0.12 + 0.26 * (r - 0.5) * 2) * fog})`;
         ctx.fillRect(x0, top, wpx, Math.max(0.6, bottom - top));
       }
     }
@@ -166,15 +167,15 @@ export function GlassCube({ size, glow = false, style, className = '', duration 
 
 /** The hero object: a frosted glass scanner holding a real code (it opens this site) under a scanning beam. */
 export function HeroScanner() {
-  const url = typeof location === 'undefined' ? 'https://qrforge.app' : location.origin;
+  const url = typeof location === 'undefined' ? 'https://qraftly.app' : location.origin;
   return (
     <div className="v-scene" aria-label="A QR code being scanned">
       <svg className="v-trails" viewBox="0 0 100 92" preserveAspectRatio="none" aria-hidden="true">
         <defs>
           <linearGradient id="trail" x1="0" x2="1">
-            <stop offset="0" stopColor="#06b6d4" stopOpacity="0" />
-            <stop offset="0.5" stopColor="#06b6d4" stopOpacity="0.9" />
-            <stop offset="1" stopColor="#2563eb" stopOpacity="0" />
+            <stop offset="0" stopColor="#D4AF65" stopOpacity="0" />
+            <stop offset="0.5" stopColor="#D4AF65" stopOpacity="0.9" />
+            <stop offset="1" stopColor="#B08A3E" stopOpacity="0" />
           </linearGradient>
         </defs>
         <path d="M-10 70 C 20 60, 40 88, 70 70 S 110 40, 120 46" stroke="url(#trail)" strokeWidth="0.5" />
@@ -186,7 +187,7 @@ export function HeroScanner() {
       <GlassCube size="6cqw" style={{ right: '10%', bottom: '8%' }} duration={22} delay={4} />
       <div className="v-panel">
         <div className="v-plate">
-          <QrSvg text={url} className="v-qr" design={{ fg: '#0b1530', dots: 'rounded', eyes: 'rounded', margin: 2 }} />
+          <QrSvg text={url} className="v-qr" design={{ fg: '#14243A', dots: 'rounded', eyes: 'rounded', margin: 2 }} />
           <div className="v-beam" />
         </div>
         <div className="v-status">

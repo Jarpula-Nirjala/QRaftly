@@ -9,7 +9,7 @@ const LOGO = 'data:image/png;base64,iVBORw0KGgo=';
 
 describe('SVG rendering', () => {
   it('draws every dot and eye style as valid SVG', () => {
-    const qr = encodeText('https://qrforge.app');
+    const qr = encodeText('https://qraftly.app');
     for (const dots of ['square', 'rounded', 'dots', 'classy', 'fluid'] as const)
       for (const eyes of ['square', 'rounded', 'circle', 'leaf'] as const) {
         const svg = toSvg(qr, { dots, eyes, fg: '#123456', bg: '#fefefe', fg2: '#884400' });
@@ -27,7 +27,7 @@ describe('SVG rendering', () => {
   });
 
   it('leaves the logo area empty and puts the image there', () => {
-    const qr = encodeText('https://qrforge.app/logo', { ecl: 'H' });
+    const qr = encodeText('https://qraftly.app/logo', { ecl: 'H' });
     const svg = toSvg(qr, { logo: LOGO, logoScale: 0.25 });
     assert.ok(svg.includes(`<image href="${LOGO}"`));
   });
@@ -35,13 +35,13 @@ describe('SVG rendering', () => {
 
 describe('Readability check', () => {
   it('passes a plain dark-on-light code', () => {
-    const r = checkReadability('https://qrforge.app/plain');
+    const r = checkReadability('https://qraftly.app/plain');
     assert.ok(r.ok, r.issues.join('; '));
     assert.equal(r.budgetUsed, 0);
   });
 
   it('proves a modest logo still scans, and how much error correction it costs', () => {
-    const r = checkReadability('https://qrforge.app/with-a-logo', { logo: LOGO, logoScale: 0.2 });
+    const r = checkReadability('https://qraftly.app/with-a-logo', { logo: LOGO, logoScale: 0.2 });
     assert.equal(r.qr.ecl, 'H');
     assert.ok(r.budgetUsed > 0 && r.budgetUsed <= 1, `budget ${r.budgetUsed}`);
   });

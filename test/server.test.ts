@@ -9,7 +9,7 @@ const IPHONE = 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebK
 const ANDROID = 'Mozilla/5.0 (Linux; Android 15; Pixel 9) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Mobile Safari/537.36';
 const WHATSAPP = 'WhatsApp/2.24.1 A';
 
-describe('QRForge server', () => {
+describe('QRaftly server', () => {
   let server: RunningServer;
   let cookie = '';
   let other = '';
@@ -154,11 +154,11 @@ describe('QRForge server', () => {
   });
 
   it('the server PNG is a real image that decodes to the code content', async () => {
-    const c = await api('/api/qrs', { body: { kind: 'static', type: 'url', data: { url: 'https://qrforge.app/png-check' }, design: { fg: '#1f3a68', bg: '#ffffff' } } });
+    const c = await api('/api/qrs', { body: { kind: 'static', type: 'url', data: { url: 'https://qraftly.app/png-check' }, design: { fg: '#1f3a68', bg: '#ffffff' } } });
     const res = await fetch(`${B()}/api/qrs/${c.json.qr.id}/png?scale=6`, { headers: { cookie } });
     assert.equal(res.headers.get('content-type'), 'image/png');
     const png = PNG.sync.read(Buffer.from(await res.arrayBuffer()));
-    assert.equal(jsQR(new Uint8ClampedArray(png.data), png.width, png.height)?.data, 'https://qrforge.app/png-check');
+    assert.equal(jsQR(new Uint8ClampedArray(png.data), png.width, png.height)?.data, 'https://qraftly.app/png-check');
   });
 
   it('profile pages, contact download and medical cards with private details', async () => {

@@ -10,7 +10,7 @@ describe('serving the web app', () => {
   let dir: string;
   before(async () => {
     dir = fs.mkdtempSync(path.join(os.tmpdir(), 'qrf-static-'));
-    fs.writeFileSync(path.join(dir, 'index.html'), '<!doctype html><title>QRForge</title>');
+    fs.writeFileSync(path.join(dir, 'index.html'), '<!doctype html><title>QRaftly</title>');
     server = await startServer({ port: 0, dataDir: null, staticDir: dir });
   });
   after(async () => {
@@ -23,7 +23,7 @@ describe('serving the web app', () => {
     for (const p of ['/', '/app', '/t/abc.def', '/v/xyz.sig']) {
       const r = await get(p);
       assert.equal(r.status, 200, p);
-      assert.match(await r.text(), /<title>QRForge/, p);
+      assert.match(await r.text(), /<title>QRaftly/, p);
     }
     assert.equal((await get('/api/nope')).status, 404);
     assert.equal((await get('/r/nope')).headers.get('location'), '/x/missing');

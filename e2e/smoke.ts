@@ -15,7 +15,7 @@ import { scanImage } from '../shared/qr/detect.ts';
 import { encodeText } from '../shared/qr/encode.ts';
 
 const BASE = process.env.BASE ?? 'http://localhost:3100';
-const SHOTS = process.env.SHOTS ?? path.join(os.tmpdir(), 'qrforge-shots');
+const SHOTS = process.env.SHOTS ?? path.join(os.tmpdir(), 'qraftly-shots');
 fs.mkdirSync(SHOTS, { recursive: true });
 const email = `smoke-${Date.now()}@example.com`;
 
@@ -172,7 +172,7 @@ try {
   await shot(page, '10-bulk');
 
   // A profile page and the PIN gate.
-  const prof = (await api('/api/qrs', cookie, { kind: 'profile', data: { firstName: 'Asha', lastName: 'Rao', title: 'Engineer', org: 'QRForge', email: 'asha@example.com', bio: 'I build web apps.', links: [{ label: 'GitHub', url: 'https://github.com' }] } })).json.qr;
+  const prof = (await api('/api/qrs', cookie, { kind: 'profile', data: { firstName: 'Asha', lastName: 'Rao', title: 'Engineer', org: 'QRaftly', email: 'asha@example.com', bio: 'I build web apps.', links: [{ label: 'GitHub', url: 'https://github.com' }] } })).json.qr;
   await page.goto(`${BASE}/p/${prof.slug}`);
   await page.getByRole('link', { name: 'Save contact' }).waitFor();
   await shot(page, '11-profile');

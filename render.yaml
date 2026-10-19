@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: qrforge
+    name: qraftly
     runtime: node
     plan: free
     buildCommand: npm ci && npm run build
@@ -13,7 +13,7 @@ services:
       # local development only; it does not fit the free instance and would be lost on every deploy.
       - key: DATABASE_URL
         sync: false
-      # The site's public address, used inside every QR code, e.g. https://qrforge.onrender.com
+      # The site's public address, used inside every QR code, e.g. https://qraftly.onrender.com
       - key: PUBLIC_URL
         sync: false
       # Signs tickets, unlock links and visitor ids. Keep it fixed: changing it invalidates issued tickets.

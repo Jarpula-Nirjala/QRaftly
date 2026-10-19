@@ -7,7 +7,8 @@ import { Link } from '../router.tsx';
 import { DesignPanel, PayloadForm, payloadOf, QrPreview, TYPES, type StaticType } from '../studio.tsx';
 import { Footer, useToast } from '../ui.tsx';
 import { DashboardScene, EncoderScene, GlobeScene, PackagingScene, PedestalScene, ProfileScene, SheetsScene, ShieldScene, TicketScene } from '../visuals/mockups.tsx';
-import { Daylight, FloatingBand, GlassPrism, HeroScanner, ModuleField, Particles, Tunnel } from '../visuals/scene.tsx';
+import { AnimatedName, LampScene, RibbonBackdrop } from '../visuals/hero.tsx';
+import { FloatingBand, GlassPrism, HeroScanner, ModuleField, Particles, Tunnel } from '../visuals/scene.tsx';
 
 const FEATURES = [
   { icon: UserRound, title: 'Living profile cards', text: 'A hosted page with your links and a one-tap "Save contact". Change jobs, keep the code.' },
@@ -48,7 +49,7 @@ export function Landing() {
   const toast = useToast();
   const [type, setType] = useState<StaticType>('url');
   const [data, setData] = useState<Record<string, string | boolean>>(() => ({ ...TYPES[0].blank, url: 'https://example.com' }));
-  const [design, setDesign] = useState<Design>({ ...DEFAULT_DESIGN, fg: '#0b1530', dots: 'rounded', eyes: 'rounded' });
+  const [design, setDesign] = useState<Design>({ ...DEFAULT_DESIGN, fg: '#14243A', dots: 'rounded', eyes: 'rounded' });
   const [tab, setTab] = useState<'content' | 'design'>('content');
   const { text, error } = payloadOf(type, data);
   const pick = (t: StaticType) => {
@@ -58,16 +59,18 @@ export function Landing() {
   return (
     <>
       <section className="v-hero">
-        <Daylight />
+        <RibbonBackdrop className="only-light" />
+        <LampScene className="only-dark lamps-desktop" />
         <Particles />
         <div className="wrap v-hero-grid">
           <div className="v-hero-copy">
-            <span className="eyebrow">
-              <Cpu size={14} /> QR engine written from scratch
-            </span>
-            <h1>
-              QR codes that keep working <em>after you print them</em>
+            <span className="hero-kicker">QR codes, crafted to last</span>
+            <h1 style={{ margin: 0 }}>
+              <AnimatedName />
             </h1>
+            <h2 className="hero-tag">
+              QR codes that keep working <em>after you print them</em>
+            </h2>
             <p className="lead">Change where a code points without reprinting it, see who scans it, protect it with a PIN, check in event guests and issue certificates nobody can forge.</p>
             <div className="row">
               <Link to="#generator" className="btn primary lg">
@@ -89,7 +92,10 @@ export function Landing() {
               </span>
             </div>
           </div>
-          <HeroScanner />
+          <div className="only-light">
+            <HeroScanner />
+          </div>
+          <LampScene className="only-dark lamps-mobile" />
         </div>
       </section>
 
@@ -147,7 +153,7 @@ export function Landing() {
         <div className="wrap">
           <div className="section-title">
             <h2>A code is the start, not the end</h2>
-            <p>Most generators stop at a picture. QRForge keeps your code useful for as long as it is on the wall, the menu, the badge or the box.</p>
+            <p>Most generators stop at a picture. QRaftly keeps your code useful for as long as it is on the wall, the menu, the badge or the box.</p>
           </div>
           <Show
             kicker="Smart profile"
@@ -247,7 +253,7 @@ export function Landing() {
                 <Cpu size={15} /> Under the hood
               </span>
               <h3>No QR library. Every layer is our own code.</h3>
-              <p>QRForge encodes, draws, checks and reads QR codes with its own implementation of the ISO/IEC 18004 standard, tested against independent decoders across all 40 versions and 4 error-correction levels.</p>
+              <p>QRaftly encodes, draws, checks and reads QR codes with its own implementation of the ISO/IEC 18004 standard, tested against independent decoders across all 40 versions and 4 error-correction levels.</p>
               <ul>
                 {[
                   'Reed–Solomon error correction over GF(256), with a full decoder',
@@ -266,7 +272,7 @@ export function Landing() {
           </div>
           <div style={{ marginTop: 40 }}>
             <FloatingBand>
-              <h2 style={{ fontSize: 'clamp(24px, 3vw, 34px)', fontWeight: 800, letterSpacing: '-0.03em', margin: 0 }}>Measured, not promised</h2>
+              <h2 style={{ fontSize: 'clamp(24px, 3vw, 34px)', fontWeight: 800, letterSpacing: '-0.01em', margin: 0 }}>Measured, not promised</h2>
               <p className="muted" style={{ margin: '8px 0 0' }}>From the project's own test suite and benchmark.</p>
               <div className="v-stats">
                 <div>

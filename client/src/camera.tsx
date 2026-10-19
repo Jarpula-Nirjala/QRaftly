@@ -10,7 +10,7 @@ interface Found {
 const MAX_SIDE = 720; // frames are scaled down to this before decoding
 
 /**
- * A live camera scanner. Frames go to a worker running QRForge's own decoder (no browser QR API needed, so it
+ * A live camera scanner. Frames go to a worker running QRaftly's own decoder (no browser QR API needed, so it
  * works in Chrome on Windows and in Firefox too). The same text is reported at most once every `repeatMs`.
  */
 export function Camera({ onResult, paused = false, repeatMs = 2500 }: { onResult(text: string): void; paused?: boolean; repeatMs?: number }) {

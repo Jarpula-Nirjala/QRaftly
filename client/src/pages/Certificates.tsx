@@ -23,22 +23,23 @@ const longDate = (d: string) => new Date(`${d}T12:00:00`).toLocaleDateString(und
 
 export function CertificateSheet({ c }: { c: Pick<Cert, 'recipient' | 'title' | 'issuer' | 'date' | 'details' | 'url'> }) {
   return (
-    <div className="cert-sheet" style={{ background: '#fffdf7', color: '#1f2433', border: '10px double #b8963e', borderRadius: 6, padding: '34px 30px', textAlign: 'center', fontFamily: 'Georgia, "Times New Roman", serif', position: 'relative' }}>
+    <div className="cert-sheet" style={{ background: '#fffdf7', color: '#1f2433', border: '10px double #b8963e', borderRadius: 6, padding: '34px 30px', textAlign: 'center', fontFamily: 'var(--font-read)', position: 'relative' }}>
       <Award size={40} color="#b8963e" />
       <div style={{ letterSpacing: '0.3em', fontSize: 12, textTransform: 'uppercase', marginTop: 6, color: '#7a6a3a' }}>Certificate</div>
       <div style={{ fontSize: 14, marginTop: 18, color: '#555' }}>This is to certify that</div>
-      <div style={{ fontSize: 30, fontWeight: 700, margin: '6px 0 8px' }}>{c.recipient}</div>
+      <div style={{ fontFamily: 'var(--font-display)', fontSize: 34, fontWeight: 700, margin: '6px 0 8px' }}>{c.recipient}</div>
       <div style={{ fontSize: 14, color: '#555' }}>has been awarded</div>
-      <div style={{ fontSize: 20, fontWeight: 600, margin: '6px 0' }}>{c.title}</div>
+      <div style={{ fontFamily: 'var(--font-display)', fontStyle: 'italic', fontSize: 22, fontWeight: 600, margin: '6px 0' }}>{c.title}</div>
       {c.details && <div style={{ fontSize: 13, color: '#555', maxWidth: 420, margin: '0 auto' }}>{c.details}</div>}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: 26, gap: 16, textAlign: 'left' }}>
         <div>
-          <div style={{ fontSize: 16, fontWeight: 600, borderTop: '1px solid #b8963e', paddingTop: 6 }}>{c.issuer}</div>
+          <div style={{ fontFamily: 'var(--font-script)', fontSize: 26, fontWeight: 700, lineHeight: 1, color: '#2a2f45' }}>{c.issuer}</div>
+          <div style={{ fontSize: 13, borderTop: '1px solid #b8963e', paddingTop: 4, marginTop: 4, letterSpacing: '0.06em', textTransform: 'uppercase', color: '#555' }}>Issued by {c.issuer}</div>
           <div style={{ fontSize: 12, color: '#666' }}>{longDate(c.date)}</div>
         </div>
         <div style={{ textAlign: 'center' }}>
           <QrSvg text={c.url} ecl="L" design={{ margin: 1, fg: '#1f2433', bg: '#fffdf7' }} className="cert-qr" />
-          <div style={{ fontSize: 10, color: '#666', marginTop: 2, fontFamily: 'Inter, sans-serif' }}>Scan to verify</div>
+          <div style={{ fontSize: 10, color: '#666', marginTop: 2, fontFamily: 'var(--font-ui)' }}>Scan to verify</div>
         </div>
       </div>
     </div>
@@ -202,7 +203,7 @@ const VERDICT = {
   valid: { icon: ShieldCheck, title: 'Genuine certificate', text: 'The signature matches and the issuer has not withdrawn it.' },
   revoked: { icon: ShieldAlert, title: 'Revoked', text: 'This certificate was genuine, but the issuer has withdrawn it.' },
   tampered: { icon: ShieldX, title: 'Tampered', text: 'The details do not match the signature. Someone has changed this certificate.' },
-  invalid: { icon: ShieldX, title: 'Not a QRForge certificate', text: 'This code does not contain a certificate we can check.' },
+  invalid: { icon: ShieldX, title: 'Not a QRaftly certificate', text: 'This code does not contain a certificate we can check.' },
 };
 
 export function VerifyPage({ initial }: { initial?: string }) {

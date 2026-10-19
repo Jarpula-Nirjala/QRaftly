@@ -19,7 +19,7 @@ export async function api<T = Record<string, unknown>>(path: string, opts: { met
       credentials: 'same-origin',
     });
   } catch {
-    throw new ApiError(0, 'Cannot reach QRForge. Check your connection.');
+    throw new ApiError(0, 'Cannot reach QRaftly. Check your connection.');
   }
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw new ApiError(res.status, (data as { error?: string }).error ?? `Request failed (${res.status}).`, data);

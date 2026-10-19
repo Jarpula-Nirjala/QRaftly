@@ -15,7 +15,7 @@ function Shell({ children }: { children: ReactNode }) {
       <div style={{ width: '100%', display: 'grid', justifyItems: 'center', gap: 18 }}>
         {children}
         <Link to="/" className="small muted row" style={{ gap: 6 }}>
-          <BrandMark size={18} /> Made with QRForge
+          <BrandMark size={18} /> Made with QRaftly
         </Link>
       </div>
     </div>
@@ -69,11 +69,11 @@ export function ProfilePage({ slug }: { slug: string }) {
   if (!data) return <Shell><Spinner /></Shell>;
   const p = data.data;
   const name = [p.firstName, p.lastName].filter(Boolean).join(' ');
-  const accent = p.accent ?? '#2563eb';
+  const accent = p.accent ?? '#B08A3E';
   return (
     <Shell>
       <div className="sheet">
-        <div className="band" style={{ background: `linear-gradient(135deg, ${accent}, color-mix(in srgb, ${accent} 55%, #06b6d4))` }} />
+        <div className="band" style={{ background: `linear-gradient(135deg, ${accent}, color-mix(in srgb, ${accent} 55%, #D4AF65))` }} />
         <div className="body">
           {p.avatar ? <img className="avatar" src={p.avatar} alt="" /> : <div className="avatar">{p.firstName?.[0]}</div>}
           <h1 style={{ fontSize: 26, margin: '12px 0 2px' }}>{name}</h1>

@@ -35,7 +35,7 @@ const SAMPLES: Partial<Record<QrType | 'dynamic' | 'certificates', string>> = {
   phone: 'label,phone\nReception,+918012345678\n',
   event: 'label,title,start,end,location\nLaunch,Product launch,2026-11-20T18:30,2026-11-20T21:00,Hall 2\n',
   geo: 'label,lat,lng\nOffice,12.9716,77.5946\n',
-  vcard: 'firstName,lastName,org,title,phone,email\nAsha,Rao,QRForge,Engineer,+919876543210,asha@example.com\n',
+  vcard: 'firstName,lastName,org,title,phone,email\nAsha,Rao,QRaftly,Engineer,+919876543210,asha@example.com\n',
 };
 
 export function BulkPage() {
@@ -113,7 +113,7 @@ export function BulkPage() {
             )}
             <div className="grid-2">
               <Field label={kind === 'certificates' ? 'Issued by' : 'Sheet title'} hint={kind === 'certificates' ? 'Used when the CSV has no "issuer" column.' : 'Printed at the top of each PDF page.'}>
-                <input className="input" value={title} onChange={(e) => setTitle(e.target.value)} placeholder={kind === 'certificates' ? 'QRForge Academy' : 'Cafe tables'} />
+                <input className="input" value={title} onChange={(e) => setTitle(e.target.value)} placeholder={kind === 'certificates' ? 'QRaftly Academy' : 'Cafe tables'} />
               </Field>
               <Field label="Colour">
                 <ColorInput label="Code colour" value={color} onChange={setColor} />

@@ -8,7 +8,7 @@ import { useCanvas } from './scene.tsx';
 import './visuals.css';
 
 /** Real codes in the mockups open this site, so a visitor who scans one lands somewhere useful. */
-const siteUrl = () => (typeof location === 'undefined' ? 'https://qrforge.app' : location.origin);
+const siteUrl = () => (typeof location === 'undefined' ? 'https://qraftly.app' : location.origin);
 
 /** A QR-looking pattern with finder eyes and random modules: decorative, deliberately not decodable. */
 function fakeQr(seed: number, n = 21, color = '#1f2937'): string {
@@ -56,7 +56,7 @@ export function ProfileScene() {
           <div className="name">Asha Rao</div>
           <div className="role">Full-stack engineer</div>
           <div className="btn-ph">Save contact</div>
-          <QrSvg text={url} className="v-qr" design={{ fg: '#0b1530', margin: 1 }} />
+          <QrSvg text={url} className="v-qr" design={{ fg: '#14243A', margin: 1 }} />
           <div className="scan-ok">✓ Ready to scan</div>
         </div>
       </div>
@@ -122,16 +122,16 @@ export function DashboardScene() {
                     {[8, 18, 28, 38].map((y) => (
                       <line key={y} x1="0" x2="100" y1={y} y2={y} stroke="#edf0f5" strokeWidth="0.4" />
                     ))}
-                    <path d={`${line}L100 38L0 38Z`} fill="#2563eb" opacity="0.1" />
-                    <path d={line} fill="none" stroke="#2563eb" strokeWidth="1.1" strokeLinejoin="round" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
-                    <circle cx={pts.at(-1)![0]} cy={pts.at(-1)![1]} r="1.4" fill="#2563eb" stroke="#fff" strokeWidth="0.6" />
+                    <path d={`${line}L100 38L0 38Z`} fill="#B08A3E" opacity="0.1" />
+                    <path d={line} fill="none" stroke="#B08A3E" strokeWidth="1.1" strokeLinejoin="round" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
+                    <circle cx={pts.at(-1)![0]} cy={pts.at(-1)![1]} r="1.4" fill="#B08A3E" stroke="#fff" strokeWidth="0.6" />
                   </svg>
                 </div>
                 <div className="pnl">
                   <small>Time of day</small>
                   <svg viewBox="0 0 48 40" preserveAspectRatio="none">
                     {hours.map((v, i) => (
-                      <rect key={i} x={i * 2 + 0.2} y={38 - v * 1.3} width="1.6" height={v * 1.3} rx="0.5" fill="#2563eb" />
+                      <rect key={i} x={i * 2 + 0.2} y={38 - v * 1.3} width="1.6" height={v * 1.3} rx="0.5" fill="#B08A3E" />
                     ))}
                   </svg>
                 </div>
@@ -219,14 +219,15 @@ export function GlobeScene() {
       return { x: cx + x * R * lift, y: cy - y * R * lift, front };
     };
     const g = ctx.createRadialGradient(cx - R * 0.35, cy - R * 0.4, R * 0.1, cx, cy, R);
-    g.addColorStop(0, 'rgba(255,255,255,0.95)');
-    g.addColorStop(0.7, 'rgba(219,234,254,0.55)');
-    g.addColorStop(1, 'rgba(147,197,253,0.45)');
+    const dark = document.documentElement.dataset.theme === 'dark';
+    g.addColorStop(0, dark ? 'rgba(255,248,235,0.4)' : 'rgba(255,255,255,0.95)');
+    g.addColorStop(0.7, dark ? 'rgba(182,154,88,0.22)' : 'rgba(246,236,214,0.55)');
+    g.addColorStop(1, dark ? 'rgba(182,154,88,0.35)' : 'rgba(226,201,143,0.45)');
     ctx.fillStyle = g;
     ctx.beginPath();
     ctx.arc(cx, cy, R, 0, Math.PI * 2);
     ctx.fill();
-    ctx.strokeStyle = 'rgba(37,99,235,0.35)';
+    ctx.strokeStyle = 'rgba(176,138,62,0.35)';
     ctx.lineWidth = 1;
     ctx.stroke();
     // Graticule.
@@ -243,7 +244,7 @@ export function GlobeScene() {
       }
       ctx.stroke();
     };
-    ctx.strokeStyle = 'rgba(37,99,235,0.16)';
+    ctx.strokeStyle = 'rgba(176,138,62,0.16)';
     for (let lon = -180; lon < 180; lon += 20) curve(Array.from({ length: 61 }, (_, i) => proj(-90 + i * 3, lon)));
     for (let lat = -60; lat <= 60; lat += 20) curve(Array.from({ length: 121 }, (_, i) => proj(lat, -180 + i * 3)));
     // Arcs from the owner's city to where scans came from.
@@ -264,7 +265,7 @@ export function GlobeScene() {
         return proj(la, lo, 1 + 0.18 * Math.sin(Math.PI * s) * Math.min(1, om));
       });
       const phase = (t * 0.35 + k * 0.13) % 1;
-      ctx.strokeStyle = k % 3 === 0 ? 'rgba(6,182,212,0.75)' : 'rgba(37,99,235,0.55)';
+      ctx.strokeStyle = k % 3 === 0 ? 'rgba(212,175,101,0.75)' : 'rgba(176,138,62,0.55)';
       ctx.setLineDash([3, 4]);
       ctx.lineDashOffset = -phase * 40;
       curve(pts);
@@ -274,13 +275,13 @@ export function GlobeScene() {
       const q = proj(lat, lon);
       if (q.front <= 0) continue;
       const s = name === 'Bengaluru' ? 7 : 5;
-      ctx.fillStyle = 'rgba(255,255,255,0.95)';
+      ctx.fillStyle = dark ? 'rgba(48,43,37,0.95)' : 'rgba(255,255,255,0.95)';
       ctx.fillRect(q.x - s / 2 - 1.5, q.y - s / 2 - 1.5, s + 3, s + 3);
-      ctx.fillStyle = name === 'Bengaluru' ? '#0b1530' : '#2563eb';
+      ctx.fillStyle = name === 'Bengaluru' ? (dark ? '#FAF7F0' : '#14243A') : dark ? '#D9C08A' : '#B08A3E';
       ctx.fillRect(q.x - s / 2, q.y - s / 2, s, s);
       if (q.front > 0.35 && (name === 'Bengaluru' || name === 'London' || name === 'Dubai' || name === 'Singapore')) {
-        ctx.fillStyle = 'rgba(61,72,99,0.9)';
-        ctx.font = '600 11px Inter, system-ui, sans-serif';
+        ctx.fillStyle = dark ? 'rgba(232,223,207,0.92)' : 'rgba(61,72,99,0.9)';
+        ctx.font = '600 12px "Times New Roman", Tinos, serif';
         ctx.fillText(name, q.x + 7, q.y + 4);
       }
     }
@@ -302,8 +303,8 @@ export function PedestalScene() {
   const codes = useMemo(() => {
     const designs: Array<{ d: Partial<Design>; ry: string; h: string; cls: string }> = [
       { d: { fg: '#111111', margin: 1 }, ry: '16deg', h: '13cqw', cls: '' },
-      { d: { fg: '#1e3a8a', bg: '#f7f9ff', dots: 'rounded', eyes: 'rounded', margin: 1 }, ry: '0deg', h: '18cqw', cls: 'navy' },
-      { d: { fg: '#0b1530', dots: 'dots', eyes: 'circle', eyeColor: '#2563eb', logo: logoUrl(), logoScale: 0.22, margin: 1 }, ry: '-16deg', h: '13cqw', cls: '' },
+      { d: { fg: '#14243A', bg: '#fdfaf3', dots: 'rounded', eyes: 'rounded', margin: 1 }, ry: '0deg', h: '18cqw', cls: 'navy' },
+      { d: { fg: '#14243A', dots: 'dots', eyes: 'circle', eyeColor: '#B08A3E', logo: logoUrl(), logoScale: 0.22, margin: 1 }, ry: '-16deg', h: '13cqw', cls: '' },
     ];
     // Each design goes through the same scan check the studio uses (the logo counted as damage).
     return designs.map((x) => {
@@ -342,12 +343,12 @@ export function ShieldScene() {
         <defs>
           <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1">
             <stop offset="0" stopColor="#ffffff" stopOpacity="0.7" />
-            <stop offset="0.5" stopColor="#dbeafe" stopOpacity="0.28" />
-            <stop offset="1" stopColor="#bae6fd" stopOpacity="0.45" />
+            <stop offset="0.5" stopColor="#f6ecd6" stopOpacity="0.28" />
+            <stop offset="1" stopColor="#efdcae" stopOpacity="0.45" />
           </linearGradient>
           <linearGradient id="edge" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0" stopColor="#ffffff" />
-            <stop offset="1" stopColor="#93c5fd" />
+            <stop offset="1" stopColor="#e2c98f" />
           </linearGradient>
           <filter id="blueGlow" x="-20%" y="-20%" width="140%" height="140%">
             <feGaussianBlur stdDeviation="2.2" result="b" />
@@ -361,11 +362,11 @@ export function ShieldScene() {
         {/* Facets, as if cut from one crystal. */}
         <path d="M100 16 L100 186 M30 42 L100 100 L170 42 M30 96 L100 100 L170 96" stroke="#ffffff" strokeOpacity="0.75" strokeWidth="0.8" fill="none" />
         <path d="M100 16 L30 42 L100 100 Z" fill="#ffffff" opacity="0.18" />
-        <path d="M100 100 L170 96 C170 140 140 170 100 186 Z" fill="#93c5fd" opacity="0.12" />
-        <path d={shield} className="trace" fill="none" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" filter="url(#blueGlow)" pathLength="990" />
+        <path d="M100 100 L170 96 C170 140 140 170 100 186 Z" fill="#e2c98f" opacity="0.12" />
+        <path d={shield} className="trace" fill="none" stroke="#B08A3E" strokeWidth="2" strokeLinecap="round" filter="url(#blueGlow)" pathLength="990" />
       </svg>
-      <div style={{ position: 'absolute', zIndex: 2, left: '50%', top: '50%', width: '30cqw', transform: 'translate(-50%, -46%)', background: '#fff', padding: '2cqw', borderRadius: '2cqw', boxShadow: '0 16px 30px -16px rgb(11 21 48 / .4)' }}>
-        <QrSvg text={siteUrl()} className="v-qr" design={{ fg: '#0b1530', margin: 0 }} />
+      <div style={{ position: 'absolute', zIndex: 2, left: '50%', top: '50%', width: '30cqw', transform: 'translate(-50%, -46%)', background: '#fff', padding: '2cqw', borderRadius: '2cqw', boxShadow: '0 16px 30px -16px rgb(20 36 58 / .4)' }}>
+        <QrSvg text={siteUrl()} className="v-qr" design={{ fg: '#14243A', margin: 0 }} />
       </div>
     </div>
   );
@@ -382,7 +383,7 @@ export function TicketScene() {
             {[22, 34, 46, 58, 70].map((r) => (
               <circle key={r} cx="150" cy="96" r={r} fill="none" stroke="#ffffff" strokeOpacity={0.05 + r / 1400} strokeWidth="0.6" />
             ))}
-            <circle cx="150" cy="96" r="12" fill="#06b6d4" opacity="0.25" />
+            <circle cx="150" cy="96" r="12" fill="#D4AF65" opacity="0.25" />
           </svg>
           <div className="info">
             <div className="adm">ADMIT ONE</div>
@@ -504,7 +505,7 @@ export function PackagingScene() {
  */
 export function EncoderScene() {
   const layers = useMemo(() => {
-    const qr = encodeText('QRForge', { ecl: 'M' });
+    const qr = encodeText('QRaftly', { ecl: 'M' });
     const { isFunction } = functionPatterns(qr.version);
     const n = qr.size;
     const fmt = new Set(formatPositions(n).flat().map(([x, y]) => `${x},${y}`));
@@ -542,22 +543,22 @@ export function EncoderScene() {
         <div className="layer l2">
           <svg viewBox={`-1 -1 ${n + 2} ${n + 2}`}>
             <rect x="-0.6" y="-0.6" width={n + 1.2} height={n + 1.2} rx="0.6" fill="#ffffff" fillOpacity="0.42" stroke="#94a3b8" strokeOpacity="0.55" strokeWidth="0.06" strokeDasharray="0.4 0.3" />
-            <path d={layers.func} fill="#2563eb" />
+            <path d={layers.func} fill="#B08A3E" />
           </svg>
         </div>
         <div className="layer l3">
           <svg viewBox={`-1 -1 ${n + 2} ${n + 2}`}>
             <rect x="-0.6" y="-0.6" width={n + 1.2} height={n + 1.2} rx="0.6" fill="#ffffff" fillOpacity="0.42" stroke="#94a3b8" strokeOpacity="0.55" strokeWidth="0.06" strokeDasharray="0.4 0.3" />
-            <path d={layers.format} fill="#06b6d4" opacity="0.9" />
+            <path d={layers.format} fill="#D4AF65" opacity="0.9" />
           </svg>
         </div>
       </div>
       <div className="v-legend">
         <span>
-          <i style={{ background: '#06b6d4' }} /> Format bits (BCH code)
+          <i style={{ background: '#D4AF65' }} /> Format bits (BCH code)
         </span>
         <span>
-          <i style={{ background: '#2563eb' }} /> Finder and timing patterns
+          <i style={{ background: '#B08A3E' }} /> Finder and timing patterns
         </span>
         <span>
           <i style={{ background: '#334155' }} /> Data + Reed–Solomon codewords
