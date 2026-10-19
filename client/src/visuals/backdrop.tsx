@@ -131,21 +131,21 @@ function faceSvg(seed: number): string {
 
 // Cubes and tiles keep to the side margins, so they never sit behind text; only tiny sparks drift in the middle.
 const OBJECTS: Array<{ x: number; y: number; s: number; d: number; z: number; kind: 'cube' | 'tile' | 'spark' }> = [
-  { x: 1.5, y: 16, s: 52, d: 34, z: 1, kind: 'cube' },
+  { x: 0.2, y: 16, s: 44, d: 34, z: 1, kind: 'cube' },
   { x: 91, y: 10, s: 66, d: 40, z: 1, kind: 'cube' },
   { x: 93, y: 58, s: 46, d: 30, z: 0, kind: 'cube' },
-  { x: 2, y: 70, s: 58, d: 38, z: 1, kind: 'cube' },
+  { x: 0.2, y: 70, s: 46, d: 38, z: 1, kind: 'cube' },
   { x: 88, y: 84, s: 38, d: 28, z: 0, kind: 'cube' },
-  { x: 4, y: 44, s: 30, d: 26, z: 0, kind: 'tile' },
+  { x: 0.6, y: 44, s: 26, d: 26, z: 0, kind: 'tile' },
   { x: 95, y: 34, s: 32, d: 32, z: 1, kind: 'tile' },
-  { x: 3, y: 92, s: 28, d: 30, z: 0, kind: 'tile' },
+  { x: 0.6, y: 92, s: 26, d: 30, z: 0, kind: 'tile' },
   { x: 90, y: 72, s: 26, d: 27, z: 0, kind: 'tile' },
   { x: 22, y: 6, s: 7, d: 18, z: 1, kind: 'spark' },
   { x: 52, y: 30, s: 6, d: 16, z: 0, kind: 'spark' },
   { x: 80, y: 22, s: 8, d: 20, z: 1, kind: 'spark' },
   { x: 38, y: 64, s: 6, d: 17, z: 0, kind: 'spark' },
   { x: 70, y: 90, s: 8, d: 22, z: 1, kind: 'spark' },
-  { x: 14, y: 52, s: 7, d: 19, z: 0, kind: 'spark' },
+  { x: 24, y: 52, s: 7, d: 19, z: 0, kind: 'spark' },
   { x: 62, y: 48, s: 5, d: 15, z: 0, kind: 'spark' },
 ];
 
@@ -154,7 +154,7 @@ function FloatingQr() {
   return (
     <div className="fq">
       {OBJECTS.map((o, i) => (
-        <div key={i} className={`fq-o ${o.kind}${o.z ? '' : ' far'}`} style={{ left: `${o.x}%`, top: `${o.y}%`, '--s': `${o.s}px`, '--d': `${o.d}s`, '--delay': `${-i * 3.7}s` } as CSSProperties}>
+        <div key={i} className={`fq-o ${o.kind}${o.z ? '' : ' far'}`} style={{ left: `${o.x}%`, top: `${o.y}%`, '--dx': o.x < 50 ? '-1.2vw' : '1.2vw', '--s': `${o.s}px`, '--d': `${o.d}s`, '--delay': `${-i * 3.7}s` } as CSSProperties}>
           {o.kind === 'cube' ? (
             <div className="fq-cube">
               {['f', 'b', 'l', 'r', 't', 'u'].map((f, k) => (

@@ -1,5 +1,4 @@
 import { useEffect, useRef, type CSSProperties, type ReactNode } from 'react';
-import { QrSvg } from '../studio.tsx';
 import './visuals.css';
 
 const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -108,43 +107,6 @@ export function GlassCube({ size, glow = false, style, className = '', duration 
         {['f1', 'f2', 'f3', 'f4', 'f5', 'f6'].map((f) => (
           <div key={f} className={`face ${f}`} />
         ))}
-      </div>
-    </div>
-  );
-}
-
-/** The hero object: a frosted glass scanner holding a real code (it opens this site) under a scanning beam. */
-export function HeroScanner() {
-  const url = typeof location === 'undefined' ? 'https://qraftly.app' : location.origin;
-  return (
-    <div className="v-scene" aria-label="A QR code being scanned">
-      <svg className="v-trails" viewBox="0 0 100 92" preserveAspectRatio="none" aria-hidden="true">
-        <defs>
-          <linearGradient id="trail" x1="0" x2="1">
-            <stop offset="0" stopColor="#D4AF65" stopOpacity="0" />
-            <stop offset="0.5" stopColor="#D4AF65" stopOpacity="0.9" />
-            <stop offset="1" stopColor="#B08A3E" stopOpacity="0" />
-          </linearGradient>
-        </defs>
-        <path d="M-10 70 C 20 60, 40 88, 70 70 S 110 40, 120 46" stroke="url(#trail)" strokeWidth="0.5" />
-        <path d="M-10 30 C 15 20, 35 40, 60 26 S 100 8, 120 16" stroke="url(#trail)" strokeWidth="0.35" />
-        <path d="M-10 86 C 30 76, 60 96, 90 82 S 115 70, 125 74" stroke="url(#trail)" strokeWidth="0.3" />
-      </svg>
-      <GlassCube size="13cqw" glow className="far" style={{ left: '2%', top: '58%' }} duration={34} />
-      <GlassCube size="8cqw" style={{ right: '4%', top: '6%' }} duration={26} delay={9} />
-      <GlassCube size="6cqw" style={{ right: '10%', bottom: '8%' }} duration={22} delay={4} />
-      <div className="v-panel">
-        <div className="v-plate">
-          <QrSvg text={url} className="v-qr" design={{ fg: '#14243A', dots: 'rounded', eyes: 'rounded', margin: 2 }} />
-          <div className="v-beam" />
-        </div>
-        <div className="v-status">
-          <span>
-            <span className="dot" />
-            Scanned · opened in 0.3 s
-          </span>
-          <span className="chip">Dynamic</span>
-        </div>
       </div>
     </div>
   );

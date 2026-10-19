@@ -15,5 +15,5 @@
     "noUnusedLocals": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["bench", "e2e", "shared", "server", "client/src", "test", "vite.config.ts"]
+  "include": ["bench", "e2e", "scripts", "shared", "server", "client/src", "test", "vite.config.ts"]
 }

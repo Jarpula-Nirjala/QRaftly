@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState, type ReactNode } from 'react';
-import { AlertTriangle, CalendarDays, CheckCircle2, Contact, Download, Globe, ImagePlus, IndianRupee, Link2, LocateFixed, Mail, MapPin, MessageCircle, MessageSquareText, Phone, Trash2, Type, Wifi, XCircle } from 'lucide-react';
+import { AlertTriangle, CalendarDays, CheckCircle2, Contact, Download, ImagePlus, IndianRupee, Link2, LocateFixed, Mail, MapPin, MessageCircle, MessageSquareText, Phone, Trash2, Type, Wifi, XCircle } from 'lucide-react';
 import { buildPayload, type PayloadData, type QrType } from '../../shared/payloads.ts';
 import { checkReadability } from '../../shared/qr/check.ts';
 import { encodeText } from '../../shared/qr/encode.ts';
@@ -388,11 +388,9 @@ export function QrPreview({ text, design, name, placeholder, extra }: { text: st
         {out && 'svg' in out ? (
           <div className="qr" dangerouslySetInnerHTML={{ __html: out.svg! }} role="img" aria-label="QR code preview" />
         ) : (
-          <div className="qr" style={{ display: 'grid', placeItems: 'center', color: 'var(--muted)', textAlign: 'center', padding: 20, border: '2px dashed var(--line-2)', borderRadius: 12, background: 'var(--surface)' }}>
-            <div>
-              <Globe size={34} style={{ opacity: 0.4 }} />
-              <p className="small" style={{ margin: '8px 0 0' }}>{out && 'error' in out ? out.error : (placeholder ?? 'Fill in the form to see your code.')}</p>
-            </div>
+          <div className="qr" style={{ display: 'grid', placeItems: 'center', textAlign: 'center', gap: 10 }}>
+            <div className="qr-placeholder" aria-hidden="true" />
+            <p className="small" style={{ margin: 0, color: '#e8dfcf' }}>{out && 'error' in out ? out.error : (placeholder ?? 'Fill in the form to see your code.')}</p>
           </div>
         )}
       </div>

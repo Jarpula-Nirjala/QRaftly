@@ -2077,8 +2077,7 @@ section[id],
 :root[data-theme='dark'] .bg-stage .v-stats div,
 :root[data-theme='dark'] .bg-stage .v-float-band,
 :root[data-theme='dark'] .bg-stage .v-tunnel,
-:root[data-theme='dark'] .bg-stage .v-tunnel .cta-card,
-:root[data-theme='dark'] .bg-stage .preview {
+:root[data-theme='dark'] .bg-stage .v-tunnel .cta-card {
   background: transparent !important;
   border-color: transparent !important;
   box-shadow: none !important;
@@ -2117,4 +2116,115 @@ section[id],
 }
 :root[data-theme='dark'] .bg-stage .divider {
   background: rgb(212 175 101 / 0.16);
+}
+
+/* ------------------------------------------------------------ cards with pictures */
+
+.card-img {
+  display: block;
+  max-width: none;
+  width: calc(100% + 44px);
+  margin: -22px -22px 14px;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--radius) var(--radius) 0 0;
+  background: var(--surface-2);
+}
+.feature .more,
+.explore-card .more {
+  margin-top: 8px !important;
+  font-size: 17px !important;
+  color: var(--muted) !important;
+}
+/* Everything in one place: five in a row, two rows. */
+.features {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+@media (max-width: 1280px) {
+  .features {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (max-width: 860px) {
+  .features {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 560px) {
+  .features {
+    grid-template-columns: 1fr;
+  }
+}
+.feature {
+  overflow: hidden;
+}
+/* Explore: three wide cards, then two centred below. */
+.explore-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 22px;
+}
+.explore-card {
+  flex: 0 1 calc((100% - 44px) / 3);
+  min-width: min(100%, 300px);
+  overflow: hidden;
+}
+.explore-card .card-img {
+  aspect-ratio: 16 / 9;
+}
+@media (max-width: 1000px) {
+  .explore-card {
+    flex-basis: calc((100% - 22px) / 2);
+  }
+}
+@media (max-width: 640px) {
+  .explore-card {
+    flex-basis: 100%;
+  }
+}
+:root[data-theme='dark'] .bg-stage .card-img {
+  border-radius: var(--radius);
+  width: 100%;
+  margin: 0 0 14px;
+}
+
+/* ------------------------------------------------------------ the generator preview: a steel-framed screen */
+
+.preview {
+  background: radial-gradient(120% 90% at 30% 0%, #2a2f38, #0b0d11 60%, #050608) !important;
+  border: 10px solid transparent !important;
+  border-radius: 26px !important;
+  background-clip: padding-box !important;
+  box-shadow:
+    0 0 0 2px #9aa1ab,
+    0 0 0 9px #c9ced5,
+    0 0 0 11px #6b727c,
+    0 30px 60px -24px rgb(0 0 0 / 0.55) !important;
+  position: relative;
+  overflow: hidden;
+}
+/* A glossy reflection across the glass. */
+.preview::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(125deg, rgb(255 255 255 / 0.12) 0%, rgb(255 255 255 / 0.03) 32%, transparent 33%);
+  pointer-events: none;
+}
+.preview .qr {
+  filter: drop-shadow(0 0 18px rgb(255 255 255 / 0.12)) !important;
+}
+.preview .qr-placeholder {
+  width: 100%;
+  max-width: 300px;
+  aspect-ratio: 1;
+  background: url('/bg/qr-frame.jpg') center / cover;
+  border-radius: 16px;
+}
+
+/* Tool screenshots are shown whole, on a soft studio backdrop. */
+.explore-card .card-img {
+  object-fit: contain;
+  background: radial-gradient(120% 90% at 30% 10%, #ffffff, #f1f3f7 60%, #e4e8ee);
 }

@@ -1627,3 +1627,76 @@
 .v-stage.v-grain::before {
   display: none !important;
 }
+
+/* ------------------------------------------------------------ enlarged showcase pictures */
+
+.v-show-visual {
+  min-width: 0;
+  display: grid;
+  justify-items: center;
+}
+.v-show--big {
+  grid-template-columns: minmax(0, 1fr) minmax(0, min(calc(470px * var(--k)), 58%));
+}
+.v-show--big.flip {
+  grid-template-columns: minmax(0, min(calc(470px * var(--k)), 58%)) minmax(0, 1fr);
+}
+.v-show--big .v-show-visual > .v-stage {
+  max-width: calc(470px * var(--k));
+}
+/* Very large pictures get a row of their own, under the text (which splits into two columns). */
+.v-show--stack {
+  grid-template-columns: 1fr;
+  gap: 18px;
+}
+.v-show--stack.flip > :first-child {
+  order: 0;
+}
+.v-show--stack .v-show-text {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  column-gap: 48px;
+  align-items: start;
+}
+.v-show--stack .v-show-text > .kicker,
+.v-show--stack .v-show-text > h3,
+.v-show--stack .v-show-text > p:not(.v-example) {
+  grid-column: 1;
+}
+.v-show--stack .v-show-text > ul,
+.v-show--stack .v-show-text > .v-example {
+  grid-column: 2;
+  grid-row: 1 / span 3;
+  align-self: center;
+}
+.v-show--stack .v-show-text > .v-example {
+  grid-row: 4;
+}
+.v-show--stack .v-show-visual > .v-stage {
+  max-width: calc(470px * var(--k));
+  aspect-ratio: 16 / 9;
+}
+@media (max-width: 860px) {
+  .v-show--big,
+  .v-show--big.flip {
+    grid-template-columns: 1fr;
+  }
+  .v-show--stack .v-show-text {
+    grid-template-columns: 1fr;
+  }
+  .v-show--stack .v-show-text > * {
+    grid-column: 1 !important;
+    grid-row: auto !important;
+  }
+}
+
+/* Light mode: a soft white backing just behind each block of text. */
+:root:not([data-theme='dark']) .bg-stage .v-show-text,
+:root:not([data-theme='dark']) .bg-stage .section-title {
+  background: rgb(255 255 255 / 0.84);
+  box-shadow: 0 0 40px 30px rgb(255 255 255 / 0.84);
+  border-radius: 32px;
+}
+.v-show-visual > * {
+  width: 100%;
+}

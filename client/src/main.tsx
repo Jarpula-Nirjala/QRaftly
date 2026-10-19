@@ -12,6 +12,7 @@ import { DoorScanner, EventDetail, EventsPage } from './pages/Events.tsx';
 import { Landing } from './pages/Landing.tsx';
 import { BlockedPage, GatePage, MedicalPage, ProfilePage, TicketPage } from './pages/Public.tsx';
 import { QrDetail } from './pages/QrDetail.tsx';
+import { BackdropStage } from './visuals/backdrop.tsx';
 import './styles.css';
 
 // The five feature pages and the newer tools load on demand, keeping the first page light.
@@ -92,8 +93,8 @@ function Routes() {
     } else page = <Landing />;
   } else if (Explore) page = <Explore />;
   else if (path === '/signin' || path === '/signup') page = <AuthPage key={path} mode={path === '/signin' ? 'signin' : 'signup'} />;
-  else if (path === '/verify') (page = <VerifyPage />), (footer = true);
-  else if ((m = match('/v/:payload', path))) (page = <VerifyPage initial={location.href} />), (footer = true);
+  else if (path === '/verify') (page = <BackdropStage><VerifyPage /></BackdropStage>), (footer = true);
+  else if ((m = match('/v/:payload', path))) (page = <BackdropStage><VerifyPage initial={location.href} /></BackdropStage>), (footer = true);
   else if (path === '/app') page = <Private><Dashboard /></Private>;
   else if (path === '/app/new') page = <Private><NewCode /></Private>;
   else if ((m = match('/app/qr/:id', path))) page = <Private><QrDetail key={m.id} id={m.id} /></Private>;

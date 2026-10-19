@@ -82,35 +82,6 @@
     transform: translateY(-0.035em);
   }
 }
-.name-swash {
-  position: absolute;
-  left: 2%;
-  right: 2%;
-  bottom: 0;
-  width: 96%;
-  height: 0.22em;
-  overflow: visible;
-}
-.name-swash path {
-  stroke-dasharray: 100;
-  stroke-dashoffset: 100;
-  animation: swash-draw 1.4s cubic-bezier(0.65, 0, 0.35, 1) 1.2s forwards;
-}
-.name-swash .spark {
-  filter: drop-shadow(0 0 4px #fff2cc) drop-shadow(0 0 10px rgb(212 175 101 / 0.8));
-  opacity: 0;
-  animation: spark-on 0.4s ease 2.4s forwards;
-}
-@keyframes swash-draw {
-  to {
-    stroke-dashoffset: 0;
-  }
-}
-@keyframes spark-on {
-  to {
-    opacity: 1;
-  }
-}
 .hero-tag {
   font-family: var(--font-display);
   font-weight: 600;
@@ -431,19 +402,11 @@
 @media (prefers-reduced-motion: reduce) {
   .hero-name .float,
   .hero-name .ch,
-  .name-swash path,
-  .name-swash .spark,
   .lamps .beam,
   .pedestal .pool,
   .lamp-unit .halo,
   .cube {
     animation: none !important;
-  }
-  .name-swash path {
-    stroke-dashoffset: 0;
-  }
-  .name-swash .spark {
-    opacity: 0;
   }
 }
 
@@ -465,4 +428,84 @@
 /* Light hero: no edge of its own, so it and the sections below share one background. */
 :root:not([data-theme='dark']) .v-hero {
   border-bottom-color: transparent;
+}
+
+/* ------------------------------------------------------------ light hero picture */
+
+.hw {
+  position: relative;
+  /* Reaches to the right edge of the window. */
+  width: calc(100% + clamp(28px, 5vw, 96px));
+  margin-right: calc(-1 * clamp(28px, 5vw, 96px));
+  aspect-ratio: 1500 / 846;
+  /* White in the picture blends away, so the corridor shows through; cubes and blue light stay. */
+  mix-blend-mode: multiply;
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 16%), linear-gradient(to bottom, transparent 0%, #000 6%, #000 90%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(to right, transparent 0%, #000 16%), linear-gradient(to bottom, transparent 0%, #000 6%, #000 90%, transparent 100%);
+  mask-composite: intersect;
+}
+.hw-img {
+  position: absolute;
+  inset: 0;
+  background: url('/bg/qr-wave.jpg') center / cover no-repeat;
+}
+@media (max-width: 760px) {
+  .hw-img {
+    background-image: url('/bg/qr-wave-960.jpg');
+  }
+}
+.hw-band {
+  clip-path: inset(var(--top) 0 var(--bot) 0);
+  will-change: transform;
+  animation: hw-wave 4.6s ease-in-out infinite;
+  animation-delay: calc(var(--i) * -0.42s);
+}
+@keyframes hw-wave {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(calc(-1px - var(--i) * 0.28px));
+  }
+}
+.hw-glint {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 40%;
+  background: linear-gradient(105deg, transparent 20%, rgb(150 205 255 / 0.18) 46%, rgb(255 255 255 / 0.3) 50%, rgb(150 205 255 / 0.18) 54%, transparent 80%);
+  mix-blend-mode: screen;
+  will-change: transform;
+  animation: hw-glint 9s ease-in-out infinite;
+}
+@keyframes hw-glint {
+  0% {
+    transform: translateX(-100%);
+  }
+  55%,
+  100% {
+    transform: translateX(260%);
+  }
+}
+@media (max-width: 900px) {
+  .hw {
+    width: 100%;
+    margin-right: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hw-band,
+  .hw-glint {
+    animation: none !important;
+  }
+}
+
+/* Light mode: the hero has no layer of its own, so its picture can blend with the corridor behind it. */
+:root:not([data-theme='dark']) .v-hero,
+:root:not([data-theme='dark']) .v-hero-grid {
+  isolation: auto;
+  z-index: auto;
 }

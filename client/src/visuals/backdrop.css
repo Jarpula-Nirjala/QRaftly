@@ -334,7 +334,8 @@
     transform: translate3d(0, 0, 0);
   }
   to {
-    transform: translate3d(1.2vw, -6vh, 0);
+    /* Objects on the left drift further left, those on the right further right: never towards the text. */
+    transform: translate3d(var(--dx, 1.2vw), -6vh, 0);
   }
 }
 .fq-cube {

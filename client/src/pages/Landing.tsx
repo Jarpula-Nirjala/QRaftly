@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { useState, type CSSProperties, type ReactNode } from 'react';
 import {
   ArrowRight, BadgeCheck, BarChart3, CalendarCheck, Check, CheckCircle2, Cpu, XCircle, Files, Globe2, HeartPulse, LockKeyhole, Package, Paintbrush, Route, ShieldCheck, Sparkles, UserRound, Wifi,
 } from 'lucide-react';
@@ -9,9 +9,9 @@ import { Pipeline, ScanFlow } from '../visuals/howitworks.tsx';
 import { DesignPanel, PayloadForm, payloadOf, QrPreview, TYPES, type StaticType } from '../studio.tsx';
 import { Footer, useToast } from '../ui.tsx';
 import { DashboardScene, EncoderScene, GlobeScene, PackagingScene, PedestalScene, ProfileScene, SheetsScene, ShieldScene, TicketScene } from '../visuals/mockups.tsx';
-import { AnimatedName, LampScene } from '../visuals/hero.tsx';
+import { AnimatedName, HeroWave, LampScene } from '../visuals/hero.tsx';
 import { BackdropStage } from '../visuals/backdrop.tsx';
-import { FloatingBand, GlassPrism, HeroScanner, Particles, Tunnel } from '../visuals/scene.tsx';
+import { FloatingBand, GlassPrism, Particles, Tunnel } from '../visuals/scene.tsx';
 
 const COMPARE: Array<[string, boolean | string, boolean | string, boolean | string]> = [
   ['Change the destination after printing', false, true, true],
@@ -28,22 +28,24 @@ const COMPARE: Array<[string, boolean | string, boolean | string, boolean | stri
 ];
 
 const FEATURES = [
-  { icon: UserRound, title: 'Living profile cards', text: 'A hosted page with your links and a one-tap "Save contact". Change jobs, keep the code.' },
-  { icon: BarChart3, title: 'Editable links with analytics', text: 'Point a printed code somewhere new. Scans by day, hour, device, country and language.' },
-  { icon: Route, title: 'Context-aware rules', text: 'Breakfast menu at 8 am, dinner at 8 pm; App Store for iPhones, Google Play for Android.' },
-  { icon: Paintbrush, title: 'Design studio with a scan check', text: 'Colours, styles and your logo, decoded before download with the logo treated as damage.' },
-  { icon: LockKeyhole, title: 'Secure and expiring codes', text: 'PIN, expiry date, scan limits and single use, safe even when two people scan at once.' },
-  { icon: CalendarCheck, title: 'Event tickets and check-in', text: 'Signed tickets, a phone scanner that catches reused tickets, and a live headcount.' },
-  { icon: HeartPulse, title: 'Medical emergency card', text: 'Blood group, allergies and a contact readable offline; private details behind a PIN.' },
-  { icon: Wifi, title: 'Wi-Fi, UPI and quick actions', text: 'Join Wi-Fi, pay by UPI, WhatsApp, SMS, email, calendar events and map pins.' },
-  { icon: Files, title: 'Bulk generation', text: 'A spreadsheet in, hundreds of codes out as PNGs or a print-ready PDF, with live progress.' },
-  { icon: BadgeCheck, title: 'Scan-to-verify certificates', text: 'Signed certificates that show "Valid", or "Tampered" if a single letter changed.' },
+  { icon: UserRound, img: 'profile', title: 'Living profile cards', text: 'A hosted page with your links and a one-tap "Save contact". Change jobs, keep the code.', more: 'Add a photo, up to eight links and your own colour; the printed card never needs replacing.' },
+  { icon: BarChart3, img: 'dynamic', title: 'Editable links with analytics', text: 'Point a printed code somewhere new. Scans by day, hour, device, country and language.', more: 'Unique visitors are counted without storing IP addresses, and the history exports as CSV.' },
+  { icon: Route, img: 'rules', title: 'Context-aware rules', text: 'Breakfast menu at 8 am, dinner at 8 pm; App Store for iPhones, Google Play for Android.', more: 'Combine time, day, phone, language and country, and test it all in the scan simulator.' },
+  { icon: Paintbrush, img: 'design', title: 'Design studio with a scan check', text: 'Colours, styles and your logo, decoded before download with the logo treated as damage.', more: 'Five dot styles, four corner styles and gradients, exported as sharp PNG or SVG.' },
+  { icon: LockKeyhole, img: 'secure', title: 'Secure and expiring codes', text: 'PIN, expiry date, scan limits and single use, safe even when two people scan at once.', more: 'Chat-app link previews never use up a scan, and refused scans still show in analytics.' },
+  { icon: CalendarCheck, img: 'tickets', title: 'Event tickets and check-in', text: 'Signed tickets, a phone scanner that catches reused tickets, and a live headcount.', more: 'Import guests from a spreadsheet and run a self check-in kiosk at the entrance.' },
+  { icon: HeartPulse, img: 'medical', title: 'Medical emergency card', text: 'Blood group, allergies and a contact readable offline; private details behind a PIN.', more: 'First responders read it with any camera, even with no signal, and call your contact in one tap.' },
+  { icon: Wifi, img: 'wifi', title: 'Wi-Fi, UPI and quick actions', text: 'Join Wi-Fi, pay by UPI, WhatsApp, SMS, email, calendar events and map pins.', more: 'Print a ready-made Wi-Fi poster with the password in plain text as well.' },
+  { icon: Files, img: 'bulk', title: 'Bulk generation', text: 'A spreadsheet in, hundreds of codes out as PNGs or a print-ready PDF, with live progress.', more: 'Rows with problems are listed, never silently dropped, and jobs survive restarts.' },
+  { icon: BadgeCheck, img: 'certs', title: 'Scan-to-verify certificates', text: 'Signed certificates that show "Valid", or "Tampered" if a single letter changed.', more: 'Anyone can check them offline with the public key, and you can revoke one at any time.' },
 ];
 
-function Show({ kicker, icon: Icon, title, text, points, visual, flip, example }: { kicker: string; icon: typeof Cpu; title: string; text: string; points: string[]; visual: ReactNode; flip?: boolean; example?: string }) {
+function Show({ kicker, icon: Icon, title, text, points, visual, flip, example, size = 1 }: { kicker: string; icon: typeof Cpu; title: string; text: string; points: string[]; visual: ReactNode; flip?: boolean; example?: string; size?: number }) {
+  // Pictures up to 1.75× sit beside the text; larger ones get a row of their own below it.
+  const cls = size >= 2 ? ' v-show--stack' : size > 1 ? ' v-show--big' : '';
   return (
-    <div className={`v-show${flip ? ' flip' : ''}`}>
-      <div>
+    <div className={`v-show${flip ? ' flip' : ''}${cls}`} style={{ '--k': size } as CSSProperties}>
+      <div className="v-show-text">
         <span className="kicker">
           <Icon size={15} /> {kicker}
         </span>
@@ -62,7 +64,7 @@ function Show({ kicker, icon: Icon, title, text, points, visual, flip, example }
           </p>
         )}
       </div>
-      {visual}
+      <div className="v-show-visual">{visual}</div>
     </div>
   );
 }
@@ -116,9 +118,7 @@ export function Landing() {
               </span>
             </div>
           </div>
-          <div className="only-light">
-            <HeroScanner />
-          </div>
+          <HeroWave className="only-light" />
           <LampScene className="only-dark lamps-mobile" />
         </div>
       </section>
@@ -199,6 +199,7 @@ export function Landing() {
             text="Dynamic codes point to a short link you control. Swap the destination after printing, switch the code off, and watch scans arrive by day and hour, in your own timezone."
             points={['Unique visitors without storing IP addresses', 'Phones, browsers, countries and languages', 'Export the scan history as CSV']}
             visual={<DashboardScene />}
+            size={1.75}
             example="A café moves its menu from a PDF to a new website without reprinting a single table tent, and sees that Saturday 1 pm is its busiest scan hour."
           />
           <Show
@@ -218,6 +219,7 @@ export function Landing() {
             text="Five dot styles, four corner styles, gradients and your logo. Before you download, we decode the design ourselves with every module under the logo counted as misread."
             points={['Shows how much error correction the logo uses', 'Warns about low contrast and light-on-dark colours', 'PNG up to 2048 px, or vector SVG']}
             visual={<PedestalScene />}
+            size={2.5}
             example="A bakery adds its logo at 25% size; the scan check shows it uses 61% of the error-correction budget, safely under the limit."
           />
           <Show
@@ -237,6 +239,7 @@ export function Landing() {
             text="Each guest gets a signed ticket that cannot be guessed or copied into a new one. Staff scan at the door with a phone camera; a reused ticket shows when and where it was first used."
             points={['“Already used at 7:42 pm, North gate”', 'Live headcount across every door', 'Import guests from a spreadsheet']}
             visual={<TicketScene />}
+            size={2.5}
             example="A 300-guest meetup with two doors: a ticket screenshot passed to a friend is refused with “already used at 6:42 pm, North gate”."
           />
           <Show
@@ -256,6 +259,7 @@ export function Landing() {
             text="Put a dynamic code on a box, a pouch or a bottle and update the page behind it: instructions, offers or a recall notice, without changing the packaging."
             points={['Vector PDF labels stay sharp at any size', 'Wi-Fi, UPI and contact codes for counters and shops', 'Medical cards readable with no signal']}
             visual={<PackagingScene />}
+            size={2}
             example="A spice brand prints one code per product line and later points it at a recall notice for one batch, overnight."
           />
         </div>
@@ -267,13 +271,15 @@ export function Landing() {
             <h2>Everything in one place</h2>
           </div>
           <div className="features">
-            {FEATURES.map(({ icon: Icon, title, text: t }) => (
+            {FEATURES.map(({ icon: Icon, img, title, text: t, more }) => (
               <article key={title} className="feature">
+                <img className="card-img" src={`/cards/${img}.jpg`} alt="" loading="lazy" decoding="async" />
                 <div className="ic">
                   <Icon size={21} />
                 </div>
                 <h3>{title}</h3>
                 <p>{t}</p>
+                <p className="more">{more}</p>
               </article>
             ))}
           </div>
@@ -407,13 +413,15 @@ export function Landing() {
             <p>Each page has five working features you can try right now, most of them without an account.</p>
           </div>
           <div className="explore-grid">
-            {EXPLORE.map(({ to, title, blurb, icon: Icon, features }) => (
+            {EXPLORE.map(({ to, title, blurb, more, img, icon: Icon, features }) => (
               <Link key={to} to={to} className="explore-card">
+                <img className="card-img" src={`/cards/${img}.jpg`} alt="" loading="lazy" decoding="async" />
                 <div className="ic">
                   <Icon size={22} />
                 </div>
                 <h3>{title}</h3>
                 <p>{blurb}</p>
+                <p className="more">{more}</p>
                 <ul>
                   {features.map((f) => (
                     <li key={f}>{f}</li>

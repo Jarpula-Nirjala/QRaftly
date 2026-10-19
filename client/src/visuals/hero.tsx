@@ -3,7 +3,6 @@ import { QrSvg } from '../studio.tsx';
 import { useCanvas } from './scene.tsx';
 import './hero.css';
 
-const reduced = () => typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 const siteUrl = () => (typeof location === 'undefined' ? 'https://qraftly.app' : location.origin);
 
 // ------------------------------------------------------------ the name, letter by letter
@@ -20,20 +19,6 @@ export function AnimatedName() {
           <span className={i === 0 ? 'ch q' : 'ch'}>{ch}</span>
         </span>
       ))}
-      <svg className="name-swash" viewBox="0 0 600 40" preserveAspectRatio="none" aria-hidden="true">
-        <defs>
-          <linearGradient id="swash" x1="0" x2="1">
-            <stop offset="0" stopColor="var(--gold)" stopOpacity="0" />
-            <stop offset="0.2" stopColor="var(--gold)" />
-            <stop offset="0.8" stopColor="var(--gold-2)" />
-            <stop offset="1" stopColor="var(--gold)" stopOpacity="0" />
-          </linearGradient>
-        </defs>
-        <path d="M8 28 C 140 6, 300 38, 440 16 S 580 14, 594 22" fill="none" stroke="url(#swash)" strokeWidth="2.4" strokeLinecap="round" pathLength={100} />
-        <circle className="spark" r="3.2" fill="#fff6dc">
-          {!reduced() && <animateMotion dur="5s" begin="2.4s" repeatCount="indefinite" path="M8 28 C 140 6, 300 38, 440 16 S 580 14, 594 22" />}
-        </circle>
-      </svg>
     </span>
   );
 }
@@ -119,6 +104,25 @@ export function LampScene({ className = '' }: { className?: string }) {
       ))}
       <Dust />
       <div className="lamps-vignette" />
+    </div>
+  );
+}
+
+// ------------------------------------------------------------ light: the QR landscape
+
+/**
+ * Your QR landscape picture. The carpet of cubes is cut into thin horizontal bands that rise and fall a pixel or
+ * two, each a little after the one above, so a very slight wave rolls through it; the rest stays still.
+ */
+export function HeroWave({ className = '' }: { className?: string }) {
+  const bands = 9;
+  return (
+    <div className={`hw ${className}`} role="img" aria-label="A QR code rising out of a landscape of cubes">
+      <div className="hw-img" />
+      {Array.from({ length: bands }, (_, i) => (
+        <div key={i} className="hw-img hw-band" style={{ '--i': i, '--top': `${58 + (i * 42) / bands}%`, '--bot': `${100 - (58 + ((i + 1) * 42) / bands)}%` } as CSSProperties} />
+      ))}
+      <div className="hw-glint" />
     </div>
   );
 }
