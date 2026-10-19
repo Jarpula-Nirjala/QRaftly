@@ -229,8 +229,15 @@ const FINDER_LIKE = [
 
 /** The standard's four penalty rules; the mask with the lowest score is the easiest to read. */
 export function penalty(m: boolean[][]): number {
+  return penaltyParts(m).reduce((a, b) => a + b, 0);
+}
+
+/** The four penalty rules scored separately: [runs, 2×2 blocks, finder-like patterns, dark/light balance]. */
+export function penaltyParts(m: boolean[][]): [number, number, number, number] {
   const size = m.length;
-  let score = 0;
+  let r1 = 0;
+  let r2 = 0;
+  let r3 = 0;
   const lines: boolean[][] = [];
   for (let y = 0; y < size; y++) lines.push(m[y]);
   for (let x = 0; x < size; x++) lines.push(m.map((row) => row[x]));
@@ -240,7 +247,7 @@ export function penalty(m: boolean[][]): number {
     for (let i = 1; i <= size; i++) {
       if (i < size && line[i] === line[i - 1]) run++;
       else {
-        if (run >= 5) score += 3 + (run - 5);
+        if (run >= 5) r1 += 3 + (run - 5);
         run = 1;
       }
     }
@@ -249,19 +256,19 @@ export function penalty(m: boolean[][]): number {
       for (const pat of FINDER_LIKE) {
         let ok = true;
         for (let k = 0; k < 11 && ok; k++) if (line[i + k] !== pat[k]) ok = false;
-        if (ok) score += 40;
+        if (ok) r3 += 40;
       }
   }
   // Rule 2: 2×2 blocks of one colour.
   for (let y = 0; y + 1 < size; y++)
     for (let x = 0; x + 1 < size; x++) {
       const c = m[y][x];
-      if (c === m[y][x + 1] && c === m[y + 1][x] && c === m[y + 1][x + 1]) score += 3;
+      if (c === m[y][x + 1] && c === m[y + 1][x] && c === m[y + 1][x + 1]) r2 += 3;
     }
   // Rule 4: balance of dark and light.
   let dark = 0;
   for (const row of m) for (const v of row) if (v) dark++;
   const total = size * size;
-  score += (Math.ceil(Math.abs(dark * 20 - total * 10) / total) - 1) * 10;
-  return score;
+  const r4 = (Math.ceil(Math.abs(dark * 20 - total * 10) / total) - 1) * 10;
+  return [r1, r2, r3, r4];
 }

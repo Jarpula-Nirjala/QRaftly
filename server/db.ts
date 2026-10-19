@@ -173,6 +173,55 @@ const MIGRATIONS: string[] = [
    create index jobs_queue on jobs (status, created_at);`,
   // Bulk jobs keep their finished items and row errors, so a restarted job resumes instead of starting over.
   `alter table jobs add column report jsonb not null default '{}'`,
+  // Feedback forms, queue tickets, view-once notes and API keys.
+  `create table forms (
+     id text primary key,
+     user_id text not null references users(id) on delete cascade,
+     title text not null,
+     question text not null,
+     created_at double precision not null
+   );
+   create table responses (
+     id bigint generated always as identity primary key,
+     form_id text not null references forms(id) on delete cascade,
+     rating integer not null,
+     comment text not null default '',
+     at double precision not null
+   );
+   create index responses_form on responses (form_id, at);
+   create table queues (
+     id text primary key,
+     user_id text not null references users(id) on delete cascade,
+     title text not null,
+     last_number integer not null default 0,
+     serving integer not null default 0,
+     created_at double precision not null
+   );
+   create table queue_entries (
+     id text primary key,
+     queue_id text not null references queues(id) on delete cascade,
+     number integer not null,
+     name text not null default '',
+     created_at double precision not null,
+     called_at double precision
+   );
+   create index queue_entries_queue on queue_entries (queue_id, number);
+   create table notes (
+     id text primary key,
+     ciphertext text not null,
+     iv text not null,
+     created_at double precision not null,
+     expires_at double precision not null
+   );
+   create table api_keys (
+     id text primary key,
+     user_id text not null references users(id) on delete cascade,
+     label text not null,
+     prefix text not null,
+     key_hash text not null unique,
+     created_at double precision not null,
+     last_used_at double precision
+   );`,
 ];
 
 async function migrate(db: Db): Promise<void> {

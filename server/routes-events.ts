@@ -4,6 +4,8 @@ import type { AppCtx } from './context.ts';
 import { csvObjects } from './csv.ts';
 import { HttpError, newId, rateLimit, requireUser, str } from './http.ts';
 import { checkTag, tag } from './security.ts';
+import { encodeText } from '../shared/qr/encode.ts';
+import { makeQrSheet } from './pdf.ts';
 
 interface EventRow {
   id: string;
@@ -144,6 +146,17 @@ export function mount(app: express.Express, ctx: AppCtx) {
     res.setHeader('Content-Type', 'text/csv; charset=utf-8');
     res.setHeader('Content-Disposition', `attachment; filename="tickets-${e.title.replace(/[^\w-]+/g, '-').slice(0, 40)}.csv"`);
     res.send(lines.join('\n'));
+  });
+
+  /** Name badges for every guest, 8 to an A4 page, each with the guest's signed ticket code. */
+  app.get('/api/events/:id/badges.pdf', async (req, res) => {
+    const e = await own(res, String(req.params.id));
+    const tickets = await db.query<TicketRow>('select * from tickets where event_id = $1 order by name', [e.id]);
+    if (!tickets.length) throw new HttpError(400, 'Add guests first.');
+    const cells = tickets.map((t) => ({ modules: encodeText(ticketUrl(t.id), { ecl: 'M' }).modules, label: t.name, sublabel: [e.title, e.venue].filter(Boolean).join(' · ') }));
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="badges-${e.title.replace(/[^\w-]+/g, '-').slice(0, 40)}.pdf"`);
+    res.send(makeQrSheet(cells, { cols: 2, rows: 4, color: '#14243a', title: `${e.title} · name badges` }));
   });
 
   /**

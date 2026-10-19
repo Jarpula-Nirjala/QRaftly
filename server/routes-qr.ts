@@ -7,7 +7,7 @@ import type { AppCtx } from './context.ts';
 import { headerCountry, lookupCountry } from './geo.ts';
 import { HttpError, clientIp, newId, newSlug, rateLimit, requireUser, str } from './http.ts';
 import { encodePng } from './png.ts';
-import { blockedReason, chooseTarget, localTime, parseVisitor, type Rule, type Security } from './scan.ts';
+import { blockedReason, chooseTarget, localTime, needsCountry, parseVisitor, pickSplit, type Rule, type Security, type SplitArm, type Visitor } from './scan.ts';
 import { checkTag, hashSecret, tag, verifySecret } from './security.ts';
 
 export type Kind = 'static' | 'dynamic' | 'profile' | 'medical';
@@ -66,7 +66,8 @@ function cleanRules(raw: unknown): Rule[] {
     if (hm(r.from) && hm(r.to)) [rule.from, rule.to] = [hm(r.from), hm(r.to)];
     if (Array.isArray(r.os)) rule.os = r.os.filter((o): o is NonNullable<Rule['os']>[number] => ['ios', 'android', 'windows', 'mac', 'linux'].includes(o as string));
     if (Array.isArray(r.lang)) rule.lang = r.lang.filter((l): l is string => typeof l === 'string' && /^[a-z]{2,3}$/.test(l)).slice(0, 10);
-    if (!rule.days?.length && !rule.from && !rule.os?.length && !rule.lang?.length) throw new HttpError(400, `Rule ${i + 1}: choose at least one condition (time, day, phone type or language).`);
+    if (Array.isArray(r.country)) rule.country = [...new Set(r.country.filter((c): c is string => typeof c === 'string' && /^[A-Za-z]{2}$/.test(c)).map((c) => c.toUpperCase()))].slice(0, 20);
+    if (!rule.days?.length && !rule.from && !rule.os?.length && !rule.lang?.length && !rule.country?.length) throw new HttpError(400, `Rule ${i + 1}: choose at least one condition (time, day, phone type, language or country).`);
     return rule;
   });
 }
@@ -84,7 +85,20 @@ function cleanMedical(o: Record<string, unknown>): MedicalData {
 function cleanData(kind: Kind, type: QrType, raw: unknown): Record<string, unknown> {
   const o = (raw && typeof raw === 'object' ? raw : {}) as Record<string, unknown>;
   try {
-    if (kind === 'dynamic') return { url: normaliseUrl(str(o.url, 2000)) };
+    if (kind === 'dynamic') {
+      const out: Record<string, unknown> = { url: normaliseUrl(str(o.url, 2000)) };
+      // An optional A/B split of the default destination.
+      if (Array.isArray(o.split) && o.split.length) {
+        const arms: SplitArm[] = o.split.slice(0, 5).map((a: Record<string, unknown>, i: number) => {
+          const weight = Math.round(Number(a?.weight));
+          if (!Number.isFinite(weight) || weight < 1 || weight > 100) throw new Error(`Variant ${i + 1}: use a weight from 1 to 100.`);
+          return { url: normaliseUrl(str(a?.url, 2000)), weight };
+        });
+        if (arms.length < 2) throw new Error('An A/B test needs at least two variants.');
+        out.split = arms;
+      }
+      return out;
+    }
     if (kind === 'profile') {
       const c = cleanContact(o);
       vcard(c); // validates
@@ -182,6 +196,7 @@ export function qrRoutes(ctx: AppCtx) {
     }
     if ('expiresAt' in b) next.expiresAt = typeof b.expiresAt === 'number' && b.expiresAt > 0 ? b.expiresAt : null;
     if ('maxScans' in b) next.maxScans = typeof b.maxScans === 'number' && b.maxScans >= 1 ? Math.min(1_000_000, Math.floor(b.maxScans)) : null;
+    if (typeof b.preview === 'boolean') next.preview = b.preview;
     return next;
   }
 
@@ -264,6 +279,20 @@ export function qrRoutes(ctx: AppCtx) {
     res.json(aggregate(scans, days, row.timezone));
   });
 
+  /** "What would this scan do?": runs the routing for a made-up visitor, without counting a scan. */
+  r.post('/api/qrs/:id/simulate', json, async (req, res) => {
+    const row = await own(res, req.params.id);
+    if (row.kind !== 'dynamic') throw new HttpError(400, 'Only dynamic codes have rules to simulate.');
+    const b = req.body ?? {};
+    const os = ['ios', 'android', 'windows', 'mac', 'linux', 'other'].includes(b.os) ? b.os : 'android';
+    const country = String(b.country ?? '').toUpperCase();
+    const v: Visitor = { device: os === 'ios' || os === 'android' ? 'mobile' : 'desktop', os, browser: 'other', lang: /^[a-z]{2,3}$/.test(b.lang) ? b.lang : 'en', country: /^[A-Z]{2}$/.test(country) ? country : undefined };
+    const at = typeof b.at === 'number' && Number.isFinite(b.at) ? b.at : Date.now();
+    const r = route(row, v, at, str(b.visitor, 80) || 'simulated-visitor');
+    const t = localTime(at, row.timezone);
+    res.json({ ...r, label: r.rule >= 0 ? (row.rules[r.rule].label ?? `Rule ${r.rule + 1}`) : r.arm >= 0 ? `Variant ${String.fromCharCode(65 + r.arm)}` : 'Main link', localDay: t.day, localMinutes: t.minutes });
+  });
+
   r.get('/api/qrs/:id/scans.csv', async (req, res) => {
     const row = await own(res, req.params.id);
     const scans = await db.query<Record<string, string | number>>('select at, device, os, browser, lang, country, outcome, target from scans where qr_id = $1 order by at desc limit 100000', [row.id]);
@@ -280,8 +309,7 @@ export function qrRoutes(ctx: AppCtx) {
   function recordScan(row: Row, req: Request, outcome: string, target = '') {
     const v = parseVisitor(req.headers['user-agent'], req.headers['accept-language']);
     const ip = clientIp(req);
-    const day = new Date().toISOString().slice(0, 10);
-    const visitor = tag(ctx.keys, 'visitor', `${ip}|${req.headers['user-agent'] ?? ''}|${day}`);
+    const visitor = visitorKey(req);
     const country = headerCountry(req);
     void (async () => {
       const c = country || (ctx.geo ? await lookupCountry(ip) : '');
@@ -301,9 +329,27 @@ export function qrRoutes(ctx: AppCtx) {
     return v;
   }
 
-  /** Where a successful scan goes. */
-  const destination = (row: Row, v: ReturnType<typeof parseVisitor>) =>
-    row.kind === 'dynamic' ? chooseTarget(String(row.data.url), row.rules, v, Date.now(), row.timezone).target : `/${row.kind === 'profile' ? 'p' : 'm'}/${row.slug}`;
+  /** The day's anonymous visitor id (also keeps A/B variants stable for a person through the day). */
+  const visitorKey = (req: Request) => tag(ctx.keys, 'visitor', `${clientIp(req)}|${req.headers['user-agent'] ?? ''}|${new Date().toISOString().slice(0, 10)}`);
+
+  /** Where a dynamic code sends this visitor: the first matching rule, else the A/B split, else the main link. */
+  function route(row: Row, v: Visitor, at: number, key: string) {
+    const r = chooseTarget(String(row.data.url), row.rules, v, at, row.timezone);
+    if (r.rule >= 0) return { target: r.target, rule: r.rule, arm: -1 };
+    const split = row.data.split as SplitArm[] | undefined;
+    if (split?.length) {
+      const p = pickSplit(split, key);
+      return { target: p.url, rule: -1, arm: p.arm };
+    }
+    return { target: r.target, rule: -1, arm: -1 };
+  }
+
+  /** Where a successful scan goes. Country rules wait briefly for the (cached) country lookup. */
+  async function destination(row: Row, req: Request, v: Visitor): Promise<string> {
+    if (row.kind !== 'dynamic') return `/${row.kind === 'profile' ? 'p' : 'm'}/${row.slug}`;
+    if (needsCountry(row.rules)) v.country = headerCountry(req) || (ctx.geo ? await lookupCountry(clientIp(req)) : '') || undefined;
+    return route(row, v, Date.now(), visitorKey(req)).target;
+  }
 
   /** Counts a scan, refusing it once the scan limit is reached (one SQL statement, so two scans at once cannot both pass). */
   const consume = async (row: Row) =>
@@ -327,12 +373,12 @@ export function qrRoutes(ctx: AppCtx) {
       recordScan(row, req, `blocked-${blocked}`);
       return res.redirect(302, `/x/${blocked}`);
     }
-    if (row.security.pinHash) return res.redirect(302, `/g/${row.slug}`);
+    if (row.security.pinHash || row.security.preview) return res.redirect(302, `/g/${row.slug}`);
     const v = parseVisitor(req.headers['user-agent'], req.headers['accept-language']);
     // Link previews (WhatsApp, Slack…) must not use up a limited code.
     if (v.device === 'bot') {
       if (row.security.maxScans) return res.redirect(302, `/g/${row.slug}`);
-      const target = destination(row, v);
+      const target = await destination(row, req, v);
       recordScan(row, req, 'bot', target);
       return res.redirect(302, target);
     }
@@ -340,7 +386,7 @@ export function qrRoutes(ctx: AppCtx) {
       recordScan(row, req, 'blocked-limit');
       return res.redirect(302, '/x/limit');
     }
-    const target = destination(row, v);
+    const target = await destination(row, req, v);
     recordScan(row, req, 'ok', target);
     res.redirect(302, target);
   });
@@ -350,7 +396,13 @@ export function qrRoutes(ctx: AppCtx) {
     const [row] = await db.query<Row>('select * from qrcodes where slug = $1', [req.params.slug]);
     if (!row || row.kind === 'static') throw new HttpError(404, 'This QR code does not exist.');
     const blocked = blockedReason(row.active, row.security, row.scan_count, Date.now());
-    res.json({ title: row.title, kind: row.kind, needsPin: !!row.security.pinHash, blocked, scansLeft: row.security.maxScans ? Math.max(0, row.security.maxScans - row.scan_count) : null });
+    // With "preview" on, the gate shows where the code leads before anyone opens it (not shown behind a PIN).
+    let preview: string | null = null;
+    if (row.security.preview && !row.security.pinHash) {
+      const t = await destination(row, req, parseVisitor(req.headers['user-agent'], req.headers['accept-language']));
+      preview = /^https?:/.test(t) ? t : `${ctx.publicUrl}${t}`;
+    }
+    res.json({ title: row.title, kind: row.kind, needsPin: !!row.security.pinHash, blocked, scansLeft: row.security.maxScans ? Math.max(0, row.security.maxScans - row.scan_count) : null, preview });
   });
 
   r.post('/api/r/:slug/unlock', express.json(), rateLimit(10, 10 * 60_000), async (req, res) => {
@@ -364,7 +416,7 @@ export function qrRoutes(ctx: AppCtx) {
     }
     if (!(await consume(row))) throw new HttpError(410, 'This QR code has already been used.');
     const v = recordScan(row, req, 'ok');
-    const target = destination(row, v);
+    const target = await destination(row, req, v);
     res.json({ target: row.kind === 'dynamic' ? target : `${target}?k=${unlockToken(row.slug)}` });
   });
 

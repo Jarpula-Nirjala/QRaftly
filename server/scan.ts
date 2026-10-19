@@ -6,6 +6,8 @@ export interface Visitor {
   browser: 'chrome' | 'safari' | 'firefox' | 'edge' | 'samsung' | 'other';
   /** Primary language, two letters (en, hi, te…). */
   lang: string;
+  /** Two-letter country code, when known (rules that need it look it up). */
+  country?: string;
 }
 
 export function parseVisitor(userAgent = '', acceptLanguage = ''): Visitor {
@@ -28,8 +30,34 @@ export interface Rule {
   to?: string;
   os?: Visitor['os'][];
   lang?: string[];
+  /** Two-letter country codes (IN, AE, GB…). */
+  country?: string[];
   target: string;
 }
+
+/** An A/B split: each destination gets a share of the traffic in proportion to its weight. */
+export interface SplitArm {
+  url: string;
+  weight: number;
+}
+
+/**
+ * Picks an arm of a split. The choice is a pure function of `key` (the day's anonymous visitor id), so the
+ * same person keeps seeing the same variant for the whole day and the shares converge on the weights.
+ */
+export function pickSplit(arms: SplitArm[], key: string): { url: string; arm: number } {
+  const total = arms.reduce((s, a) => s + a.weight, 0);
+  let h = 2166136261;
+  for (let i = 0; i < key.length; i++) h = Math.imul(h ^ key.charCodeAt(i), 16777619);
+  let x = ((h >>> 0) / 4294967296) * total;
+  for (let i = 0; i < arms.length; i++) {
+    x -= arms[i].weight;
+    if (x < 0) return { url: arms[i].url, arm: i };
+  }
+  return { url: arms[arms.length - 1].url, arm: arms.length - 1 };
+}
+
+export const needsCountry = (rules: Rule[]) => rules.some((r) => r.country?.length);
 
 /** The weekday and minutes since midnight at `at` in `timeZone`. */
 export function localTime(at: number, timeZone: string): { day: number; minutes: number } {
@@ -52,6 +80,7 @@ const toMinutes = (hm: string) => {
 export function ruleMatches(rule: Rule, v: Visitor, at: number, timeZone: string): boolean {
   if (rule.os?.length && !rule.os.includes(v.os)) return false;
   if (rule.lang?.length && !rule.lang.includes(v.lang)) return false;
+  if (rule.country?.length && !(v.country && rule.country.includes(v.country))) return false;
   if (rule.days?.length || rule.from || rule.to) {
     const t = localTime(at, timeZone);
     if (rule.days?.length && !rule.days.includes(t.day)) return false;
@@ -78,6 +107,8 @@ export interface Security {
   expiresAt?: number | null;
   /** Stop after this many successful scans (1 = single use). */
   maxScans?: number | null;
+  /** Show the destination and ask before opening it (a guard against swapped stickers and phishing). */
+  preview?: boolean;
 }
 
 export type Blocked = 'off' | 'expired' | 'limit';

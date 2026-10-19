@@ -32,7 +32,7 @@ export async function startServer(opts: ServerOptions): Promise<RunningServer> {
   /** Feature modules; each may return a function that stops its background work. */
   const extra: Array<(app: express.Express, ctx: AppCtx) => void | (() => void)> = [];
   const stops: Array<() => void> = [];
-  for (const mod of ['./routes-events.ts', './routes-certs.ts', './routes-bulk.ts']) {
+  for (const mod of ['./routes-events.ts', './routes-certs.ts', './routes-bulk.ts', './routes-extra.ts']) {
     const file = new URL(mod, import.meta.url);
     if (fs.existsSync(file)) extra.push((await import(file.href)).mount);
   }
