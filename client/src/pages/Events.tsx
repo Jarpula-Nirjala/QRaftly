@@ -380,6 +380,7 @@ export function DoorScanner({ id }: { id: string }) {
       const b = e instanceof ApiError ? (e.body as { status?: string; ticket?: Ticket }) : {};
       if (b.status === 'duplicate' && b.ticket) show({ kind: 'dup', title: 'Already used', detail: `${b.ticket.name} checked in at ${fmtTime(b.ticket.checkedInAt!)}${b.ticket.checkedInBy ? ` (${b.ticket.checkedInBy})` : ''}.` });
       else if (b.status === 'wrong-event') show({ kind: 'bad', title: 'Wrong event', detail: 'This ticket is for a different event.' });
+      else if (b.status === 'cancelled') show({ kind: 'bad', title: 'Ticket cancelled', detail: 'This ticket was cancelled by the organiser.' });
       else show({ kind: 'bad', title: 'Not a valid ticket', detail: errorText(e) });
     }
   };

@@ -160,6 +160,12 @@ describe('events, certificates and bulk jobs', () => {
     assert.equal((await api(`/api/events/${ev2}/checkin`, { body: { code: t2.url } })).json.status, 'wrong-event');
     // Another account cannot use this event's scanner.
     assert.equal((await api(`/api/events/${id}/checkin`, { body: { code: t2.url }, as: other })).status, 404);
+    // A cancelled ticket is reported as cancelled, not as another event's ticket.
+    const t3 = (await api(`/api/events/${id}/tickets`, { body: { attendees: [{ name: 'Gone Guest' }] } })).json.tickets[0];
+    assert.equal((await api(`/api/events/${id}/tickets/${t3.id}`, { method: 'DELETE' })).status, 200);
+    const cancelled = await api(`/api/events/${id}/checkin`, { body: { code: t3.url } });
+    assert.equal(cancelled.status, 404);
+    assert.equal(cancelled.json.status, 'cancelled');
 
     await new Promise((r) => setTimeout(r, 100));
     ctrl.abort();

@@ -172,7 +172,9 @@ export function mount(app: express.Express, ctx: AppCtx) {
       return { status: 'ok' as const, ticket: ticketApi(done), ...c };
     }
     const [t] = await db.query<TicketRow>('select * from tickets where id = $1', [ticketId]);
-    if (!t || t.event_id !== e.id) return { status: 'wrong-event' as const, ...(await counts(e.id)) };
+    // The ticket's signature was genuine, so a missing row means it was cancelled (cancelling deletes it).
+    if (!t) return { status: 'cancelled' as const, error: 'This ticket has been cancelled.', ...(await counts(e.id)) };
+    if (t.event_id !== e.id) return { status: 'wrong-event' as const, ...(await counts(e.id)) };
     return { status: 'duplicate' as const, ticket: ticketApi(t), ...(await counts(e.id)) };
   }
 

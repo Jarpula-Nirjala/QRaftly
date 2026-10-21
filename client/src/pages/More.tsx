@@ -459,7 +459,7 @@ export function Kiosk({ id }: { id: string }) {
       setFlash({ ok: true, title: `Welcome, ${r.ticket.name}!`, detail: 'You are checked in. Enjoy the event.' });
     } catch (e) {
       const b = e instanceof ApiError ? (e.body as { status?: string }) : {};
-      setFlash({ ok: false, title: b.status === 'duplicate' ? 'This ticket was already used' : 'We could not read that ticket', detail: 'Please see a member of staff.' });
+      setFlash({ ok: false, title: b.status === 'duplicate' ? 'This ticket was already used' : b.status === 'cancelled' ? 'This ticket was cancelled' : 'We could not read that ticket', detail: 'Please see a member of staff.' });
     }
     clearTimeout(timer.current);
     timer.current = window.setTimeout(() => setFlash(null), 4000);
