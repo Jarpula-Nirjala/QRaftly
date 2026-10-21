@@ -3,6 +3,8 @@ services:
     name: qraftly
     runtime: node
     plan: free
+    # Next to the Neon database (us-east-2, Ohio): every request makes a few database round trips.
+    region: ohio
     buildCommand: npm ci && npm run build
     startCommand: npm start
     healthCheckPath: /healthz
