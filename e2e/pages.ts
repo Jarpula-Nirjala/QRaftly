@@ -30,10 +30,10 @@ try {
   page.on('pageerror', (e) => errors.push(`pageerror: ${e.message}`));
   page.on('console', (m) => m.type() === 'error' && !/Failed to load resource/.test(m.text()) && errors.push(`console: ${m.text()}`));
 
-  // Dark is the default theme.
+  // Light is the default theme.
   await page.goto(BASE, { waitUntil: 'domcontentloaded' });
   await page.locator('.hero-name').waitFor();
-  assert.equal(await page.evaluate(() => document.documentElement.dataset.theme), 'dark');
+  assert.equal(await page.evaluate(() => document.documentElement.dataset.theme), 'light');
   // Header links scroll to their sections.
   for (const [label, id] of [['Features', 'features'], ['How it works', 'how']] as const) {
     await page.evaluate(() => scrollTo(0, 0));
