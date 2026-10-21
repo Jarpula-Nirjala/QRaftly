@@ -110,14 +110,18 @@ For development, run `npm run dev:server` and `npm run dev:client` in two termin
 | Variable | Purpose |
 |---|---|
 | `DATABASE_URL` | Postgres connection string (required in production; without it the embedded PGlite is used) |
-| `PUBLIC_URL` | The address put inside QR codes, e.g. `https://qraftly.onrender.com` |
+| `PUBLIC_URL` | The address put inside QR codes, e.g. `https://qraftly.onrender.com` (on Render, defaults to `RENDER_EXTERNAL_URL`) |
 | `HMAC_SECRET` | Key for ticket, unlock-link and visitor-id tags (generated and stored in the database if unset) |
 | `GEOIP` | `off` disables the country lookup for scans |
+| `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | Optional: Continue with Google. Register `<PUBLIC_URL>/api/auth/oauth/google/callback` as a redirect URI |
+| `RESEND_API_KEY`, `MAIL_FROM` | Optional: emails password reset links through Resend (without it the link is written to the server log) |
+
+Locally, these can go in an uncommitted `.env` file in the project folder.
 
 ## Tests
 
 ```bash
-npm test          # 66 tests: QR engine, design check, server, events, certificates, bulk, camera decoder, the 25 newer features
+npm test          # 67 tests: QR engine, design check, server, accounts, events, certificates, bulk, camera decoder, the 25 newer features
 npm run e2e       # two browser tests against a running server (BASE=http://localhost:3000): the core app, and all five feature pages
 ```
 
@@ -127,7 +131,8 @@ The browser test drives the Edge or Chrome already installed on the machine (`pl
 
 1. Create a free Postgres database on [Neon](https://neon.tech) and copy its connection string.
 2. On Render, choose **New → Blueprint** and select this repository. `render.yaml` sets the build, the start command and the health check.
-3. Set `DATABASE_URL` to the Neon string and `PUBLIC_URL` to the service's `onrender.com` address.
+3. Set `DATABASE_URL` to the Neon string. `PUBLIC_URL` is optional (the service's `onrender.com` address is used without it).
+4. Optional: set `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` for Continue with Google, and `RESEND_API_KEY` for password reset emails.
 
 Measured on this codebase:
 

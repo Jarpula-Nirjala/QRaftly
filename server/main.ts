@@ -16,7 +16,8 @@ const server = await startServer({
   databaseUrl: process.env.DATABASE_URL || null,
   dataDir: process.env.DATABASE_URL ? null : (process.env.DATA_DIR ?? path.join(root, 'data')),
   staticDir: path.join(root, 'dist'),
-  publicUrl: process.env.PUBLIC_URL || undefined,
+  // Render sets RENDER_EXTERNAL_URL (https://<service>.onrender.com), so codes point at the live site even before PUBLIC_URL is set.
+  publicUrl: process.env.PUBLIC_URL || process.env.RENDER_EXTERNAL_URL || undefined,
   geo: process.env.GEOIP !== 'off',
 });
 console.log(`QRaftly listening on http://localhost:${server.port} (database: ${server.ctx.db.kind})`);

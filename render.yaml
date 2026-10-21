@@ -13,7 +13,8 @@ services:
       # local development only; it does not fit the free instance and would be lost on every deploy.
       - key: DATABASE_URL
         sync: false
-      # The site's public address, used inside every QR code, e.g. https://qraftly.onrender.com
+      # The site's public address, used inside every QR code, e.g. https://qraftly.onrender.com (or your own domain).
+      # Optional on Render: without it the address Render gives the service (RENDER_EXTERNAL_URL) is used.
       - key: PUBLIC_URL
         sync: false
       # Signs tickets, unlock links and visitor ids. Keep it fixed: changing it invalidates issued tickets.
