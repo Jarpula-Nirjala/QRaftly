@@ -5,6 +5,7 @@ import { match, navigate, scrollToHash, useLocation } from './router.tsx';
 import { BackBar, Footer, Header, Loading, ToastProvider } from './ui.tsx';
 import { AccountPage } from './pages/Account.tsx';
 import { AuthPage, ForgotPage, ResetPage } from './pages/Auth.tsx';
+import { PrivacyPage, TermsPage } from './pages/Legal.tsx';
 import { BulkPage } from './pages/Bulk.tsx';
 import { CertificatesPage, VerifyPage } from './pages/Certificates.tsx';
 import { Dashboard } from './pages/Dashboard.tsx';
@@ -94,6 +95,8 @@ function Routes() {
     } else page = <Landing />;
   } else if (Explore) page = <Explore />;
   else if (path === '/signin' || path === '/signup') page = <AuthPage key={path} mode={path === '/signin' ? 'signin' : 'signup'} />;
+  else if (path === '/privacy') (page = <PrivacyPage />), (footer = true);
+  else if (path === '/terms') (page = <TermsPage />), (footer = true);
   else if (path === '/forgot') page = <ForgotPage />;
   else if (path === '/reset') page = <ResetPage />;
   else if (path === '/verify') (page = <BackdropStage><VerifyPage /></BackdropStage>), (footer = true);

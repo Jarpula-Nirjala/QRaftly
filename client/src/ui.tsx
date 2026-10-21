@@ -365,7 +365,8 @@ export function Footer() {
               <li><Link to="/verify">Verify a certificate</Link></li>
               <li><Link to="/trust">Check a link before you open it</Link></li>
               <li><a href="/api/certs/public-key">Signing public key</a></li>
-              <li><Link to="/#privacy">Privacy</Link></li>
+              <li><Link to="/privacy">Privacy policy</Link></li>
+              <li><Link to="/terms">Terms of use</Link></li>
             </ul>
           </div>
         </div>

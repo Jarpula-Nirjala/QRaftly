@@ -128,7 +128,7 @@ export function AuthPage({ mode }: { mode: 'signin' | 'signup' }) {
         </Link>
       )}
       <p className="small muted" style={{ textAlign: 'center', margin: 0 }}>
-        You stay signed in for 30 days on this device, renewed each time you visit.
+        You stay signed in for 30 days on this device, renewed each time you visit. By continuing you agree to the <Link to="/terms">terms</Link> and <Link to="/privacy">privacy policy</Link>.
       </p>
     </AuthCard>
   );

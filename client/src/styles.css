@@ -2324,3 +2324,23 @@ section[id],
   text-decoration: none;
   gap: 8px;
 }
+
+/* ------------------------------------------------------------ privacy policy and terms */
+.legal {
+  max-width: 760px;
+  padding-top: 24px;
+  padding-bottom: 48px;
+}
+.legal h2 {
+  margin: 32px 0 10px;
+  font-size: 24px;
+}
+.legal ul {
+  padding-left: 22px;
+  display: grid;
+  gap: 8px;
+}
+.legal p,
+.legal li {
+  line-height: 1.65;
+}
