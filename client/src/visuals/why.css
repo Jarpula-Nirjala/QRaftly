@@ -460,3 +460,34 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* The comparison picture. The "Get started for free" button drawn in it is covered by a real link,
+   placed by percentages so it stays on the button at every width (the picture is 1672 × 941). */
+.wy-compare {
+  position: relative;
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow: 0 40px 80px -40px rgb(8 22 51 / 0.6);
+}
+.wy-compare img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.wy-compare-cta {
+  position: absolute;
+  left: 4.4%;
+  top: 82.6%;
+  width: 23.6%;
+  height: 9.2%;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.wy-compare-cta:hover {
+  background: rgb(255 255 255 / 0.12);
+  box-shadow: 0 0 0 2px rgb(255 214 120 / 0.6);
+}
+.wy-compare-cta:focus-visible {
+  outline: 3px solid #ffd678;
+  outline-offset: 3px;
+}

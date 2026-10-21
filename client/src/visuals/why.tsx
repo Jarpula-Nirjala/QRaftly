@@ -1,10 +1,10 @@
-import { ArrowRight, BarChart3, CheckCircle2, Circle, Crown, Eye, FileCheck2, Link2, Lock, QrCode, Settings, ShieldCheck, SlidersHorizontal, XCircle, Zap } from 'lucide-react';
+import { ArrowRight, BarChart3, CheckCircle2, Eye, FileCheck2, Link2, QrCode, Settings, ShieldCheck, SlidersHorizontal, XCircle } from 'lucide-react';
+import { useAuth } from '../auth.tsx';
 import { Link } from '../router.tsx';
 import './why.css';
 
 type Mark = 'yes' | 'no' | 'part';
-const Tick = ({ m }: { m: Mark }) =>
-  m === 'yes' ? <CheckCircle2 className="wy-yes" size={19} aria-label="Yes" /> : m === 'no' ? <XCircle className="wy-no" size={19} aria-label="No" /> : <Circle className="wy-part" size={19} aria-label="Partly" />;
+const MARK_TEXT: Record<Mark, string> = { yes: 'Yes', no: 'No', part: 'Partly' };
 
 const BENEFITS: Array<{ icon: typeof Eye; title: string; text: string; win: string }> = [
   { icon: Link2, title: 'Change destination anytime', text: 'No need to reprint. Update the link even after printing.', win: 'Save time and cost' },
@@ -35,6 +35,7 @@ const TABLE: Array<[string, Mark, Mark, Mark]> = [
 
 /** "Why QRaftly", in three parts: the benefits, the evolution of a code, and the comparison table. */
 export function WhySection() {
+  const { user } = useAuth();
   return (
     <div className="wy">
       {/* 2. Benefits */}
@@ -93,98 +94,39 @@ export function WhySection() {
         </ol>
       </div>
 
-      {/* 4. The table, on navy */}
-      <div className="wy-panel wy-navy">
-        <div className="wy-intro">
-          <span className="wy-kicker">Why QRaftly</span>
-          <h2>
-            More control.
-            <br />
-            More possibilities.
-            <br />
-            Still free.
-          </h2>
-          <p>Everything you need from a modern QR tool — without the usual limitations.</p>
-          <ul className="wy-points">
-            <li>
-              <span>
-                <Zap size={20} />
-              </span>
-              <div>
-                <b>Dynamic &amp; editable</b>
-                Change your link anytime, even after printing.
-              </div>
-            </li>
-            <li>
-              <span>
-                <Lock size={20} />
-              </span>
-              <div>
-                <b>Private &amp; secure</b>
-                No IP storage. Link safety checks.
-              </div>
-            </li>
-            <li>
-              <span>
-                <BarChart3 size={20} />
-              </span>
-              <div>
-                <b>Advanced features</b>
-                Rules, analytics, A/B tests, signed tickets and more.
-              </div>
-            </li>
-          </ul>
-          <Link to="/signup" className="wy-gold">
-            Get started for free <ArrowRight size={18} />
-          </Link>
-        </div>
-        <div className="wy-table">
-          <table>
-            <thead>
-              <tr>
-                <th>Features</th>
-                <th>
-                  Free
-                  <br />
-                  Generator
-                </th>
-                <th>
-                  Paid
-                  <br />
-                  Platform
-                </th>
-                <th className="ours">
-                  <Crown size={20} />
-                  <br />
-                  QRaftly
-                </th>
+      {/* 4. The comparison, as the designed picture; the button in it is a real link laid over it. */}
+      <div className="wy-compare">
+        <img src="/bg/why-compare.jpg" width={1672} height={941} loading="lazy" decoding="async" alt="More control. More possibilities. Still free. QRaftly compared with a free generator and a paid platform." />
+        <Link to={user ? '/app' : '/signup'} className="wy-compare-cta" aria-label={user ? 'Go to your codes' : 'Get started for free'} title={user ? 'Go to your codes' : 'Get started for free'} />
+        <table className="sr-only">
+          <caption>Features compared</caption>
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th>Free generator</th>
+              <th>Paid platform</th>
+              <th>QRaftly</th>
+            </tr>
+          </thead>
+          <tbody>
+            {TABLE.map(([f, ...marks]) => (
+              <tr key={f}>
+                <td>{f}</td>
+                {marks.map((m, i) => (
+                  <td key={i}>{MARK_TEXT[m]}</td>
+                ))}
               </tr>
-            </thead>
-            <tbody>
-              {TABLE.map(([f, a, b, c]) => (
-                <tr key={f}>
-                  <td>{f}</td>
-                  <td>
-                    <Tick m={a} />
-                  </td>
-                  <td>
-                    <Tick m={b} />
-                  </td>
-                  <td className="ours">
-                    <Tick m={c} />
-                  </td>
-                </tr>
-              ))}
-              <tr className="price">
-                <td>Price</td>
-                <td>Free</td>
-                <td>Monthly fee</td>
-                <td className="ours">Free</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+            ))}
+            <tr>
+              <td>Price</td>
+              <td>Free</td>
+              <td>Monthly fee</td>
+              <td>Free</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
+
       <p className="wy-note">“Typical” describes common products in general, not any one company; features vary by plan.</p>
     </div>
   );
