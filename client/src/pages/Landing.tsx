@@ -48,7 +48,7 @@ export function Landing() {
   const toast = useToast();
   const [type, setType] = useState<StaticType>('url');
   const [data, setData] = useState<Record<string, string | boolean>>(() => ({ ...TYPES[0].blank, url: 'https://example.com' }));
-  const [design, setDesign] = useState<Design>({ ...DEFAULT_DESIGN, fg: '#ffffff', bg: '#000000', dots: 'square', eyes: 'square' });
+  const [design, setDesign] = useState<Design>({ ...DEFAULT_DESIGN, fg: '#000000', bg: '#ffffff', dots: 'square', eyes: 'square' });
   const [tab, setTab] = useState<'content' | 'design'>('content');
   const { text, error } = payloadOf(type, data);
   const pick = (t: StaticType) => {

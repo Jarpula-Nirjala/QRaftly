@@ -78,10 +78,10 @@ export function checkReadability(text: string, partial: Partial<Design> = {}, ec
   const fgRgb = hexToRgb(design.fg);
   const bgRgb = hexToRgb(design.transparent ? '#ffffff' : design.bg);
   const contrast = contrastRatio(design.fg, design.transparent ? '#ffffff' : design.bg);
-  // Reflectance reversal is allowed by ISO/IEC 18004:2015 and read by current phone cameras, but not by every
-  // older scanner app, so it is advice rather than a failure.
+  // Reflectance reversal is allowed by ISO/IEC 18004:2015, but many readers (Google Lens among them) often miss it,
+  // so it is a strong warning; the design still decodes, so it is not marked as a failure.
   const notes: string[] = [];
-  if (fgRgb && bgRgb && luminance(fgRgb) > luminance(bgRgb)) notes.push('Light squares on a dark background: phone cameras read this, but some older scanner apps do not.');
+  if (fgRgb && bgRgb && luminance(fgRgb) > luminance(bgRgb)) notes.push('Light squares on a dark background: many scanners, Google Lens among them, often cannot read this. Use dark dots on a light background for anything you share or print.');
   if (contrast < 3) issues.unshift(`Contrast is too low (${contrast.toFixed(1)}:1). Use a darker colour for the dots or a lighter background.`);
   else if (contrast < 4.5) issues.push(`Contrast is a little low (${contrast.toFixed(1)}:1). Darker dots scan more reliably.`);
   if (design.margin < 2) issues.push('Leave at least 2 modules of empty space around the code (4 is ideal).');
