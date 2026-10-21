@@ -47,10 +47,17 @@ export function newSlug(length = 7): string {
   return [...bytes].map((b) => alphabet[b % alphabet.length]).join('');
 }
 
-/** The client's IP, honouring one proxy hop (Render sits in front of the app). */
-export function clientIp(req: Request): string {
-  const fwd = String(req.headers['x-forwarded-for'] ?? '').split(',')[0].trim();
-  return fwd || req.socket.remoteAddress || '';
+/**
+ * The client's IP, for rate limits, visitor counts and the country lookup. It must not come from a header the
+ * client controls: the first X-Forwarded-For entry is whatever the client sent, which let anyone dodge the
+ * PIN-guessing limit. On Render, traffic arrives through Cloudflare, which sets CF-Connecting-IP to the real
+ * address and overwrites any value the client sent; elsewhere Express's req.ip honours exactly the one proxy
+ * hop set with 'trust proxy'.
+ */
+export function clientIp(req: Request, onRender = Boolean(process.env.RENDER)): string {
+  const cf = req.headers['cf-connecting-ip'];
+  if (onRender && typeof cf === 'string' && cf.trim()) return cf.trim();
+  return req.ip || req.socket.remoteAddress || '';
 }
 
 /** A fixed-window rate limit per IP and route. */

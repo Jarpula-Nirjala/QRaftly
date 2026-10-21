@@ -4,6 +4,8 @@ import jsQRModule from 'jsqr';
 import { PNG } from 'pngjs';
 import { startServer, type RunningServer } from '../server/app.ts';
 import { outbox } from '../server/mail.ts';
+import { clientIp } from '../server/http.ts';
+import type { Request } from 'express';
 
 const jsQR = jsQRModule as unknown as (d: Uint8ClampedArray, w: number, h: number) => { data: string } | null;
 const IPHONE = 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1';
@@ -161,6 +163,29 @@ describe('QRaftly server', () => {
     const ok = await api(`/api/r/${slug}/unlock`, { body: { pin: '4321' }, as: '' });
     assert.equal(ok.json.target, 'https://example.com/secret');
     assert.equal((await api('/api/qrs', { body: { kind: 'dynamic', data: { url: 'a.com' }, security: { pin: '12' } } })).status, 400);
+  });
+
+  it('PIN guessing stays limited when the client fakes X-Forwarded-For', async () => {
+    const c = await api('/api/qrs', { body: { kind: 'dynamic', data: { url: 'https://example.com/vault' }, security: { pin: '4821' } } });
+    const guess = (i: number) =>
+      fetch(`${B()}/api/r/${c.json.qr.slug}/unlock`, {
+        method: 'POST',
+        // The first entry is whatever the client sent; the proxy appended the real address after it.
+        headers: { 'content-type': 'application/json', 'x-forwarded-for': `10.9.${i}.1, 198.51.100.99` },
+        body: JSON.stringify({ pin: String(1000 + i) }),
+      }).then((r) => r.status);
+    const statuses: number[] = [];
+    for (let i = 0; i < 12; i++) statuses.push(await guess(i));
+    assert.deepEqual(statuses.slice(0, 10), Array(10).fill(403));
+    assert.deepEqual(statuses.slice(10), [429, 429]);
+  });
+
+  it('on Render the client address comes from Cloudflare, never from a header the client controls', () => {
+    const req = (headers: Record<string, string>, ip = '172.16.0.5') => ({ headers, ip, socket: { remoteAddress: ip } }) as unknown as Request;
+    assert.equal(clientIp(req({ 'cf-connecting-ip': '203.0.113.50', 'x-forwarded-for': '6.6.6.6, 203.0.113.50' }), true), '203.0.113.50');
+    assert.equal(clientIp(req({ 'x-forwarded-for': '6.6.6.6' }), true), '172.16.0.5');
+    // Off Render, a CF-Connecting-IP header could be sent by anyone, so it is ignored.
+    assert.equal(clientIp(req({ 'cf-connecting-ip': '6.6.6.6' }), false), '172.16.0.5');
   });
 
   it('expired and switched-off codes stop working', async () => {
